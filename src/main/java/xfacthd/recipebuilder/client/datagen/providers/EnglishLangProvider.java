@@ -5,6 +5,7 @@ import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.data.LanguageProvider;
 import xfacthd.recipebuilder.RecipeBuilder;
+import xfacthd.recipebuilder.client.RBClient;
 import xfacthd.recipebuilder.client.data.Condition;
 import xfacthd.recipebuilder.client.builders.vanilla.*;
 import xfacthd.recipebuilder.client.screen.*;
@@ -52,6 +53,8 @@ public class EnglishLangProvider extends LanguageProvider
         add(Condition.MSG_NOT_A_BLOCK, "Not a block: ");
         add(CookingBuilder.TITLE_SMELT_TIME, "Time (Optional)");
         add(CookingBuilder.TITLE_EXPERIENCE, "XP (Optional)");
+        add(RBClient.KEY_BIND_OPEN_BUILDER.get().getName(), "Open builder");
+        add(RBClient.KEY_BIND_OPEN_BUILDER.get().getCategory(), "RecipeBuilder");
 
         add(IRecipeSerializer.SHAPED_RECIPE, "Shaped Crafting");
         add(IRecipeSerializer.SHAPELESS_RECIPE, "Shapeless Crafting");

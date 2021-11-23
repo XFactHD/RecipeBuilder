@@ -1,5 +1,6 @@
 {
   "hover.recipebuilder.recipebuilder.builder.path.click": "Click to open the datapack in the file explorer",
+  "key.categories.recipebuilder": "RecipeBuilder",
   "msg.recipebuilder.builder.success": "The recipe has been exported successfully. You can find the generated datapack here: ",
   "msg.recipebuilder.builder.success_local": "The recipe has also been placed in a generated datapack in the running World. To activate the new recipe, run the \"/reload\" command.",
   "msg.recipebuilder.condition.no_such_tag": "Unknown tag: ",
@@ -22,6 +23,7 @@
   "recipebuilder.edit_item.title": "Edit item",
   "recipebuilder.edit_params.title": "Edit parameters",
   "recipebuilder.edit_slot.use_tag.title": "Use tag",
+  "recipebuilder.key.open_builder": "Open builder",
   "recipebuilder.message.btn.ok": "Ok",
   "recipebuilder.message.error.title": "Builder Error",
   "recipebuilder.message.info.title": "Builder Info",
