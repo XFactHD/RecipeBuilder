@@ -37,6 +37,8 @@ public class BuilderScreen extends ContainerScreen<BuilderContainer>
     public static final ITextComponent MSG_SUCCESS_LOCAL = Utils.translate("msg", "builder.success_local");
     public static final ITextComponent HOVER_MSG_CLICK_TO_OPEN = Utils.translate("hover", "recipebuilder.builder.path.click");
     public static final ITextComponent FILTER_ALL = Utils.translate(null, "recipebuilder.builder.filter.all");
+    static final int WIDTH = 424;
+    static final int HEIGHT = 250;
     private static final int BORDER = 4;
     private static final int TEXT_PADDING = 3;
     private static final int LIST_WIDTH = 110;
@@ -62,8 +64,8 @@ public class BuilderScreen extends ContainerScreen<BuilderContainer>
     public BuilderScreen(BuilderContainer container, PlayerInventory playerInv, ITextComponent title)
     {
         super(container, playerInv, title);
-        imageWidth = 424;
-        imageHeight = 250;
+        imageWidth = WIDTH;
+        imageHeight = HEIGHT;
     }
 
     @Override
@@ -91,9 +93,8 @@ public class BuilderScreen extends ContainerScreen<BuilderContainer>
             }
         });
         addWidget(builderFilter);
-        topOffset += 22;
 
-        builderList = new BuilderListWidget(this, LIST_WIDTH, topPos + topOffset, topPos + imageHeight - BORDER - TEXT_PADDING);
+        builderList = new BuilderListWidget(this, LIST_WIDTH, topPos + topOffset + 22, topPos + imageHeight - BORDER - TEXT_PADDING);
         builderList.setLeftPos(leftPos + titleLabelX);
         addWidget(builderList);
 

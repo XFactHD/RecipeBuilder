@@ -7,17 +7,16 @@ import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.*;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.*;
+import net.minecraft.util.text.ITextComponent;
+import xfacthd.recipebuilder.client.data.Condition;
 import xfacthd.recipebuilder.client.screen.widget.HintedTextFieldWidget;
 import xfacthd.recipebuilder.client.screen.widget.SelectionWidget;
 import xfacthd.recipebuilder.client.util.ClientUtils;
-import xfacthd.recipebuilder.client.data.Condition;
+import xfacthd.recipebuilder.common.container.BuilderContainer;
 import xfacthd.recipebuilder.common.util.Utils;
 
-public class SelectConditionScreen extends ContainerScreen<SelectConditionScreen.DummyContainer>
+public class SelectConditionScreen extends ContainerScreen<BuilderContainer>
 {
     public static final ITextComponent TITLE = Utils.translate(null, "select_condition.title");
     public static final ITextComponent TITLE_SELECT = Utils.translate(null, "select_condition.select.title");
@@ -26,14 +25,14 @@ public class SelectConditionScreen extends ContainerScreen<SelectConditionScreen
     public static final ITextComponent MSG_NO_CONDITION = Utils.translate("msg", "select_condition.no_condition");
     public static final ITextComponent MSG_MISSING_DATA = Utils.translate("msg", "select_condition.missing_data");
     private static final int WIDTH = 176;
-    private static final int MAIN_HEIGHT = 112;
-    private static final int INV_HEIGHT = 82;
-    private static final int HEIGHT = MAIN_HEIGHT + INV_HEIGHT;
+    private static final int INV_HEIGHT = ClientUtils.INVENTORY_HEIGHT;
     private static final int LEFT_OFFSET = 8;
     private static final int SLOT_X = 70;
     private static final int SLOT_Y = 50;
 
     private final BuilderScreen parent;
+    private final int localWidth;
+    private int localLeft;
     private SelectionWidget<ConditionEntry> selection = null;
     private ConditionEntry currEntry = null;
     private ItemStack conditionStack = ItemStack.EMPTY;
@@ -42,10 +41,11 @@ public class SelectConditionScreen extends ContainerScreen<SelectConditionScreen
     public SelectConditionScreen(BuilderScreen parent)
     {
         //noinspection ConstantConditions
-        super(new DummyContainer(), Minecraft.getInstance().player.inventory, TITLE);
+        super(parent.getMenu(), Minecraft.getInstance().player.inventory, TITLE);
         this.parent = parent;
-        this.imageWidth = WIDTH;
-        this.imageHeight = HEIGHT;
+        this.imageWidth = BuilderScreen.WIDTH;
+        this.imageHeight = BuilderScreen.HEIGHT;
+        this.localWidth = WIDTH;
     }
 
     @Override
@@ -53,9 +53,14 @@ public class SelectConditionScreen extends ContainerScreen<SelectConditionScreen
     {
         super.init();
 
-        inventoryLabelY = HEIGHT - 4 - INV_HEIGHT - font.lineHeight + 2;
+        this.localLeft = (this.imageWidth - this.localWidth) / 2 + leftPos;
 
-        selection = addWidget(new SelectionWidget<>(leftPos + LEFT_OFFSET, topPos + 20, WIDTH - 16, TITLE_SELECT, this::onEntrySelected));
+        int edgeDistX = (BuilderScreen.WIDTH - WIDTH) / 2;
+        titleLabelX += edgeDistX;
+        inventoryLabelX += edgeDistX;
+        inventoryLabelY = BuilderScreen.HEIGHT - 4 - INV_HEIGHT - font.lineHeight + 2;
+
+        selection = addWidget(new SelectionWidget<>(localLeft + LEFT_OFFSET, topPos + 20, WIDTH - 16, TITLE_SELECT, this::onEntrySelected));
         selection.addEntry(new ConditionEntry(Condition.HAS_ITEM));
         selection.addEntry(new ConditionEntry(Condition.HAS_ITEM_TAG));
         selection.addEntry(new ConditionEntry(Condition.ENTERED_BLOCK));
@@ -64,10 +69,10 @@ public class SelectConditionScreen extends ContainerScreen<SelectConditionScreen
             selection.setSelected(currEntry, false);
         }
 
-        conditionTagField = addButton(new HintedTextFieldWidget(font, leftPos + LEFT_OFFSET + 1, topPos + 50, WIDTH - 18, 18, conditionTagField, TITLE_TAG));
+        conditionTagField = addButton(new HintedTextFieldWidget(font, localLeft + LEFT_OFFSET + 1, topPos + 50, WIDTH - 18, 18, conditionTagField, TITLE_TAG));
         conditionTagField.visible = false;
 
-        addButton(new Button(leftPos + (WIDTH / 2) - 30, topPos + MAIN_HEIGHT - 35, 60, 20, MessageScreen.TITLE_BTN_OK, btn -> onConfirm()));
+        addButton(new Button(localLeft + (WIDTH / 2) - 30, topPos + BuilderScreen.HEIGHT - INV_HEIGHT - 40, 60, 20, MessageScreen.TITLE_BTN_OK, btn -> onConfirm()));
     }
 
     @Override
@@ -81,13 +86,13 @@ public class SelectConditionScreen extends ContainerScreen<SelectConditionScreen
     @Override
     protected void renderBg(MatrixStack mstack, float partialTicks, int mouseX, int mouseY)
     {
-        ClientUtils.drawScreenBackground(this, mstack, leftPos, topPos, WIDTH, MAIN_HEIGHT);
-        ClientUtils.drawInventoryBackground(this, mstack, leftPos, topPos + MAIN_HEIGHT - 4, true);
+        ClientUtils.drawScreenBackground(this, mstack, localLeft, topPos, WIDTH, BuilderScreen.HEIGHT);
+        ClientUtils.drawInventoryBackground(this, mstack, localLeft, topPos + BuilderScreen.HEIGHT - INV_HEIGHT - 4, true);
 
         if (currEntry != null && currEntry.getCondition().needsItem())
         {
-            font.draw(mstack, TITLE_STACK, leftPos + LEFT_OFFSET, topPos + 55, 0x404040);
-            renderConditionSlot(mstack, mouseX, mouseY, leftPos + SLOT_X, topPos + SLOT_Y);
+            font.draw(mstack, TITLE_STACK, localLeft + LEFT_OFFSET, topPos + 55, 0x404040);
+            renderConditionSlot(mstack, mouseX, mouseY, localLeft + SLOT_X, topPos + SLOT_Y);
         }
     }
 
@@ -134,7 +139,7 @@ public class SelectConditionScreen extends ContainerScreen<SelectConditionScreen
     {
         if (button == 0 && currEntry != null && currEntry.getCondition().needsItem() && !selection.isMouseOver(mouseX, mouseY))
         {
-            int slotX = leftPos + SLOT_X + 1;
+            int slotX = localLeft + SLOT_X + 1;
             int slotY = topPos + SLOT_Y + 1;
             if (mouseX >= slotX && mouseX <= slotX + 16 && mouseY >= slotY && mouseY <= slotY + 16)
             {
@@ -212,14 +217,17 @@ public class SelectConditionScreen extends ContainerScreen<SelectConditionScreen
     @Override
     public boolean isPauseScreen() { return false; }
 
+    //Can't use the standard version of ContainerScreen#onClose() and ContainerScreen#removed() because
+    //they completely close the Screen stack and kill the container
     @Override
     public void onClose()
     {
-        //Can't use the standard version of ContainerScreen#onClose() because it completely closes the Screen stack
-        player().inventory.setCarried(ItemStack.EMPTY);
         player().containerMenu = parent.getMenu();
         mc().popGuiLayer();
     }
+
+    @Override
+    public void removed() { }
 
     private Minecraft mc()
     {
@@ -246,34 +254,5 @@ public class SelectConditionScreen extends ContainerScreen<SelectConditionScreen
         }
 
         public Condition getCondition() { return condition; }
-    }
-
-    protected static class DummyContainer extends Container
-    {
-        protected DummyContainer()
-        {
-            super(null, -1);
-
-            //noinspection ConstantConditions
-            PlayerInventory playerInv = Minecraft.getInstance().player.inventory;
-
-            int yTop = MAIN_HEIGHT;
-            for(int row = 0; row < 3; ++row)
-            {
-                for(int column = 0; column < 9; ++column)
-                {
-                    addSlot(new Slot(playerInv, column + row * 9 + 9, 8 + column * 18, yTop + row * 18));
-                }
-            }
-
-            yTop += (18 * 3) + 4;
-            for(int column = 0; column < 9; ++column)
-            {
-                addSlot(new Slot(playerInv, column, 8 + column * 18, yTop));
-            }
-        }
-
-        @Override
-        public boolean stillValid(PlayerEntity player) { return true; }
     }
 }

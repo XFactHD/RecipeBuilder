@@ -4,6 +4,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.Slot;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import xfacthd.recipebuilder.RecipeBuilder;
@@ -32,4 +33,7 @@ public class BuilderContainer extends Container
 
     @Override
     public boolean stillValid(PlayerEntity player) { return true; }
+
+    @Override
+    public ItemStack quickMoveStack(PlayerEntity pPlayer, int pIndex) { return ItemStack.EMPTY; }
 }
