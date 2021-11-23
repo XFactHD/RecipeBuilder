@@ -1,0 +1,35 @@
+package xfacthd.recipebuilder.common.container;
+
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.Slot;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
+import xfacthd.recipebuilder.RecipeBuilder;
+
+public class BuilderContainer extends Container
+{
+    public static final ITextComponent TITLE = new TranslationTextComponent("recipebuilder.builder.title");
+
+    public BuilderContainer(int containerId, PlayerInventory playerInv)
+    {
+        super(RecipeBuilder.BUILDER_CONTAINER.get(), containerId);
+
+        for(int row = 0; row < 3; ++row)
+        {
+            for(int column = 0; column < 9; ++column)
+            {
+                addSlot(new Slot(playerInv, column + row * 9 + 9, 132 + column * 18, 168 + row * 18));
+            }
+        }
+
+        for(int column = 0; column < 9; ++column)
+        {
+            addSlot(new Slot(playerInv, column, 132 + column * 18, 226));
+        }
+    }
+
+    @Override
+    public boolean stillValid(PlayerEntity player) { return true; }
+}

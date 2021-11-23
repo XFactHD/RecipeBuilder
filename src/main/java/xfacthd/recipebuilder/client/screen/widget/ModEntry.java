@@ -1,0 +1,19 @@
+package xfacthd.recipebuilder.client.screen.widget;
+
+import net.minecraft.util.text.ITextComponent;
+import xfacthd.recipebuilder.client.data.BuilderType;
+
+public class ModEntry extends SelectionWidget.SelectionEntry
+{
+    private final String modid;
+
+    public ModEntry(String modid) { this(BuilderType.getModName(modid), modid); }
+
+    public ModEntry(ITextComponent modName, String modid)
+    {
+        super(modName);
+        this.modid = modid;
+    }
+
+    public String getModid() { return modid; }
+}

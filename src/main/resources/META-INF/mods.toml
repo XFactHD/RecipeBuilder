@@ -1,0 +1,28 @@
+modLoader="javafml"
+loaderVersion="[36,)"
+license="LGPLv3"
+issueTrackerURL="https://www.github.com/xfacthd/xfacthd.recipebuilder"
+
+[[mods]]
+modId="recipebuilder"
+version="${file.jarVersion}"
+displayName="RecipeBuilder"
+#updateJSONURL="https://change.me.example.invalid/updates.json"
+#displayURL="https://change.me.to.your.mods.homepage.example.invalid/"
+logoFile="logo.png"
+authors="XFactHD"
+description=''''''
+
+[[dependencies.recipebuilder]]
+    modId="forge" #mandatory
+    mandatory=true #mandatory
+    versionRange="[36,)" #mandatory
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.recipebuilder]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.16.5,1.17)"
+    ordering="NONE"
+    side="BOTH"
