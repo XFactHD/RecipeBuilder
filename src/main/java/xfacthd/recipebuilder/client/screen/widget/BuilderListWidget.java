@@ -11,7 +11,7 @@ import net.minecraft.util.text.*;
 import org.lwjgl.opengl.GL11;
 import xfacthd.recipebuilder.client.RBClient;
 import xfacthd.recipebuilder.client.screen.BuilderScreen;
-import xfacthd.recipebuilder.client.data.BuilderType;
+import xfacthd.recipebuilder.client.data.AbstractBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +51,7 @@ public class BuilderListWidget extends ExtendedList<BuilderListWidget.BuilderEnt
         return super.addEntry(pEntry);
     }
 
-    public void setSelected(BuilderType type)
+    public void setSelected(AbstractBuilder type)
     {
         for (BuilderEntry entry : children())
         {
@@ -80,11 +80,11 @@ public class BuilderListWidget extends ExtendedList<BuilderListWidget.BuilderEnt
 
     protected class BuilderEntry extends ExtendedList.AbstractListEntry<BuilderEntry>
     {
-        private final BuilderType type;
+        private final AbstractBuilder type;
         private final ITextComponent typeTitle;
         private final ITextComponent modName;
 
-        private BuilderEntry(BuilderType type)
+        private BuilderEntry(AbstractBuilder type)
         {
             this.type = type;
             this.typeTitle = type.getTypeName();

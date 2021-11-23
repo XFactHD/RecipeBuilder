@@ -1,4 +1,4 @@
-package xfacthd.recipebuilder.client.data.builders;
+package xfacthd.recipebuilder.client.builders.vanilla;
 
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.advancements.ICriterionInstance;
@@ -15,7 +15,7 @@ import xfacthd.recipebuilder.common.util.Utils;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CookingBuilder extends BuilderType
+public class CookingBuilder extends AbstractBuilder
 {
     private static final Map<IRecipeSerializer<?>, ResourceLocation> TEXTURES = Util.make(new HashMap<>(), map ->
     {

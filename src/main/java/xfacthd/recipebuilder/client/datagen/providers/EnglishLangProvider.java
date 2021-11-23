@@ -6,11 +6,11 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.data.LanguageProvider;
 import xfacthd.recipebuilder.RecipeBuilder;
 import xfacthd.recipebuilder.client.data.Condition;
-import xfacthd.recipebuilder.client.data.builders.*;
+import xfacthd.recipebuilder.client.builders.vanilla.*;
 import xfacthd.recipebuilder.client.screen.*;
 import xfacthd.recipebuilder.client.screen.edit.EditItemSlotScreen;
 import xfacthd.recipebuilder.common.container.BuilderContainer;
-import xfacthd.recipebuilder.client.data.BuilderType;
+import xfacthd.recipebuilder.client.data.AbstractBuilder;
 
 public class EnglishLangProvider extends LanguageProvider
 {
@@ -42,9 +42,9 @@ public class EnglishLangProvider extends LanguageProvider
         add(EditSlotScreen.TITLE_USE_TAG, "Use tag");
         add(EditSlotScreen.MSG_NO_TAG_SELECTED, "No tag selected");
         add(EditItemSlotScreen.TITLE, "Edit item");
-        add(BuilderType.MSG_NO_UNLOCK, "No advancement criterion set");
-        add(BuilderType.MSG_INPUT_EMPTY, "The input may not be empty");
-        add(BuilderType.MSG_NON_OPT_EMPTY, "A non-optional Slot is empty: ");
+        add(AbstractBuilder.MSG_NO_UNLOCK, "No advancement criterion set");
+        add(AbstractBuilder.MSG_INPUT_EMPTY, "The input may not be empty");
+        add(AbstractBuilder.MSG_NON_OPT_EMPTY, "A non-optional Slot is empty: ");
         add(Condition.HAS_ITEM.getName(), "Has item (item-based)");
         add(Condition.HAS_ITEM_TAG.getName(), "Has item (tag-based)");
         add(Condition.ENTERED_BLOCK.getName(), "Entered block");
@@ -63,7 +63,7 @@ public class EnglishLangProvider extends LanguageProvider
         add(IRecipeSerializer.STONECUTTER, "Stonecutting");
     }
 
-    private void add(IRecipeSerializer<?> serializer, String value) { add(BuilderType.getTypeName(serializer), value); }
+    private void add(IRecipeSerializer<?> serializer, String value) { add(AbstractBuilder.getTypeName(serializer), value); }
 
     private void add(ITextComponent component, String value) { add(component.getString(), value); }
 }

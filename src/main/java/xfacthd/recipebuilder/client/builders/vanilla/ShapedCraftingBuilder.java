@@ -1,4 +1,4 @@
-package xfacthd.recipebuilder.client.data.builders;
+package xfacthd.recipebuilder.client.builders.vanilla;
 
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.advancements.ICriterionInstance;
@@ -15,7 +15,7 @@ import xfacthd.recipebuilder.client.data.slots.ItemSlot;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class ShapedCraftingBuilder extends BuilderType
+public class ShapedCraftingBuilder extends AbstractBuilder
 {
     public static final ResourceLocation TEXTURE = new ResourceLocation("minecraft", "textures/gui/container/crafting_table.png");
 

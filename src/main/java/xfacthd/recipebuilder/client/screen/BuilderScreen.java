@@ -46,7 +46,7 @@ public class BuilderScreen extends ContainerScreen<BuilderContainer>
     private static final int BUTTON_INTERVAL = 25;
 
     private final Map<RecipeSlot<?>, SlotContent<?>> recipeSlots = new HashMap<>();
-    private BuilderType currentBuilder = null;
+    private AbstractBuilder currentBuilder = null;
     private Condition recipeCondition = null;
     private ItemStack conditionStack = ItemStack.EMPTY;
     private String conditionTag = "";
@@ -83,7 +83,7 @@ public class BuilderScreen extends ContainerScreen<BuilderContainer>
         //Can't use method reference for callback because builderList might be null
         builderFilter = new SelectionWidget<>(leftPos + titleLabelX, topPos + topOffset, LIST_WIDTH, new StringTextComponent(""), entry -> builderList.filter(entry));
         builderFilter.addEntry(nextFilter[0]);
-        RBClient.BUILDERS.values().stream().map(BuilderType::getModid).distinct().forEach(modid ->
+        RBClient.BUILDERS.values().stream().map(AbstractBuilder::getModid).distinct().forEach(modid ->
         {
             ModEntry entry = new ModEntry(modid);
             builderFilter.addEntry(entry);
@@ -240,7 +240,7 @@ public class BuilderScreen extends ContainerScreen<BuilderContainer>
         return super.mouseClicked(mouseX, mouseY, button);
     }
 
-    public void selectBuilder(BuilderType type)
+    public void selectBuilder(AbstractBuilder type)
     {
         boolean changed = currentBuilder != type;
         currentBuilder = type;

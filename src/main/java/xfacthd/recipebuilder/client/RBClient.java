@@ -15,20 +15,22 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import org.lwjgl.glfw.GLFW;
 import xfacthd.recipebuilder.RecipeBuilder;
-import xfacthd.recipebuilder.client.data.builders.*;
+import xfacthd.recipebuilder.client.builders.vanilla.*;
 import xfacthd.recipebuilder.client.screen.BuilderScreen;
-import xfacthd.recipebuilder.client.data.BuilderType;
+import xfacthd.recipebuilder.client.data.AbstractBuilder;
 import xfacthd.recipebuilder.common.net.PacketOpenBuilder;
 import xfacthd.recipebuilder.common.util.Utils;
 
 import java.util.*;
+import java.util.function.Supplier;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = RecipeBuilder.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class RBClient
 {
-    public static final Map<IRecipeSerializer<?>, BuilderType> BUILDERS = new Object2ObjectArrayMap<>();
+    public static final Map<IRecipeSerializer<?>, AbstractBuilder> BUILDERS = new Object2ObjectArrayMap<>();
 
     public static final Lazy<KeyBinding> KEY_BIND_OPEN_BUILDER = makeKeyBind();
 
@@ -53,6 +55,30 @@ public class RBClient
         BUILDERS.put(IRecipeSerializer.CAMPFIRE_COOKING_RECIPE, new CookingBuilder(IRecipeSerializer.CAMPFIRE_COOKING_RECIPE, 100, 9));
         BUILDERS.put(IRecipeSerializer.STONECUTTER, new StonecuttingBuilder());
         BUILDERS.put(IRecipeSerializer.SMITHING, new SmithingBuilder());
+    }
+
+    @SubscribeEvent
+    public static void onHandleIMC(final InterModProcessEvent event)
+    {
+        Map<String, List<AbstractBuilder>> buildersPerMod = new Object2ObjectArrayMap<>();
+
+        event.getIMCStream("builder"::equals).forEach(msg ->
+        {
+            Supplier<AbstractBuilder> builder = msg.getMessageSupplier();
+            buildersPerMod.computeIfAbsent(
+                    msg.getSenderModId(),
+                    modid -> new ArrayList<>()
+            ).add(builder.get());
+
+            RecipeBuilder.LOGGER.error("Received builder via IMC message from mod '{}'", msg.getSenderModId());
+        });
+
+        buildersPerMod.keySet()
+                .stream()
+                .sorted()
+                .map(buildersPerMod::get)
+                .flatMap(List::stream)
+                .forEach(builder -> BUILDERS.put(builder.getType(), builder));
     }
 
     private static void onMainMenuOpen(final GuiScreenEvent.InitGuiEvent.Pre event)

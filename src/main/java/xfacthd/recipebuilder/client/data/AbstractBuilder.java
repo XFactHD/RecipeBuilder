@@ -19,7 +19,7 @@ import xfacthd.recipebuilder.common.util.Utils;
 
 import java.util.*;
 
-public abstract class BuilderType
+public abstract class AbstractBuilder
 {
     public static final IFormattableTextComponent MSG_NON_OPT_EMPTY = Utils.translate("msg", "non_opt_empty");
     public static final IFormattableTextComponent MSG_NO_UNLOCK = Utils.translate("msg", "no_unlock");
@@ -37,7 +37,7 @@ public abstract class BuilderType
     private final int texHeight;
     private final boolean needAdvancement;
 
-    protected BuilderType(
+    protected AbstractBuilder(
             IRecipeSerializer<?> type,
             String modid,
             Map<String, RecipeSlot<?>> slots,

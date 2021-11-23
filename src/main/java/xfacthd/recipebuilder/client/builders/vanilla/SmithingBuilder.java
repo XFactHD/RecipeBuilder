@@ -1,4 +1,4 @@
-package xfacthd.recipebuilder.client.data.builders;
+package xfacthd.recipebuilder.client.builders.vanilla;
 
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.advancements.ICriterionInstance;
@@ -13,7 +13,7 @@ import xfacthd.recipebuilder.client.data.slots.ItemSlot;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SmithingBuilder extends BuilderType
+public class SmithingBuilder extends AbstractBuilder
 {
     private static final ResourceLocation TEXTURE = new ResourceLocation("minecraft", "textures/gui/container/smithing.png");
 

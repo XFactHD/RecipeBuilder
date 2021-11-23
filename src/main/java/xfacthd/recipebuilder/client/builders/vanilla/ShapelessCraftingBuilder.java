@@ -1,4 +1,4 @@
-package xfacthd.recipebuilder.client.data.builders;
+package xfacthd.recipebuilder.client.builders.vanilla;
 
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.advancements.ICriterionInstance;
@@ -11,7 +11,7 @@ import xfacthd.recipebuilder.client.data.*;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class ShapelessCraftingBuilder extends BuilderType
+public class ShapelessCraftingBuilder extends AbstractBuilder
 {
     public ShapelessCraftingBuilder()
     {
