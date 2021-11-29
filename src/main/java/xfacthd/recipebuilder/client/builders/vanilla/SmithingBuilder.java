@@ -2,8 +2,10 @@ package xfacthd.recipebuilder.client.builders.vanilla;
 
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.advancements.ICriterionInstance;
+import net.minecraft.block.Blocks;
 import net.minecraft.data.SmithingRecipeBuilder;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.ResourceLocation;
@@ -19,7 +21,7 @@ public class SmithingBuilder extends AbstractBuilder
 
     public SmithingBuilder()
     {
-        super(IRecipeSerializer.SMITHING, "minecraft", buildSlotMap(), TEXTURE, 17, 7, 134, 57, true);
+        super(IRecipeSerializer.SMITHING, "minecraft", new ItemStack(Blocks.SMITHING_TABLE), buildSlotMap(), TEXTURE, 17, 7, 134, 57, true);
     }
 
     @Override

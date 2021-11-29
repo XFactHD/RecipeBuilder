@@ -2,11 +2,13 @@ package xfacthd.recipebuilder.client.screen.widget;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.widget.list.ExtendedList;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.*;
 import org.lwjgl.opengl.GL11;
 import xfacthd.recipebuilder.client.RBClient;
@@ -79,12 +81,14 @@ public class BuilderListWidget extends ScissoredList<BuilderListWidget.BuilderEn
     protected class BuilderEntry extends ExtendedList.AbstractListEntry<BuilderEntry>
     {
         private final AbstractBuilder type;
+        private final ItemStack typeIcon;
         private final ITextComponent typeTitle;
         private final ITextComponent modName;
 
         private BuilderEntry(AbstractBuilder type)
         {
             this.type = type;
+            this.typeIcon = type.getIcon();
             this.typeTitle = type.getTypeName();
             this.modName = type.getModName();
         }
@@ -120,15 +124,17 @@ public class BuilderListWidget extends ScissoredList<BuilderListWidget.BuilderEn
                 RenderSystem.enableTexture();
             }
 
+            Minecraft.getInstance().getItemRenderer().renderAndDecorateFakeItem(typeIcon, left + 1, top + 2);
+
             FontRenderer font = BuilderListWidget.this.parent.getFont();
 
             ITextProperties titleLine = ITextProperties.composite(font.substrByWidth(typeTitle, listWidth - 6));
             ITextProperties modNameLine = ITextProperties.composite(font.substrByWidth(modName, listWidth - 6));
 
             int textY = top + 2;
-            font.draw(mstack, LanguageMap.getInstance().getVisualOrder(titleLine), left + 2, textY, 0xFFFFFF);
+            font.draw(mstack, LanguageMap.getInstance().getVisualOrder(titleLine), left + 20, textY, 0xFFFFFF);
             textY += font.lineHeight;
-            font.draw(mstack, LanguageMap.getInstance().getVisualOrder(modNameLine), left + 2, textY, 0xCCCCCC);
+            font.draw(mstack, LanguageMap.getInstance().getVisualOrder(modNameLine), left + 20, textY, 0xCCCCCC);
         }
 
         @Override

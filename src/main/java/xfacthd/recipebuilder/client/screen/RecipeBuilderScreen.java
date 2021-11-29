@@ -40,11 +40,11 @@ public class RecipeBuilderScreen extends ContainerScreen<RecipeBuilderContainer>
     public static final ITextComponent MSG_SUCCESS_LOCAL = Utils.translate("msg", "builder.success_local");
     public static final ITextComponent HOVER_MSG_CLICK_TO_OPEN = Utils.translate("hover", "recipebuilder.builder.path.click");
     public static final ITextComponent FILTER_ALL = Utils.translate(null, "recipebuilder.builder.filter.all");
-    static final int WIDTH = 424;
+    static final int WIDTH = 464;
     static final int HEIGHT = 250;
     private static final int BORDER = 4;
     public static final int TEXT_PADDING = 3;
-    private static final int LIST_WIDTH = 110;
+    private static final int LIST_WIDTH = 130;
     public static final int BUTTON_WIDTH = 100;
     public static final int BUTTON_INTERVAL = 25;
     private static final Pattern NAME_PATTERN = Pattern.compile("([a-z0-9_.-]+)([:]?)([a-z0-9/._-]*)");

@@ -2,6 +2,7 @@ package xfacthd.recipebuilder.client.builders.vanilla;
 
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.advancements.ICriterionInstance;
+import net.minecraft.block.Blocks;
 import net.minecraft.data.ShapelessRecipeBuilder;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipeSerializer;
@@ -15,7 +16,7 @@ public class ShapelessCraftingBuilder extends AbstractBuilder
 {
     public ShapelessCraftingBuilder()
     {
-        super(IRecipeSerializer.SHAPELESS_RECIPE, "minecraft", ShapedCraftingBuilder.buildSlotMap(), ShapedCraftingBuilder.TEXTURE, 29, 16, 116, 54, true);
+        super(IRecipeSerializer.SHAPELESS_RECIPE, "minecraft", new ItemStack(Blocks.CRAFTING_TABLE), ShapedCraftingBuilder.buildSlotMap(), ShapedCraftingBuilder.TEXTURE, 29, 16, 116, 54, true);
     }
 
     @Override

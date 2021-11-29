@@ -2,6 +2,7 @@ package xfacthd.recipebuilder.client.builders.vanilla;
 
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.advancements.ICriterionInstance;
+import net.minecraft.block.Blocks;
 import net.minecraft.data.SingleItemRecipeBuilder;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipeSerializer;
@@ -19,7 +20,7 @@ public class StonecuttingBuilder extends AbstractBuilder
 
     public StonecuttingBuilder()
     {
-        super(IRecipeSerializer.STONECUTTER, "minecraft", buildSlotMap(), TEXTURE, 19, 14, 145, 56, true);
+        super(IRecipeSerializer.STONECUTTER, "minecraft", new ItemStack(Blocks.STONECUTTER), buildSlotMap(), TEXTURE, 19, 14, 145, 56, true);
     }
 
     @Override

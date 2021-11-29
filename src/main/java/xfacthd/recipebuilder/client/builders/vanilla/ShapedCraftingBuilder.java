@@ -2,6 +2,7 @@ package xfacthd.recipebuilder.client.builders.vanilla;
 
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.advancements.ICriterionInstance;
+import net.minecraft.block.Blocks;
 import net.minecraft.data.ShapedRecipeBuilder;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -21,7 +22,7 @@ public class ShapedCraftingBuilder extends AbstractBuilder
 
     public ShapedCraftingBuilder()
     {
-        super(IRecipeSerializer.SHAPED_RECIPE, "minecraft", buildSlotMap(), TEXTURE, 29, 16, 116, 54, true);
+        super(IRecipeSerializer.SHAPED_RECIPE, "minecraft", new ItemStack(Blocks.CRAFTING_TABLE), buildSlotMap(), TEXTURE, 29, 16, 116, 54, true);
     }
 
     @Override

@@ -29,6 +29,7 @@ public abstract class AbstractBuilder
     private final String modid;
     private final ITextComponent typeName;
     private final ITextComponent modName;
+    private final ItemStack iconStack;
     private final Map<String, RecipeSlot<?>> slots;
     private final ResourceLocation texture;
     private final int texX;
@@ -40,6 +41,7 @@ public abstract class AbstractBuilder
     protected AbstractBuilder(
             IRecipeSerializer<?> type,
             String modid,
+            ItemStack iconStack,
             Map<String, RecipeSlot<?>> slots,
             ResourceLocation texture,
             int texX,
@@ -53,6 +55,7 @@ public abstract class AbstractBuilder
         this.typeName = getTypeName(type);
         this.modid = modid;
         this.modName = getModName(modid);
+        this.iconStack = iconStack;
         this.slots = slots;
         this.texture = texture;
         this.texX = texX;
@@ -69,6 +72,8 @@ public abstract class AbstractBuilder
     public String getModid() { return modid; }
 
     public final ITextComponent getModName() { return modName; }
+
+    public final ItemStack getIcon() { return iconStack; }
 
     public final Map<String, RecipeSlot<?>> getSlots() { return slots; }
 

@@ -4,6 +4,7 @@ import com.mojang.datafixers.util.Pair;
 import net.minecraft.advancements.ICriterionInstance;
 import net.minecraft.data.CookingRecipeBuilder;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.*;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Util;
@@ -29,11 +30,11 @@ public class CookingBuilder extends AbstractBuilder
 
     private final int defaultTime;
 
-    public CookingBuilder(IRecipeSerializer<?> type, int defaultTime) { this(type, defaultTime, 1); }
+    public CookingBuilder(IRecipeSerializer<?> type, ItemStack iconStack, int defaultTime) { this(type, iconStack, defaultTime, 1); }
 
-    public CookingBuilder(IRecipeSerializer<?> type, int defaultTime, int slotInY)
+    public CookingBuilder(IRecipeSerializer<?> type, ItemStack iconStack, int defaultTime, int slotInY)
     {
-        super(type, "minecraft", buildSlotMap(slotInY), TEXTURES.get(type), 55, 16, 82, 54, true);
+        super(type, "minecraft", iconStack, buildSlotMap(slotInY), TEXTURES.get(type), 55, 16, 82, 54, true);
         this.defaultTime = defaultTime;
     }
 

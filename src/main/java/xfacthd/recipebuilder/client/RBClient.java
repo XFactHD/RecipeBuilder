@@ -1,10 +1,12 @@
 package xfacthd.recipebuilder.client;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.gui.screen.MainMenuScreen;
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.GuiScreenEvent;
@@ -54,10 +56,10 @@ public class RBClient
 
         BUILDERS.put(IRecipeSerializer.SHAPED_RECIPE, new ShapedCraftingBuilder());
         BUILDERS.put(IRecipeSerializer.SHAPELESS_RECIPE, new ShapelessCraftingBuilder());
-        BUILDERS.put(IRecipeSerializer.SMELTING_RECIPE, new CookingBuilder(IRecipeSerializer.SMELTING_RECIPE, 200));
-        BUILDERS.put(IRecipeSerializer.BLASTING_RECIPE, new CookingBuilder(IRecipeSerializer.BLASTING_RECIPE, 100));
-        BUILDERS.put(IRecipeSerializer.SMOKING_RECIPE, new CookingBuilder(IRecipeSerializer.SMOKING_RECIPE, 100));
-        BUILDERS.put(IRecipeSerializer.CAMPFIRE_COOKING_RECIPE, new CookingBuilder(IRecipeSerializer.CAMPFIRE_COOKING_RECIPE, 100, 9));
+        BUILDERS.put(IRecipeSerializer.SMELTING_RECIPE, new CookingBuilder(IRecipeSerializer.SMELTING_RECIPE, new ItemStack(Blocks.FURNACE), 200));
+        BUILDERS.put(IRecipeSerializer.BLASTING_RECIPE, new CookingBuilder(IRecipeSerializer.BLASTING_RECIPE, new ItemStack(Blocks.BLAST_FURNACE), 100));
+        BUILDERS.put(IRecipeSerializer.SMOKING_RECIPE, new CookingBuilder(IRecipeSerializer.SMOKING_RECIPE, new ItemStack(Blocks.SMOKER), 100));
+        BUILDERS.put(IRecipeSerializer.CAMPFIRE_COOKING_RECIPE, new CookingBuilder(IRecipeSerializer.CAMPFIRE_COOKING_RECIPE, new ItemStack(Blocks.CAMPFIRE), 100, 9));
         BUILDERS.put(IRecipeSerializer.STONECUTTER, new StonecuttingBuilder());
         BUILDERS.put(IRecipeSerializer.SMITHING, new SmithingBuilder());
     }
