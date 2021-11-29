@@ -6,11 +6,11 @@ import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.network.NetworkHooks;
-import xfacthd.recipebuilder.common.container.BuilderContainer;
+import xfacthd.recipebuilder.common.container.RecipeBuilderContainer;
 
 import java.util.function.Supplier;
 
-public class PacketOpenBuilder
+public class PacketOpenRecipeBuilder
 {
     public boolean handle(Supplier<NetworkEvent.Context> ctx)
     {
@@ -23,12 +23,12 @@ public class PacketOpenBuilder
         NetworkHooks.openGui(player, new INamedContainerProvider()
         {
             @Override
-            public ITextComponent getDisplayName() { return BuilderContainer.TITLE; }
+            public ITextComponent getDisplayName() { return RecipeBuilderContainer.TITLE; }
 
             @Override
             public Container createMenu(int containerId, PlayerInventory playerInv, PlayerEntity playerEntity)
             {
-                return new BuilderContainer(containerId, playerInv);
+                return new RecipeBuilderContainer(containerId, playerInv);
             }
         });
     }

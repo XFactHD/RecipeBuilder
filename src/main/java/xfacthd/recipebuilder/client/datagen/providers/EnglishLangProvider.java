@@ -4,14 +4,18 @@ import net.minecraft.data.DataGenerator;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.data.LanguageProvider;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.IForgeRegistry;
 import xfacthd.recipebuilder.RecipeBuilder;
 import xfacthd.recipebuilder.client.RBClient;
 import xfacthd.recipebuilder.client.data.Condition;
 import xfacthd.recipebuilder.client.builders.vanilla.*;
 import xfacthd.recipebuilder.client.screen.*;
 import xfacthd.recipebuilder.client.screen.edit.EditItemSlotScreen;
-import xfacthd.recipebuilder.common.container.BuilderContainer;
+import xfacthd.recipebuilder.common.container.RecipeBuilderContainer;
 import xfacthd.recipebuilder.client.data.AbstractBuilder;
+import xfacthd.recipebuilder.common.container.TagBuilderContainer;
+import xfacthd.recipebuilder.common.util.Utils;
 
 public class EnglishLangProvider extends LanguageProvider
 {
@@ -20,16 +24,30 @@ public class EnglishLangProvider extends LanguageProvider
     @Override
     protected void addTranslations()
     {
-        add(BuilderContainer.TITLE, "Recipe Builder");
-        add(BuilderScreen.TITLE_BTN_BUILD, "Build");
-        add(BuilderScreen.TITLE_BTN_RESET, "Reset slots");
-        add(BuilderScreen.TITLE_TEXT_RECIPENAME, "Name (Optional)");
-        add(BuilderScreen.TITLE_BTN_CONDITION, "Set condition");
-        add(BuilderScreen.TITLE_BTN_PARAMETERS, "Edit parameters");
-        add(BuilderScreen.MSG_SUCCESS, "The recipe has been exported successfully. You can find the generated datapack here: ");
-        add(BuilderScreen.MSG_SUCCESS_LOCAL, "The recipe has also been placed in a generated datapack in the running World. To activate the new recipe, run the \"/reload\" command.");
-        add(BuilderScreen.HOVER_MSG_CLICK_TO_OPEN, "Click to open the datapack in the file explorer");
-        add(BuilderScreen.FILTER_ALL, "[All]");
+        add(RecipeBuilderContainer.TITLE, "Recipe Builder");
+        add(RecipeBuilderScreen.TITLE_BTN_BUILD, "Build");
+        add(RecipeBuilderScreen.TITLE_BTN_RESET, "Reset slots");
+        add(RecipeBuilderScreen.TITLE_TEXT_RECIPENAME, "Name (Optional)");
+        add(RecipeBuilderScreen.TITLE_BTN_CONDITION, "Set condition");
+        add(RecipeBuilderScreen.TITLE_BTN_PARAMETERS, "Edit parameters");
+        add(RecipeBuilderScreen.MSG_SUCCESS, "The recipe has been exported successfully. You can find the generated datapack here: ");
+        add(RecipeBuilderScreen.MSG_SUCCESS_LOCAL, "The recipe has also been placed in a generated datapack in the running World. To activate the new recipe, run the \"/reload\" command.");
+        add(RecipeBuilderScreen.HOVER_MSG_CLICK_TO_OPEN, "Click to open the datapack in the file explorer");
+        add(RecipeBuilderScreen.FILTER_ALL, "[All]");
+        add(TagBuilderContainer.TITLE, "Tag Builder");
+        add(TagBuilderScreen.TITLE_TEXT_TAGNAME, "Tag name");
+        add(TagBuilderScreen.TITLE_TEXT_ADD, "Entry name");
+        add(TagBuilderScreen.TITLE_TAG_TYPE, "Tag type");
+        add(TagBuilderScreen.TITLE_TAG_REPLACE, "Replace existing");
+        add(TagBuilderScreen.TITLE_BTN_ADD_ENTRY, "Add entry");
+        add(TagBuilderScreen.TITLE_BTN_REMOVE_ENTRY, "Remove entry");
+        add(TagBuilderScreen.MSG_NAME_EMPTY, "The tag name must not be empty");
+        add(TagBuilderScreen.MSG_NAME_NO_NS, "The tag name must be namespaced (namespace:path)");
+        add(TagBuilderScreen.MSG_ENTRY_NAME_EMPTY, "The entry name must not be empty");
+        add(TagBuilderScreen.MSG_ENTRY_UNKNOWN, "Unknown registry entry: ");
+        add(TagBuilderScreen.MSG_ENTRY_EXISTS, "This entry already exists");
+        add(TagBuilderScreen.MSG_SUCCESS, "The tag has been exported successfully. You can find the generated datapack here: ");
+        add(TagBuilderScreen.MSG_SUCCESS_LOCAL, "The tag has also been placed in a generated datapack in the running World. To activate the new tag, run the \"/reload\" command.");
         add(MessageScreen.INFO_TITLE, "Builder Info");
         add(MessageScreen.ERROR_TITLE, "Builder Error");
         add(MessageScreen.TITLE_BTN_OK, "Ok");
@@ -53,8 +71,9 @@ public class EnglishLangProvider extends LanguageProvider
         add(Condition.MSG_NOT_A_BLOCK, "Not a block: ");
         add(CookingBuilder.TITLE_SMELT_TIME, "Time (Optional)");
         add(CookingBuilder.TITLE_EXPERIENCE, "XP (Optional)");
-        add(RBClient.KEY_BIND_OPEN_BUILDER.get().getName(), "Open builder");
-        add(RBClient.KEY_BIND_OPEN_BUILDER.get().getCategory(), "RecipeBuilder");
+        add(RBClient.KEY_BIND_OPEN_RECIPE_BUILDER.get().getCategory(), "RecipeBuilder");
+        add(RBClient.KEY_BIND_OPEN_RECIPE_BUILDER.get().getName(), "Open recipe builder");
+        add(RBClient.KEY_BIND_OPEN_TAG_BUILDER.get().getName(), "Open tag builder");
 
         add(IRecipeSerializer.SHAPED_RECIPE, "Shaped Crafting");
         add(IRecipeSerializer.SHAPELESS_RECIPE, "Shapeless Crafting");
@@ -64,9 +83,19 @@ public class EnglishLangProvider extends LanguageProvider
         add(IRecipeSerializer.CAMPFIRE_COOKING_RECIPE, "Campfire Cooking");
         add(IRecipeSerializer.SMITHING, "Smithing");
         add(IRecipeSerializer.STONECUTTER, "Stonecutting");
+
+        add(ForgeRegistries.BLOCKS, "Blocks");
+        add(ForgeRegistries.ITEMS, "Items");
+        add(ForgeRegistries.FLUIDS, "Fluids");
+        add(ForgeRegistries.ENTITIES, "EntityTypes");
+        add(ForgeRegistries.TILE_ENTITIES, "BlockEntityTypes");
+        add(ForgeRegistries.POTIONS, "Effects");
+        add(ForgeRegistries.ENCHANTMENTS, "Enchantments");
     }
 
     private void add(IRecipeSerializer<?> serializer, String value) { add(AbstractBuilder.getTypeName(serializer), value); }
+
+    private void add(IForgeRegistry<?> registry, String value) { add(Utils.translate("tag_type", registry.getRegistryName().toString()), value); }
 
     private void add(ITextComponent component, String value) { add(component.getString(), value); }
 }

@@ -15,7 +15,7 @@ public class ClientUtils
     private static final ResourceLocation BUILDER_BACKGROUND_TEXTURE = Utils.location("textures/builder_background.png");
     public static final ResourceLocation INVENTORY_TEXTURE = new ResourceLocation("minecraft", "textures/gui/container/generic_54.png");
 
-    private static final int BORDER = 4;
+    public static final int BORDER = 4;
     private static final int BUILDER_BORDER = 2;
     private static final int BACKGROUND_WIDTH = 248;
     private static final int BACKGROUND_HEIGHT = 166;

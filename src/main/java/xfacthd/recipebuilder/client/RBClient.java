@@ -19,9 +19,11 @@ import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import org.lwjgl.glfw.GLFW;
 import xfacthd.recipebuilder.RecipeBuilder;
 import xfacthd.recipebuilder.client.builders.vanilla.*;
-import xfacthd.recipebuilder.client.screen.BuilderScreen;
+import xfacthd.recipebuilder.client.screen.RecipeBuilderScreen;
 import xfacthd.recipebuilder.client.data.AbstractBuilder;
-import xfacthd.recipebuilder.common.net.PacketOpenBuilder;
+import xfacthd.recipebuilder.client.screen.TagBuilderScreen;
+import xfacthd.recipebuilder.common.net.PacketOpenRecipeBuilder;
+import xfacthd.recipebuilder.common.net.PacketOpenTagBuilder;
 import xfacthd.recipebuilder.common.util.Utils;
 
 import java.util.*;
@@ -32,16 +34,19 @@ public class RBClient
 {
     public static final Map<IRecipeSerializer<?>, AbstractBuilder> BUILDERS = new Object2ObjectArrayMap<>();
 
-    public static final Lazy<KeyBinding> KEY_BIND_OPEN_BUILDER = makeKeyBind();
+    public static final Lazy<KeyBinding> KEY_BIND_OPEN_RECIPE_BUILDER = makeKeyBind("recipebuilder.key.open_recipe_builder", GLFW.GLFW_KEY_B);
+    public static final Lazy<KeyBinding> KEY_BIND_OPEN_TAG_BUILDER = makeKeyBind("recipebuilder.key.open_tag_builder", GLFW.GLFW_KEY_V);
 
     @SubscribeEvent
     public static void onClientSetup(final FMLClientSetupEvent event)
     {
         event.enqueueWork(() ->
         {
-            ClientRegistry.registerKeyBinding(KEY_BIND_OPEN_BUILDER.get());
+            ClientRegistry.registerKeyBinding(KEY_BIND_OPEN_RECIPE_BUILDER.get());
+            ClientRegistry.registerKeyBinding(KEY_BIND_OPEN_TAG_BUILDER.get());
 
-            ScreenManager.register(RecipeBuilder.BUILDER_CONTAINER.get(), BuilderScreen::new);
+            ScreenManager.register(RecipeBuilder.RECIPE_BUILDER_CONTAINER.get(), RecipeBuilderScreen::new);
+            ScreenManager.register(RecipeBuilder.TAG_BUILDER_CONTAINER.get(), TagBuilderScreen::new);
         });
 
         MinecraftForge.EVENT_BUS.addListener(RBClient::onMainMenuOpen);
@@ -91,16 +96,21 @@ public class RBClient
 
     private static void onClientTickStart(final TickEvent.ClientTickEvent event)
     {
-        if (event.phase != TickEvent.Phase.START) { return; }
+        if (event.phase != TickEvent.Phase.START || Minecraft.getInstance().screen != null) { return; }
 
-        if (KEY_BIND_OPEN_BUILDER.get().consumeClick() && Minecraft.getInstance().screen == null)
+        if (KEY_BIND_OPEN_RECIPE_BUILDER.get().consumeClick())
         {
-            RecipeBuilder.NETWORK.sendToServer(new PacketOpenBuilder());
+            RecipeBuilder.NETWORK.sendToServer(new PacketOpenRecipeBuilder());
+        }
+
+        if (KEY_BIND_OPEN_TAG_BUILDER.get().consumeClick())
+        {
+            RecipeBuilder.NETWORK.sendToServer(new PacketOpenTagBuilder());
         }
     }
 
-    private static Lazy<KeyBinding> makeKeyBind()
+    private static Lazy<KeyBinding> makeKeyBind(String name, int key)
     {
-        return Lazy.of(() -> new KeyBinding("recipebuilder.key.open_builder", GLFW.GLFW_KEY_B, "key.categories.recipebuilder"));
+        return Lazy.of(() -> new KeyBinding(name, key, "key.categories.recipebuilder"));
     }
 }

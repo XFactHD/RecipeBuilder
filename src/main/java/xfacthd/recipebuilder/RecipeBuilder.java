@@ -11,8 +11,10 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import xfacthd.recipebuilder.common.container.BuilderContainer;
-import xfacthd.recipebuilder.common.net.PacketOpenBuilder;
+import xfacthd.recipebuilder.common.container.RecipeBuilderContainer;
+import xfacthd.recipebuilder.common.container.TagBuilderContainer;
+import xfacthd.recipebuilder.common.net.PacketOpenRecipeBuilder;
+import xfacthd.recipebuilder.common.net.PacketOpenTagBuilder;
 
 @Mod(RecipeBuilder.MOD_ID)
 public class RecipeBuilder
@@ -29,7 +31,14 @@ public class RecipeBuilder
     );
 
     private static final DeferredRegister<ContainerType<?>> CONTAINERS = DeferredRegister.create(ForgeRegistries.CONTAINERS, MOD_ID);
-    public static final RegistryObject<ContainerType<BuilderContainer>> BUILDER_CONTAINER = CONTAINERS.register("builder", () -> new ContainerType<>(BuilderContainer::new));
+    public static final RegistryObject<ContainerType<RecipeBuilderContainer>> RECIPE_BUILDER_CONTAINER = CONTAINERS.register(
+            "recipe_builder",
+            () -> new ContainerType<>(RecipeBuilderContainer::new)
+    );
+    public static final RegistryObject<ContainerType<TagBuilderContainer>> TAG_BUILDER_CONTAINER = CONTAINERS.register(
+            "tag_builder",
+            () -> new ContainerType<>(TagBuilderContainer::new)
+    );
 
     public RecipeBuilder()
 	{
@@ -43,10 +52,16 @@ public class RecipeBuilder
     {
         int packet = 0;
 
-        NETWORK.messageBuilder(PacketOpenBuilder.class, packet++)
+        NETWORK.messageBuilder(PacketOpenRecipeBuilder.class, packet++)
                 .encoder((pkt, buf) -> {})
-                .decoder(buf -> new PacketOpenBuilder())
-                .consumer(PacketOpenBuilder::handle)
+                .decoder(buf -> new PacketOpenRecipeBuilder())
+                .consumer(PacketOpenRecipeBuilder::handle)
+                .add();
+
+        NETWORK.messageBuilder(PacketOpenTagBuilder.class, packet++)
+                .encoder((pkt, buf) -> {})
+                .decoder(buf -> new PacketOpenTagBuilder())
+                .consumer(PacketOpenTagBuilder::handle)
                 .add();
     }
 }

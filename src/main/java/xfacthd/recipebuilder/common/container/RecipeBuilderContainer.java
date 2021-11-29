@@ -9,13 +9,13 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import xfacthd.recipebuilder.RecipeBuilder;
 
-public class BuilderContainer extends Container
+public class RecipeBuilderContainer extends Container
 {
     public static final ITextComponent TITLE = new TranslationTextComponent("recipebuilder.builder.title");
 
-    public BuilderContainer(int containerId, PlayerInventory playerInv)
+    public RecipeBuilderContainer(int containerId, PlayerInventory playerInv)
     {
-        super(RecipeBuilder.BUILDER_CONTAINER.get(), containerId);
+        super(RecipeBuilder.RECIPE_BUILDER_CONTAINER.get(), containerId);
 
         for(int row = 0; row < 3; ++row)
         {

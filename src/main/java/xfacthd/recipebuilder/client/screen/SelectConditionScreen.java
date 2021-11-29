@@ -13,10 +13,10 @@ import xfacthd.recipebuilder.client.data.Condition;
 import xfacthd.recipebuilder.client.screen.widget.HintedTextFieldWidget;
 import xfacthd.recipebuilder.client.screen.widget.SelectionWidget;
 import xfacthd.recipebuilder.client.util.ClientUtils;
-import xfacthd.recipebuilder.common.container.BuilderContainer;
+import xfacthd.recipebuilder.common.container.RecipeBuilderContainer;
 import xfacthd.recipebuilder.common.util.Utils;
 
-public class SelectConditionScreen extends ContainerScreen<BuilderContainer>
+public class SelectConditionScreen extends ContainerScreen<RecipeBuilderContainer>
 {
     public static final ITextComponent TITLE = Utils.translate(null, "select_condition.title");
     public static final ITextComponent TITLE_SELECT = Utils.translate(null, "select_condition.select.title");
@@ -30,7 +30,7 @@ public class SelectConditionScreen extends ContainerScreen<BuilderContainer>
     private static final int SLOT_X = 70;
     private static final int SLOT_Y = 50;
 
-    private final BuilderScreen parent;
+    private final RecipeBuilderScreen parent;
     private final int localWidth;
     private int localLeft;
     private SelectionWidget<ConditionEntry> selection = null;
@@ -38,13 +38,13 @@ public class SelectConditionScreen extends ContainerScreen<BuilderContainer>
     private ItemStack conditionStack = ItemStack.EMPTY;
     private TextFieldWidget conditionTagField = null;
 
-    public SelectConditionScreen(BuilderScreen parent)
+    public SelectConditionScreen(RecipeBuilderScreen parent)
     {
         //noinspection ConstantConditions
         super(parent.getMenu(), Minecraft.getInstance().player.inventory, TITLE);
         this.parent = parent;
-        this.imageWidth = BuilderScreen.WIDTH;
-        this.imageHeight = BuilderScreen.HEIGHT;
+        this.imageWidth = RecipeBuilderScreen.WIDTH;
+        this.imageHeight = RecipeBuilderScreen.HEIGHT;
         this.localWidth = WIDTH;
     }
 
@@ -55,10 +55,10 @@ public class SelectConditionScreen extends ContainerScreen<BuilderContainer>
 
         this.localLeft = (this.imageWidth - this.localWidth) / 2 + leftPos;
 
-        int edgeDistX = (BuilderScreen.WIDTH - WIDTH) / 2;
+        int edgeDistX = (RecipeBuilderScreen.WIDTH - WIDTH) / 2;
         titleLabelX += edgeDistX;
         inventoryLabelX += edgeDistX;
-        inventoryLabelY = BuilderScreen.HEIGHT - 4 - INV_HEIGHT - font.lineHeight + 2;
+        inventoryLabelY = RecipeBuilderScreen.HEIGHT - 4 - INV_HEIGHT - font.lineHeight + 2;
 
         selection = addWidget(new SelectionWidget<>(localLeft + LEFT_OFFSET, topPos + 20, WIDTH - 16, TITLE_SELECT, this::onEntrySelected));
         selection.addEntry(new ConditionEntry(Condition.HAS_ITEM));
@@ -72,7 +72,7 @@ public class SelectConditionScreen extends ContainerScreen<BuilderContainer>
         conditionTagField = addButton(new HintedTextFieldWidget(font, localLeft + LEFT_OFFSET + 1, topPos + 50, WIDTH - 18, 18, conditionTagField, TITLE_TAG));
         conditionTagField.visible = false;
 
-        addButton(new Button(localLeft + (WIDTH / 2) - 30, topPos + BuilderScreen.HEIGHT - INV_HEIGHT - 40, 60, 20, MessageScreen.TITLE_BTN_OK, btn -> onConfirm()));
+        addButton(new Button(localLeft + (WIDTH / 2) - 30, topPos + RecipeBuilderScreen.HEIGHT - INV_HEIGHT - 40, 60, 20, MessageScreen.TITLE_BTN_OK, btn -> onConfirm()));
     }
 
     @Override
@@ -86,8 +86,8 @@ public class SelectConditionScreen extends ContainerScreen<BuilderContainer>
     @Override
     protected void renderBg(MatrixStack mstack, float partialTicks, int mouseX, int mouseY)
     {
-        ClientUtils.drawScreenBackground(this, mstack, localLeft, topPos, WIDTH, BuilderScreen.HEIGHT);
-        ClientUtils.drawInventoryBackground(this, mstack, localLeft, topPos + BuilderScreen.HEIGHT - INV_HEIGHT - 4, true);
+        ClientUtils.drawScreenBackground(this, mstack, localLeft, topPos, WIDTH, RecipeBuilderScreen.HEIGHT);
+        ClientUtils.drawInventoryBackground(this, mstack, localLeft, topPos + RecipeBuilderScreen.HEIGHT - INV_HEIGHT - 4, true);
 
         if (currEntry != null && currEntry.getCondition().needsItem())
         {
@@ -158,6 +158,16 @@ public class SelectConditionScreen extends ContainerScreen<BuilderContainer>
         }
 
         return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    @Override
+    public boolean keyPressed(int pKeyCode, int pScanCode, int pModifiers)
+    {
+        if (mc().options.keyInventory.matches(pKeyCode, pScanCode) && conditionTagField.isFocused())
+        {
+            return true;
+        }
+        return super.keyPressed(pKeyCode, pScanCode, pModifiers);
     }
 
     public void setExistingSelection(Condition condition, ItemStack stack, String tag)

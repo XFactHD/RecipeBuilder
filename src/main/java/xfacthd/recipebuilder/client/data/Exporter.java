@@ -8,6 +8,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SharedConstants;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.storage.FolderName;
+import net.minecraftforge.registries.IForgeRegistry;
 import xfacthd.recipebuilder.RecipeBuilder;
 import xfacthd.recipebuilder.client.util.BuilderException;
 
@@ -16,6 +17,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -52,21 +54,18 @@ public class Exporter
         JsonObject advancementJson = recipe.serializeAdvancement();
 
         //Export to game directory
-        Path datapackRoot = Minecraft.getInstance().gameDirectory.toPath().resolve(RecipeBuilder.MOD_ID + "/generated_pack");
-        exportToPath(datapackRoot, recipeName, recipeJson, advancementName, advancementJson);
+        Path datapackRoot = getGameDir().resolve(RecipeBuilder.MOD_ID + "/generated_pack");
+        exportRecipeToPath(datapackRoot, recipeName, recipeJson, advancementName, advancementJson);
 
         //Export to datapack in running world in singleplayer
         if (Minecraft.getInstance().hasSingleplayerServer())
         {
-            IntegratedServer server = Minecraft.getInstance().getSingleplayerServer();
-            //noinspection ConstantConditions
-            datapackRoot = server.getWorldPath(FolderName.DATAPACK_DIR).resolve(RecipeBuilder.MOD_ID);
-
-            exportToPath(datapackRoot, recipeName, recipeJson, advancementName, advancementJson);
+            datapackRoot = getServerPackDir().resolve(RecipeBuilder.MOD_ID);
+            exportRecipeToPath(datapackRoot, recipeName, recipeJson, advancementName, advancementJson);
         }
     }
 
-    private static void exportToPath(Path packRoot, String recipeName, JsonObject recipe, @Nullable String advancementName, @Nullable JsonObject advancement)
+    private static void exportRecipeToPath(Path packRoot, String recipeName, JsonObject recipe, @Nullable String advancementName, @Nullable JsonObject advancement)
     {
         ensurePackDefinitionExists(packRoot);
 
@@ -78,6 +77,36 @@ public class Exporter
             Path advancementPath = packRoot.resolve("data/" + RecipeBuilder.MOD_ID + "/advancements/" + advancementName + ".json");
             saveToFile(advancementPath, advancement);
         }
+    }
+
+    public static void exportTag(IForgeRegistry<?> regType, String name, List<String> entries, boolean replace)
+    {
+        String type = regType.getRegistryName().getPath();
+
+        JsonObject obj = new JsonObject();
+        obj.addProperty("replace", replace);
+
+        JsonArray arr = new JsonArray();
+        entries.forEach(arr::add);
+        obj.add("values", arr);
+
+        //Export to game directory
+        Path datapackRoot = getGameDir().resolve(RecipeBuilder.MOD_ID + "/generated_pack");
+        exportTagToPath(datapackRoot, type, name, obj);
+
+        if (Minecraft.getInstance().hasSingleplayerServer())
+        {
+            datapackRoot = getServerPackDir().resolve(RecipeBuilder.MOD_ID);
+            exportTagToPath(datapackRoot, type, name, obj);
+        }
+    }
+
+    private static void exportTagToPath(Path packRoot, String type, String tagName, JsonObject contents)
+    {
+        ensurePackDefinitionExists(packRoot);
+
+        Path tagPath = packRoot.resolve("data/" + RecipeBuilder.MOD_ID + "/tags/" + type + "s/" + tagName + ".json");
+        saveToFile(tagPath, contents);
     }
 
     private static void ensurePackDefinitionExists(Path packRoot)
@@ -121,5 +150,14 @@ public class Exporter
         {
             throw new BuilderException(new StringTextComponent(e.getMessage()));
         }
+    }
+
+    private static Path getGameDir() { return Minecraft.getInstance().gameDirectory.toPath(); }
+
+    private static Path getServerPackDir()
+    {
+        IntegratedServer server = Minecraft.getInstance().getSingleplayerServer();
+        //noinspection ConstantConditions
+        return server.getWorldPath(FolderName.DATAPACK_DIR);
     }
 }

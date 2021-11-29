@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-public class SelectionWidget<T extends SelectionWidget.SelectionEntry> extends Widget
+public class SelectionWidget<T extends SelectionWidget.SelectionEntry> extends Widget //TODO: add drag scrolling
 {
     private static final ResourceLocation ICONS = new ResourceLocation("minecraft", "textures/gui/resource_packs.png");
     private static final int ENTRY_HEIGHT = 20;
@@ -110,7 +110,7 @@ public class SelectionWidget<T extends SelectionWidget.SelectionEntry> extends W
                 setSelected(getEntryAtPosition(mouseX, mouseY), true);
             }
 
-            if (mouseX < maxX)
+            if ((mouseY < y + ENTRY_HEIGHT && mouseX < x + width) || mouseX < maxX)
             {
                 extended = !extended;
                 scrollOffset = 0;

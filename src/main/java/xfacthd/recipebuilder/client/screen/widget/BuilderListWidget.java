@@ -10,23 +10,21 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.text.*;
 import org.lwjgl.opengl.GL11;
 import xfacthd.recipebuilder.client.RBClient;
-import xfacthd.recipebuilder.client.screen.BuilderScreen;
+import xfacthd.recipebuilder.client.screen.RecipeBuilderScreen;
 import xfacthd.recipebuilder.client.data.AbstractBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class BuilderListWidget extends ExtendedList<BuilderListWidget.BuilderEntry>
+public class BuilderListWidget extends ScissoredList<BuilderListWidget.BuilderEntry>
 {
     private final List<BuilderEntry> entries = new ArrayList<>();
-    private final BuilderScreen parent;
-    private final int listWidth;
+    private final RecipeBuilderScreen parent;
 
-    public BuilderListWidget(BuilderScreen parent, int width, int top, int bottom)
+    public BuilderListWidget(RecipeBuilderScreen parent, int width, int top, int bottom)
     {
-        super(parent.getMinecraft(), width, parent.getYSize(), top, bottom, parent.getFont().lineHeight * 2 + 8);
+        super(parent.getMinecraft(), width, bottom - top, top, bottom, parent.getFont().lineHeight * 2 + 8);
         this.parent = parent;
-        this.listWidth = width;
         setRenderTopAndBottom(false);
 
         RBClient.BUILDERS.forEach((type, builder) -> addEntry(new BuilderEntry(builder)));
@@ -123,8 +121,14 @@ public class BuilderListWidget extends ExtendedList<BuilderListWidget.BuilderEnt
             }
 
             FontRenderer font = BuilderListWidget.this.parent.getFont();
-            font.draw(mstack, LanguageMap.getInstance().getVisualOrder(ITextProperties.composite(font.substrByWidth(typeTitle, listWidth - 6))), left + 2, top + 2, 0xFFFFFF);
-            font.draw(mstack, LanguageMap.getInstance().getVisualOrder(ITextProperties.composite(font.substrByWidth(modName,   listWidth - 6))), left + 2, top + 2 + font.lineHeight, 0xCCCCCC);
+
+            ITextProperties titleLine = ITextProperties.composite(font.substrByWidth(typeTitle, listWidth - 6));
+            ITextProperties modNameLine = ITextProperties.composite(font.substrByWidth(modName, listWidth - 6));
+
+            int textY = top + 2;
+            font.draw(mstack, LanguageMap.getInstance().getVisualOrder(titleLine), left + 2, textY, 0xFFFFFF);
+            textY += font.lineHeight;
+            font.draw(mstack, LanguageMap.getInstance().getVisualOrder(modNameLine), left + 2, textY, 0xCCCCCC);
         }
 
         @Override

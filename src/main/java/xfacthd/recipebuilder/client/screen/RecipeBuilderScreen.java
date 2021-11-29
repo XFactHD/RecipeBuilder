@@ -10,6 +10,7 @@ import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.StringUtils;
 import net.minecraft.util.text.*;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.util.text.event.HoverEvent;
@@ -19,14 +20,16 @@ import xfacthd.recipebuilder.client.data.slots.INumberContent;
 import xfacthd.recipebuilder.client.data.slots.NumberSlot;
 import xfacthd.recipebuilder.client.screen.widget.*;
 import xfacthd.recipebuilder.client.util.ClientUtils;
-import xfacthd.recipebuilder.common.container.BuilderContainer;
+import xfacthd.recipebuilder.common.container.RecipeBuilderContainer;
 import xfacthd.recipebuilder.client.data.*;
 import xfacthd.recipebuilder.common.util.Utils;
 
 import java.nio.file.Path;
 import java.util.*;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
-public class BuilderScreen extends ContainerScreen<BuilderContainer>
+public class RecipeBuilderScreen extends ContainerScreen<RecipeBuilderContainer>
 {
     public static final ITextComponent TITLE_BTN_CONDITION = Utils.translate(null, "builder.btn.condition");
     public static final ITextComponent TITLE_BTN_PARAMETERS = Utils.translate(null, "builder.btn.parameters");
@@ -40,10 +43,17 @@ public class BuilderScreen extends ContainerScreen<BuilderContainer>
     static final int WIDTH = 424;
     static final int HEIGHT = 250;
     private static final int BORDER = 4;
-    private static final int TEXT_PADDING = 3;
+    public static final int TEXT_PADDING = 3;
     private static final int LIST_WIDTH = 110;
-    private static final int BUTTON_WIDTH = 100;
-    private static final int BUTTON_INTERVAL = 25;
+    public static final int BUTTON_WIDTH = 100;
+    public static final int BUTTON_INTERVAL = 25;
+    private static final Pattern NAME_PATTERN = Pattern.compile("([a-z0-9_.-]+)([:]?)([a-z0-9/._-]*)");
+    private static final Predicate<String> NAME_FILTER = s ->
+    {
+        if (StringUtils.isNullOrEmpty(s)) { return true; }
+        if (s.contains("..")) { return false; } //Name is used as part of the path -> must deny jumping up the directory tree
+        return NAME_PATTERN.matcher(s).matches();
+    };
 
     private final Map<RecipeSlot<?>, SlotContent<?>> recipeSlots = new HashMap<>();
     private AbstractBuilder currentBuilder = null;
@@ -61,7 +71,7 @@ public class BuilderScreen extends ContainerScreen<BuilderContainer>
     private int builderX = 0;
     private int builderY = 0;
 
-    public BuilderScreen(BuilderContainer container, PlayerInventory playerInv, ITextComponent title)
+    public RecipeBuilderScreen(RecipeBuilderContainer container, PlayerInventory playerInv, ITextComponent title)
     {
         super(container, playerInv, title);
         imageWidth = WIDTH;
@@ -99,9 +109,10 @@ public class BuilderScreen extends ContainerScreen<BuilderContainer>
         addWidget(builderList);
 
         int buttonX = leftPos + imageWidth - BUTTON_WIDTH - (BORDER * 2);
-        int buttonY = topOffset;
+        int buttonY = topPos + titleLabelY + font.lineHeight + RecipeBuilderScreen.TEXT_PADDING;
 
-        recipeName = addButton(new HintedTextFieldWidget(font, buttonX + 1, buttonY, BUTTON_WIDTH - 2, 18, recipeName, TITLE_TEXT_RECIPENAME));
+        recipeName = addButton(new HintedTextFieldWidget(font, buttonX + 1, buttonY + 1, BUTTON_WIDTH - 2, 18, recipeName, TITLE_TEXT_RECIPENAME));
+        recipeName.setFilter(NAME_FILTER);
         recipeName.active = false;
         buttonY += BUTTON_INTERVAL;
 
@@ -128,7 +139,7 @@ public class BuilderScreen extends ContainerScreen<BuilderContainer>
 
         builderFilter.setSelected(nextFilter[0], true);
 
-        buildPackPathComponent();
+        pathComponent = buildPackPathComponent();
     }
 
     @Override
@@ -154,10 +165,10 @@ public class BuilderScreen extends ContainerScreen<BuilderContainer>
         }
 
         int invX = (imageWidth / 2) - (ClientUtils.INVENTORY_WIDTH / 2);
-        int invY = imageHeight - BORDER - ClientUtils.INVENTORY_HEIGHT;
+        int invY = imageHeight - ClientUtils.BORDER - ClientUtils.INVENTORY_HEIGHT;
         ClientUtils.drawInventoryBackground(this, mstack, leftPos + invX, topPos + invY, false);
 
-        builderList.render(mstack, mouseX, mouseY, partialTicks); //TODO: stencil away the top and bottom overhang when list is scrollable
+        builderList.render(mstack, mouseX, mouseY, partialTicks);
         builderFilter.render(mstack, mouseX, mouseY, partialTicks);
         renderSlots(mstack, mouseX, mouseY);
     }
@@ -238,6 +249,16 @@ public class BuilderScreen extends ContainerScreen<BuilderContainer>
             }
         }
         return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    @Override
+    public boolean keyPressed(int pKeyCode, int pScanCode, int pModifiers)
+    {
+        if (mc().options.keyInventory.matches(pKeyCode, pScanCode) && recipeName.isFocused())
+        {
+            return true;
+        }
+        return super.keyPressed(pKeyCode, pScanCode, pModifiers);
     }
 
     public void selectBuilder(AbstractBuilder type)
@@ -339,10 +360,10 @@ public class BuilderScreen extends ContainerScreen<BuilderContainer>
         setCriterion(null, ItemStack.EMPTY, "");
     }
 
-    private void buildPackPathComponent()
+    public static ITextComponent buildPackPathComponent()
     {
-        Path datapack = mc().gameDirectory.toPath().resolve(RecipeBuilder.MOD_ID + "/generated_pack").toAbsolutePath().normalize();
-        pathComponent = new StringTextComponent(datapack.toString())
+        Path datapack = Minecraft.getInstance().gameDirectory.toPath().resolve(RecipeBuilder.MOD_ID + "/generated_pack").toAbsolutePath().normalize();
+        return new StringTextComponent(datapack.toString())
                 .setStyle(Style.EMPTY
                         .withColor(TextFormatting.DARK_GRAY)
                         .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, HOVER_MSG_CLICK_TO_OPEN))
