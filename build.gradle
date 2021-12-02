@@ -19,8 +19,8 @@ apply plugin: 'maven-publish'
 apply plugin: 'org.spongepowered.mixin'
 
 version = '1.0'
-group = 'xfacthd.xfacthd.recipebuilder'
-archivesBaseName = 'RecipeBuilder'
+group = 'xfacthd.recipebuilder'
+archivesBaseName = 'RecipeBuilder-1.16'
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(8) // Mojang ships Java 8 to end users, so your mod should target Java 8.
 
@@ -116,7 +116,7 @@ mixin {
 jar {
     manifest {
         attributes([
-            "Specification-Title": "xfacthd.recipebuilder",
+            "Specification-Title": "recipebuilder",
             "Specification-Vendor": "XFactHD",
             "Specification-Version": "1", // We are version 1 of ourselves
             "Implementation-Title": project.name,

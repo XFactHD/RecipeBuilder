@@ -50,6 +50,9 @@ public class SelectionWidget<T extends SelectionWidget.SelectionEntry> extends W
 
         if (extended)
         {
+            mstack.pushPose();
+            mstack.translate(0, 0, 500);
+
             int boxHeight = Math.max(1, ENTRY_HEIGHT * Math.min(entries.size(), 4)) + 2;
 
             fill(mstack, x,     y + ENTRY_HEIGHT - 1, x + width,     y + ENTRY_HEIGHT + boxHeight - 1, 0xFFFFFFFF);
@@ -80,6 +83,8 @@ public class SelectionWidget<T extends SelectionWidget.SelectionEntry> extends W
                 fill(mstack, x + width - 5, scrollY,     x + width - 1, scrollY + barHeight,     0xFF666666);
                 fill(mstack, x + width - 4, scrollY + 1, x + width - 2, scrollY + barHeight - 1, 0xFFAAAAAA);
             }
+
+            mstack.popPose();
         }
         else
         {
