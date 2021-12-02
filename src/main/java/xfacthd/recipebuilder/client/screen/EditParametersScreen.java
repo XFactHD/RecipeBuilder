@@ -1,10 +1,9 @@
 package xfacthd.recipebuilder.client.screen;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
 import xfacthd.recipebuilder.client.data.slots.INumberContent;
 import xfacthd.recipebuilder.client.data.slots.NumberSlot;
 import xfacthd.recipebuilder.client.screen.widget.NumberTextFieldWidget;
@@ -15,7 +14,7 @@ import java.util.Map;
 
 public class EditParametersScreen extends Screen
 {
-    public static final ITextComponent TITLE = Utils.translate(null, "edit_params.title");
+    public static final Component TITLE = Utils.translate(null, "edit_params.title");
     private static final int WIDTH = 176;
     private static final int BASE_HEIGHT = 64;
     private static final int TITLE_Y = 6;
@@ -43,34 +42,34 @@ public class EditParametersScreen extends Screen
         int fieldY = topPos + TITLE_Y + font.lineHeight + 5;
         for (Map.Entry<NumberSlot<?>, INumberContent> entry : params.entrySet())
         {
-            addButton(new NumberTextFieldWidget(font, leftPos + LEFT_OFFSET, fieldY, 50, 18, entry.getKey(), entry.getValue(), false));
+            addRenderableWidget(new NumberTextFieldWidget(font, leftPos + LEFT_OFFSET, fieldY, 50, 18, entry.getKey(), entry.getValue(), false));
             fieldY += FIELD_INTERVAL;
         }
 
-        addButton(new Button(leftPos + (WIDTH / 2) - 30, topPos + imageHeight - 35, 60, 20, MessageScreen.TITLE_BTN_OK, btn -> onConfirm()));
+        addRenderableWidget(new Button(leftPos + (WIDTH / 2) - 30, topPos + imageHeight - 35, 60, 20, MessageScreen.TITLE_BTN_OK, btn -> onConfirm()));
     }
 
     @Override
-    public final void render(MatrixStack mstack, int mouseX, int mouseY, float partialTicks)
+    public final void render(PoseStack pstack, int mouseX, int mouseY, float partialTicks)
     {
-        renderBackground(mstack);
+        renderBackground(pstack);
 
-        ClientUtils.drawScreenBackground(this, mstack, leftPos, topPos, WIDTH, imageHeight);
-        font.draw(mstack, title, leftPos + LEFT_OFFSET, topPos + TITLE_Y, 0x404040);
+        ClientUtils.drawScreenBackground(this, pstack, leftPos, topPos, WIDTH, imageHeight);
+        font.draw(pstack, title, leftPos + LEFT_OFFSET, topPos + TITLE_Y, 0x404040);
 
         int fieldY = topPos + TITLE_Y + font.lineHeight + 10;
         for (NumberSlot<?> slot : params.keySet())
         {
-            font.draw(mstack, slot.getTitle(), leftPos + LEFT_OFFSET + 55, fieldY, 0x404040);
+            font.draw(pstack, slot.getTitle(), leftPos + LEFT_OFFSET + 55, fieldY, 0x404040);
             fieldY += FIELD_INTERVAL;
         }
 
-        super.render(mstack, mouseX, mouseY, partialTicks);
+        super.render(pstack, mouseX, mouseY, partialTicks);
     }
 
     private void onConfirm()
     {
-        children.stream()
+        children().stream()
                 .filter(w -> w instanceof NumberTextFieldWidget)
                 .map(w -> (NumberTextFieldWidget)w)
                 .forEach(NumberTextFieldWidget::commit);

@@ -1,7 +1,7 @@
 package xfacthd.recipebuilder.client.screen.widget;
 
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.resources.ResourceLocation;
 
 public class LocationEntry extends SelectionWidget.SelectionEntry
 {
@@ -9,7 +9,7 @@ public class LocationEntry extends SelectionWidget.SelectionEntry
 
     public LocationEntry(ResourceLocation name)
     {
-        super(new StringTextComponent(name.toString()));
+        super(new TextComponent(name.toString()));
         this.name = name;
     }
 

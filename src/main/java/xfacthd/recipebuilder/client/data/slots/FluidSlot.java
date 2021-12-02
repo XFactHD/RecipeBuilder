@@ -1,9 +1,9 @@
 package xfacthd.recipebuilder.client.data.slots;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.item.ItemStack;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
@@ -32,13 +32,13 @@ public class FluidSlot extends RecipeSlot<FluidSlot.FluidContent>
     }
 
     @Override
-    public void renderContent(Screen screen, FluidContent content, MatrixStack mstack, int slotX, int slotY, int blitBase, FontRenderer font)
+    public void renderContent(Screen screen, FluidContent content, PoseStack pstack, int slotX, int slotY, int blitBase, Font font)
     {
         //TODO: implement fluid rendering
     }
 
     @Override
-    public void renderTooltip(Screen screen, FluidContent content, MatrixStack mstack, int mouseX, int mouseY, FontRenderer font)
+    public void renderTooltip(Screen screen, FluidContent content, PoseStack pstack, int mouseX, int mouseY, Font font)
     {
         //TODO: implement tooltip rendering
     }

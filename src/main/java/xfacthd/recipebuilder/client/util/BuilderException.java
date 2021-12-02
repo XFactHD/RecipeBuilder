@@ -1,12 +1,12 @@
 package xfacthd.recipebuilder.client.util;
 
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.network.chat.Component;
 
 public class BuilderException extends RuntimeException
 {
-    private final ITextComponent message;
+    private final Component message;
 
-    public BuilderException(ITextComponent message) { this.message = message; }
+    public BuilderException(Component message) { this.message = message; }
 
-    public ITextComponent getComponent() { return message; }
+    public Component getComponent() { return message; }
 }

@@ -1,14 +1,14 @@
 package xfacthd.recipebuilder.client.builders.vanilla;
 
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.advancements.ICriterionInstance;
-import net.minecraft.block.Blocks;
-import net.minecraft.data.ShapedRecipeBuilder;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.tags.ITag;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.advancements.CriterionTriggerInstance;
+import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.Tag;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.level.block.Blocks;
 import xfacthd.recipebuilder.client.util.BuilderException;
 import xfacthd.recipebuilder.client.data.*;
 import xfacthd.recipebuilder.client.data.slots.ItemSlot;
@@ -22,7 +22,7 @@ public class ShapedCraftingBuilder extends AbstractBuilder
 
     public ShapedCraftingBuilder()
     {
-        super(IRecipeSerializer.SHAPED_RECIPE, "minecraft", new ItemStack(Blocks.CRAFTING_TABLE), buildSlotMap(), TEXTURE, 29, 16, 116, 54, true);
+        super(RecipeSerializer.SHAPED_RECIPE, "minecraft", new ItemStack(Blocks.CRAFTING_TABLE), buildSlotMap(), TEXTURE, 29, 16, 116, 54, true);
     }
 
     @Override
@@ -48,14 +48,14 @@ public class ShapedCraftingBuilder extends AbstractBuilder
     }
 
     @Override
-    protected void build(Map<String, Pair<RecipeSlot<?>, SlotContent<?>>> contents, String recipeName, ICriterionInstance criterion, String criterionName)
+    protected void build(Map<String, Pair<RecipeSlot<?>, SlotContent<?>>> contents, String recipeName, CriterionTriggerInstance criterion, String criterionName)
     {
         ItemStack out = getItemContent(contents.get("out").getSecond());
 
         ShapedRecipeBuilder builder = new ShapedRecipeBuilder(out.getItem(), out.getCount());
 
         Map<Item, Character> itemKeys = new HashMap<>();
-        Map<ITag<Item>, Character> tagKeys = new HashMap<>();
+        Map<Tag<Item>, Character> tagKeys = new HashMap<>();
         List<String> lines = parseGridLines(contents, itemKeys, tagKeys);
 
         itemKeys.forEach((i, c) -> builder.define(c, i));
@@ -67,7 +67,7 @@ public class ShapedCraftingBuilder extends AbstractBuilder
         Exporter.exportRecipe(builder::save, builder::save, recipeName);
     }
 
-    private List<String> parseGridLines(Map<String, Pair<RecipeSlot<?>, SlotContent<?>>> contents, Map<Item, Character> itemKeys, Map<ITag<Item>, Character> tagKeys)
+    private List<String> parseGridLines(Map<String, Pair<RecipeSlot<?>, SlotContent<?>>> contents, Map<Item, Character> itemKeys, Map<Tag<Item>, Character> tagKeys)
     {
         char[][] grid = new char[][] { { ' ', ' ', ' ', }, { ' ', ' ', ' ', }, { ' ', ' ', ' ', } };
 
@@ -93,7 +93,7 @@ public class ShapedCraftingBuilder extends AbstractBuilder
 
             if (pair.getSecond().shouldUseTag())
             {
-                ITag<Item> tag = getTagContent(pair.getSecond());
+                Tag<Item> tag = getTagContent(pair.getSecond());
                 if (!tagKeys.containsKey(tag))
                 {
                     tagKeys.put(tag, lastChar);

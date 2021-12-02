@@ -1,13 +1,13 @@
 package xfacthd.recipebuilder.client.data;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.tags.ITag;
+import net.minecraft.tags.Tag;
+import net.minecraft.world.item.ItemStack;
 
 public abstract class SlotContent<T>
 {
     protected T content;
     protected boolean useTag = false;
-    protected ITag<T> tag = null;
+    protected Tag<T> tag = null;
 
     protected SlotContent(T content) { this.content = content; }
 
@@ -23,7 +23,7 @@ public abstract class SlotContent<T>
 
     public final T getContent() { return content; }
 
-    public void setTag(ITag<T> tag)
+    public void setTag(Tag<T> tag)
     {
         useTag = tag != null;
         this.tag = tag;
@@ -31,7 +31,7 @@ public abstract class SlotContent<T>
 
     public final boolean shouldUseTag() { return useTag; }
 
-    public final ITag<T> getTag()
+    public final Tag<T> getTag()
     {
         if (!useTag)
         {

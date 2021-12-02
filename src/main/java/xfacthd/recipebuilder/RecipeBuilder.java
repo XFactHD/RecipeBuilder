@@ -1,14 +1,12 @@
 package xfacthd.recipebuilder;
 
-import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.RegistryObject;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.MenuType;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.network.NetworkRegistry;
-import net.minecraftforge.fml.network.simple.SimpleChannel;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.network.NetworkRegistry;
+import net.minecraftforge.network.simple.SimpleChannel;
+import net.minecraftforge.registries.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import xfacthd.recipebuilder.common.container.RecipeBuilderContainer;
@@ -30,19 +28,19 @@ public class RecipeBuilder
             NET_VERSION::equals
     );
 
-    private static final DeferredRegister<ContainerType<?>> CONTAINERS = DeferredRegister.create(ForgeRegistries.CONTAINERS, MOD_ID);
-    public static final RegistryObject<ContainerType<RecipeBuilderContainer>> RECIPE_BUILDER_CONTAINER = CONTAINERS.register(
+    private static final DeferredRegister<MenuType<?>> MENU_TYPES = DeferredRegister.create(ForgeRegistries.CONTAINERS, MOD_ID);
+    public static final RegistryObject<MenuType<RecipeBuilderContainer>> RECIPE_BUILDER_CONTAINER = MENU_TYPES.register(
             "recipe_builder",
-            () -> new ContainerType<>(RecipeBuilderContainer::new)
+            () -> new MenuType<>(RecipeBuilderContainer::new)
     );
-    public static final RegistryObject<ContainerType<TagBuilderContainer>> TAG_BUILDER_CONTAINER = CONTAINERS.register(
+    public static final RegistryObject<MenuType<TagBuilderContainer>> TAG_BUILDER_CONTAINER = MENU_TYPES.register(
             "tag_builder",
-            () -> new ContainerType<>(TagBuilderContainer::new)
+            () -> new MenuType<>(TagBuilderContainer::new)
     );
 
     public RecipeBuilder()
 	{
-        CONTAINERS.register(FMLJavaModLoadingContext.get().getModEventBus());
+        MENU_TYPES.register(FMLJavaModLoadingContext.get().getModEventBus());
 
         initPackets();
     }

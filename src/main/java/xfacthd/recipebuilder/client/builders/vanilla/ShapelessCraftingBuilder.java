@@ -1,11 +1,11 @@
 package xfacthd.recipebuilder.client.builders.vanilla;
 
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.advancements.ICriterionInstance;
-import net.minecraft.block.Blocks;
-import net.minecraft.data.ShapelessRecipeBuilder;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipeSerializer;
+import net.minecraft.advancements.CriterionTriggerInstance;
+import net.minecraft.data.recipes.ShapelessRecipeBuilder;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.level.block.Blocks;
 import xfacthd.recipebuilder.client.util.BuilderException;
 import xfacthd.recipebuilder.client.data.*;
 
@@ -16,7 +16,7 @@ public class ShapelessCraftingBuilder extends AbstractBuilder
 {
     public ShapelessCraftingBuilder()
     {
-        super(IRecipeSerializer.SHAPELESS_RECIPE, "minecraft", new ItemStack(Blocks.CRAFTING_TABLE), ShapedCraftingBuilder.buildSlotMap(), ShapedCraftingBuilder.TEXTURE, 29, 16, 116, 54, true);
+        super(RecipeSerializer.SHAPELESS_RECIPE, "minecraft", new ItemStack(Blocks.CRAFTING_TABLE), ShapedCraftingBuilder.buildSlotMap(), ShapedCraftingBuilder.TEXTURE, 29, 16, 116, 54, true);
     }
 
     @Override
@@ -42,7 +42,7 @@ public class ShapelessCraftingBuilder extends AbstractBuilder
     }
 
     @Override
-    protected void build(Map<String, Pair<RecipeSlot<?>, SlotContent<?>>> contents, String recipeName, ICriterionInstance criterion, String criterionName)
+    protected void build(Map<String, Pair<RecipeSlot<?>, SlotContent<?>>> contents, String recipeName, CriterionTriggerInstance criterion, String criterionName)
     {
         ItemStack out = getItemContent(contents.get("out").getSecond());
 

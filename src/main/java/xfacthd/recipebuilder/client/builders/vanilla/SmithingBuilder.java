@@ -1,14 +1,14 @@
 package xfacthd.recipebuilder.client.builders.vanilla;
 
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.advancements.ICriterionInstance;
-import net.minecraft.block.Blocks;
-import net.minecraft.data.SmithingRecipeBuilder;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.advancements.CriterionTriggerInstance;
+import net.minecraft.data.recipes.UpgradeRecipeBuilder;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.level.block.Blocks;
 import xfacthd.recipebuilder.client.data.*;
 import xfacthd.recipebuilder.client.data.slots.ItemSlot;
 
@@ -21,20 +21,20 @@ public class SmithingBuilder extends AbstractBuilder
 
     public SmithingBuilder()
     {
-        super(IRecipeSerializer.SMITHING, "minecraft", new ItemStack(Blocks.SMITHING_TABLE), buildSlotMap(), TEXTURE, 17, 7, 134, 57, true);
+        super(RecipeSerializer.SMITHING, "minecraft", new ItemStack(Blocks.SMITHING_TABLE), buildSlotMap(), TEXTURE, 17, 7, 134, 57, true);
     }
 
     @Override
     protected void validate(Map<String, Pair<RecipeSlot<?>, SlotContent<?>>> contents) { }
 
     @Override
-    protected void build(Map<String, Pair<RecipeSlot<?>, SlotContent<?>>> contents, String recipeName, ICriterionInstance criterion, String criterionName)
+    protected void build(Map<String, Pair<RecipeSlot<?>, SlotContent<?>>> contents, String recipeName, CriterionTriggerInstance criterion, String criterionName)
     {
         Ingredient base = getContentAsIngredient(contents.get("base").getSecond(), true);
         Ingredient addition = getContentAsIngredient(contents.get("base").getSecond(), true);
         Item output = getItemContent(contents.get("out").getSecond()).getItem();
 
-        SmithingRecipeBuilder builder = SmithingRecipeBuilder.smithing(base, addition, output)
+        UpgradeRecipeBuilder builder = UpgradeRecipeBuilder.smithing(base, addition, output)
                 .unlocks(criterionName, criterion);
 
         //noinspection ConstantConditions

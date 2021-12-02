@@ -1,8 +1,8 @@
 package xfacthd.recipebuilder.common.util;
 
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.LanguageMap;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.locale.Language;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
 import xfacthd.recipebuilder.RecipeBuilder;
 
 import java.util.ArrayList;
@@ -16,7 +16,7 @@ public class Utils
 
     public static ResourceLocation location(String path) { return new ResourceLocation(RecipeBuilder.MOD_ID, path); }
 
-    public static TranslationTextComponent translate(String prefix, String postfix)
+    public static TranslatableComponent translate(String prefix, String postfix)
     {
         String key = prefix != null ? prefix + "." : "";
         key += RecipeBuilder.MOD_ID + "." + postfix;
@@ -27,13 +27,13 @@ public class Utils
             {
                 TRANSLATION_KEYS.add(key);
             }
-            else if (!LanguageMap.getInstance().has(key))
+            else if (!Language.getInstance().has(key))
             {
                 RecipeBuilder.LOGGER.warn("No translation for key: " + key);
             }
         }
 
-        return new TranslationTextComponent(key);
+        return new TranslatableComponent(key);
     }
 
     public static void enteredMainMenu()
@@ -42,7 +42,7 @@ public class Utils
 
         doneLoading = true;
 
-        LanguageMap map = LanguageMap.getInstance();
+        Language map = Language.getInstance();
         for (String key : TRANSLATION_KEYS)
         {
             if (!map.has(key))

@@ -1,16 +1,16 @@
 package xfacthd.recipebuilder.client.data;
 
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.advancements.ICriterionInstance;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.tags.ITag;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.*;
+import net.minecraft.advancements.CriterionTriggerInstance;
+import net.minecraft.network.chat.*;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.Tag;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
+import net.minecraftforge.forgespi.language.IModFileInfo;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.registries.ForgeRegistries;
 import xfacthd.recipebuilder.client.data.slots.*;
@@ -21,14 +21,14 @@ import java.util.*;
 
 public abstract class AbstractBuilder
 {
-    public static final IFormattableTextComponent MSG_NON_OPT_EMPTY = Utils.translate("msg", "non_opt_empty");
-    public static final IFormattableTextComponent MSG_NO_UNLOCK = Utils.translate("msg", "no_unlock");
-    public static final ITextComponent MSG_INPUT_EMPTY = Utils.translate("msg", "input_empty");
+    public static final MutableComponent MSG_NON_OPT_EMPTY = Utils.translate("msg", "non_opt_empty");
+    public static final MutableComponent MSG_NO_UNLOCK = Utils.translate("msg", "no_unlock");
+    public static final Component MSG_INPUT_EMPTY = Utils.translate("msg", "input_empty");
 
-    private final IRecipeSerializer<?> type;
+    private final RecipeSerializer<?> type;
     private final String modid;
-    private final ITextComponent typeName;
-    private final ITextComponent modName;
+    private final Component typeName;
+    private final Component modName;
     private final ItemStack iconStack;
     private final Map<String, RecipeSlot<?>> slots;
     private final ResourceLocation texture;
@@ -39,7 +39,7 @@ public abstract class AbstractBuilder
     private final boolean needAdvancement;
 
     protected AbstractBuilder(
-            IRecipeSerializer<?> type,
+            RecipeSerializer<?> type,
             String modid,
             ItemStack iconStack,
             Map<String, RecipeSlot<?>> slots,
@@ -65,13 +65,13 @@ public abstract class AbstractBuilder
         this.needAdvancement = needAdvancement;
     }
 
-    public final IRecipeSerializer<?> getType() { return type; }
+    public final RecipeSerializer<?> getType() { return type; }
 
-    public final ITextComponent getTypeName() { return typeName; }
+    public final Component getTypeName() { return typeName; }
 
     public String getModid() { return modid; }
 
-    public final ITextComponent getModName() { return modName; }
+    public final Component getModName() { return modName; }
 
     public final ItemStack getIcon() { return iconStack; }
 
@@ -89,7 +89,7 @@ public abstract class AbstractBuilder
 
     public final boolean needsAdvancement() { return needAdvancement; }
 
-    public final ITextComponent buildRecipe(Map<RecipeSlot<?>, SlotContent<?>> contents, String recipeName, ICriterionInstance criterion, String criterionName)
+    public final Component buildRecipe(Map<RecipeSlot<?>, SlotContent<?>> contents, String recipeName, CriterionTriggerInstance criterion, String criterionName)
     {
         Map<String, Pair<RecipeSlot<?>, SlotContent<?>>> byName = new HashMap<>();
 
@@ -123,7 +123,7 @@ public abstract class AbstractBuilder
 
     protected abstract void validate(Map<String, Pair<RecipeSlot<?>, SlotContent<?>>> contents);
 
-    protected abstract void build(Map<String, Pair<RecipeSlot<?>, SlotContent<?>>> contents, String recipeName, ICriterionInstance criterion, String criterionName);
+    protected abstract void build(Map<String, Pair<RecipeSlot<?>, SlotContent<?>>> contents, String recipeName, CriterionTriggerInstance criterion, String criterionName);
 
 
 
@@ -139,7 +139,7 @@ public abstract class AbstractBuilder
         return fluid.getContent();
     }
 
-    protected final <T> ITag<T> getTagContent(SlotContent<?> content)
+    protected final <T> Tag<T> getTagContent(SlotContent<?> content)
     {
         SlotContent<T> tContent = content.cast();
         return tContent.getTag();
@@ -169,22 +169,22 @@ public abstract class AbstractBuilder
         return floatContent.getContent();
     }
 
-    public static ITextComponent getTypeName(IRecipeSerializer<?> type)
+    public static Component getTypeName(RecipeSerializer<?> type)
     {
         ResourceLocation typeKey = ForgeRegistries.RECIPE_SERIALIZERS.getKey(type);
         if (typeKey == null) { throw new IllegalArgumentException("Recipe type has no name!"); }
         return Utils.translate("typename", typeKey.getPath());
     }
 
-    public static ITextComponent getModName(String modid)
+    public static Component getModName(String modid)
     {
-        ModFileInfo file = ModList.get().getModFileById(modid);
+        IModFileInfo file = ModList.get().getModFileById(modid);
         Optional<IModInfo> modInfo = file.getMods().stream().filter(mod -> mod.getModId().equals(modid)).findFirst();
-        if (!modInfo.isPresent())
+        if (modInfo.isEmpty())
         {
             throw new IllegalArgumentException("Unable to get mod from ID: " + modid);
         }
 
-        return new StringTextComponent(modInfo.get().getDisplayName());
+        return new TextComponent(modInfo.get().getDisplayName());
     }
 }

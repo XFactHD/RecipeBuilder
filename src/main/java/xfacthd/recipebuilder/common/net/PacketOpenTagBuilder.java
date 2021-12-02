@@ -1,11 +1,13 @@
 package xfacthd.recipebuilder.common.net;
 
-import net.minecraft.entity.player.*;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraftforge.fml.network.NetworkEvent;
-import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.network.NetworkHooks;
 import xfacthd.recipebuilder.common.container.TagBuilderContainer;
 
 import java.util.function.Supplier;
@@ -18,15 +20,15 @@ public class PacketOpenTagBuilder
         return true;
     }
 
-    private void openContainer(ServerPlayerEntity player)
+    private void openContainer(ServerPlayer player)
     {
-        NetworkHooks.openGui(player, new INamedContainerProvider()
+        NetworkHooks.openGui(player, new MenuProvider()
         {
             @Override
-            public ITextComponent getDisplayName() { return TagBuilderContainer.TITLE; }
+            public Component getDisplayName() { return TagBuilderContainer.TITLE; }
 
             @Override
-            public Container createMenu(int containerId, PlayerInventory playerInv, PlayerEntity playerEntity)
+            public AbstractContainerMenu createMenu(int containerId, Inventory playerInv, Player playerEntity)
             {
                 return new TagBuilderContainer(containerId, playerInv);
             }

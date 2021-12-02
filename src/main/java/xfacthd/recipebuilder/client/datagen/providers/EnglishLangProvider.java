@@ -1,8 +1,8 @@
 package xfacthd.recipebuilder.client.datagen.providers;
 
 import net.minecraft.data.DataGenerator;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraftforge.common.data.LanguageProvider;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
@@ -75,27 +75,27 @@ public class EnglishLangProvider extends LanguageProvider
         add(RBClient.KEY_BIND_OPEN_RECIPE_BUILDER.get().getName(), "Open recipe builder");
         add(RBClient.KEY_BIND_OPEN_TAG_BUILDER.get().getName(), "Open tag builder");
 
-        add(IRecipeSerializer.SHAPED_RECIPE, "Shaped Crafting");
-        add(IRecipeSerializer.SHAPELESS_RECIPE, "Shapeless Crafting");
-        add(IRecipeSerializer.SMELTING_RECIPE, "Smelting");
-        add(IRecipeSerializer.BLASTING_RECIPE, "Blasting");
-        add(IRecipeSerializer.SMOKING_RECIPE, "Smoking");
-        add(IRecipeSerializer.CAMPFIRE_COOKING_RECIPE, "Campfire Cooking");
-        add(IRecipeSerializer.SMITHING, "Smithing");
-        add(IRecipeSerializer.STONECUTTER, "Stonecutting");
+        add(RecipeSerializer.SHAPED_RECIPE, "Shaped Crafting");
+        add(RecipeSerializer.SHAPELESS_RECIPE, "Shapeless Crafting");
+        add(RecipeSerializer.SMELTING_RECIPE, "Smelting");
+        add(RecipeSerializer.BLASTING_RECIPE, "Blasting");
+        add(RecipeSerializer.SMOKING_RECIPE, "Smoking");
+        add(RecipeSerializer.CAMPFIRE_COOKING_RECIPE, "Campfire Cooking");
+        add(RecipeSerializer.SMITHING, "Smithing");
+        add(RecipeSerializer.STONECUTTER, "Stonecutting");
 
         add(ForgeRegistries.BLOCKS, "Blocks");
         add(ForgeRegistries.ITEMS, "Items");
         add(ForgeRegistries.FLUIDS, "Fluids");
         add(ForgeRegistries.ENTITIES, "EntityTypes");
-        add(ForgeRegistries.TILE_ENTITIES, "BlockEntityTypes");
-        add(ForgeRegistries.POTIONS, "Effects");
+        add(ForgeRegistries.BLOCK_ENTITIES, "BlockEntityTypes");
+        add(ForgeRegistries.MOB_EFFECTS, "Effects");
         add(ForgeRegistries.ENCHANTMENTS, "Enchantments");
     }
 
-    private void add(IRecipeSerializer<?> serializer, String value) { add(AbstractBuilder.getTypeName(serializer), value); }
+    private void add(RecipeSerializer<?> serializer, String value) { add(AbstractBuilder.getTypeName(serializer), value); }
 
     private void add(IForgeRegistry<?> registry, String value) { add(Utils.translate("tag_type", registry.getRegistryName().toString()), value); }
 
-    private void add(ITextComponent component, String value) { add(component.getString(), value); }
+    private void add(Component component, String value) { add(component.getString(), value); }
 }

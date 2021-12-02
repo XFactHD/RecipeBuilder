@@ -1,12 +1,13 @@
 package xfacthd.recipebuilder.client.data.slots;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.renderer.ItemRenderer;
-import net.minecraft.item.ItemStack;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.client.RenderProperties;
 import xfacthd.recipebuilder.client.data.RecipeSlot;
 import xfacthd.recipebuilder.client.data.SlotContent;
 import xfacthd.recipebuilder.client.screen.edit.EditItemSlotScreen;
@@ -37,7 +38,7 @@ public class ItemSlot extends RecipeSlot<ItemSlot.ItemContent>
     public ItemContent newEmptyContent() { return new ItemContent(ItemStack.EMPTY); }
 
     @Override
-    public void renderContent(Screen screen, ItemContent content, MatrixStack mstack, int slotX, int slotY, int blitBase, FontRenderer font)
+    public void renderContent(Screen screen, ItemContent content, PoseStack pstack, int slotX, int slotY, int blitBase, Font font)
     {
         ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
 
@@ -45,8 +46,7 @@ public class ItemSlot extends RecipeSlot<ItemSlot.ItemContent>
         itemRenderer.blitOffset = blitBase + 100.0F;
 
         RenderSystem.enableDepthTest();
-        //noinspection ConstantConditions
-        itemRenderer.renderAndDecorateItem(Minecraft.getInstance().player, content.getContent(), slotX, slotY);
+        itemRenderer.renderAndDecorateItem(content.getContent(), slotX, slotY);
         itemRenderer.renderGuiItemDecorations(font, content.getContent(), slotX, slotY, null);
 
         itemRenderer.blitOffset = 0.0F;
@@ -54,14 +54,12 @@ public class ItemSlot extends RecipeSlot<ItemSlot.ItemContent>
     }
 
     @Override
-    public void renderTooltip(Screen screen, ItemContent content, MatrixStack mstack, int mouseX, int mouseY, FontRenderer font)
+    public void renderTooltip(Screen screen, ItemContent content, PoseStack pstack, int mouseX, int mouseY, Font font)
     {
         ItemStack stack = content.getContent();
 
-        FontRenderer stackFont = stack.getItem().getFontRenderer(stack);
-        net.minecraftforge.fml.client.gui.GuiUtils.preItemToolTip(stack);
-        screen.renderWrappedToolTip(mstack, screen.getTooltipFromItem(stack), mouseX, mouseY, (stackFont == null ? font : stackFont));
-        net.minecraftforge.fml.client.gui.GuiUtils.postItemToolTip();
+        Font stackFont = RenderProperties.get(stack.getItem()).getFont(stack);
+        screen.renderTooltip(pstack, screen.getTooltipFromItem(stack), stack.getTooltipImage(), mouseX, mouseY, stackFont, stack);
     }
 
     public class ItemContent extends SlotContent<ItemStack>

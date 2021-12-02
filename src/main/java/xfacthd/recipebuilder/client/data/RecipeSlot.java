@@ -1,9 +1,9 @@
 package xfacthd.recipebuilder.client.data;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.util.ResourceLocation;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.resources.ResourceLocation;
 
 public abstract class RecipeSlot<T extends SlotContent<?>>
 {
@@ -60,12 +60,12 @@ public abstract class RecipeSlot<T extends SlotContent<?>>
 
     public Screen requestEdit(T content) { return null; }
 
-    public void renderContentInBuilder(Screen screen, T content, MatrixStack mstack, int builderX, int builderY, int blitBase, FontRenderer font)
+    public void renderContentInBuilder(Screen screen, T content, PoseStack pstack, int builderX, int builderY, int blitBase, Font font)
     {
-        renderContent(screen, content, mstack, builderX + getX(), builderY + getY(), blitBase, font);
+        renderContent(screen, content, pstack, builderX + getX(), builderY + getY(), blitBase, font);
     }
 
-    public abstract void renderContent(Screen screen, T content, MatrixStack mstack, int builderX, int builderY, int blitBase, FontRenderer font);
+    public abstract void renderContent(Screen screen, T content, PoseStack pstack, int builderX, int builderY, int blitBase, Font font);
 
-    public abstract void renderTooltip(Screen screen, T content, MatrixStack mstack, int mouseX, int mouseY, FontRenderer font);
+    public abstract void renderTooltip(Screen screen, T content, PoseStack pstack, int mouseX, int mouseY, Font font);
 }

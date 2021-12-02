@@ -1,15 +1,15 @@
 package xfacthd.recipebuilder.client.screen.widget.taglist;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.client.renderer.texture.AtlasTexture;
+import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.util.ColorHelper;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FastColor;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -29,17 +29,17 @@ public class FluidTagEntry extends AbstractTagEntry
     }
 
     @Override //TODO: the fluid texture is too dark
-    public void render(MatrixStack mstack, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean isMouseOver, float partialTicks)
+    public void render(PoseStack pstack, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean isMouseOver, float partialTicks)
     {
-        RenderSystem.color4f(color[0], color[1], color[2], color[3]);
-        AbstractGui.blit(mstack, left + 2, top + 6, parent.getBlitOffset(), 16, 16, sprite);
+        RenderSystem.setShaderColor(color[0], color[1], color[2], color[3]);
+        GuiComponent.blit(pstack, left + 2, top + 6, parent.getBlitOffset(), 16, 16, sprite);
 
-        super.render(mstack, index, top, left, width, height, mouseX, mouseY, isMouseOver, partialTicks);
+        super.render(pstack, index, top, left, width, height, mouseX, mouseY, isMouseOver, partialTicks);
     }
 
 
 
-    private static ITextComponent getTranslation(String name)
+    private static Component getTranslation(String name)
     {
         Fluid fluid = ForgeRegistries.FLUIDS.getValue(new ResourceLocation(name));
         //noinspection ConstantConditions
@@ -50,17 +50,17 @@ public class FluidTagEntry extends AbstractTagEntry
     {
         FluidAttributes attr = fluid.getAttributes();
         //noinspection deprecation
-        return Minecraft.getInstance().getTextureAtlas(AtlasTexture.LOCATION_BLOCKS).apply(attr.getStillTexture());
+        return Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(attr.getStillTexture());
     }
 
     public static float[] getFluidColor(Fluid fluid)
     {
         int color = fluid.getAttributes().getColor();
         return new float[] {
-                (float) ColorHelper.PackedColor.red(color) / 255F,
-                (float) ColorHelper.PackedColor.green(color) / 255F,
-                (float) ColorHelper.PackedColor.blue(color) / 255F,
-                (float) ColorHelper.PackedColor.alpha(color) / 255F
+                (float) FastColor.ARGB32.red(color) / 255F,
+                (float) FastColor.ARGB32.green(color) / 255F,
+                (float) FastColor.ARGB32.blue(color) / 255F,
+                (float) FastColor.ARGB32.alpha(color) / 255F
         };
     }
 }

@@ -1,14 +1,14 @@
 package xfacthd.recipebuilder.client.screen;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import xfacthd.recipebuilder.client.data.Condition;
 import xfacthd.recipebuilder.client.screen.widget.HintedTextFieldWidget;
 import xfacthd.recipebuilder.client.screen.widget.SelectionWidget;
@@ -16,14 +16,14 @@ import xfacthd.recipebuilder.client.util.ClientUtils;
 import xfacthd.recipebuilder.common.container.RecipeBuilderContainer;
 import xfacthd.recipebuilder.common.util.Utils;
 
-public class SelectConditionScreen extends ContainerScreen<RecipeBuilderContainer>
+public class SelectConditionScreen extends AbstractContainerScreen<RecipeBuilderContainer>
 {
-    public static final ITextComponent TITLE = Utils.translate(null, "select_condition.title");
-    public static final ITextComponent TITLE_SELECT = Utils.translate(null, "select_condition.select.title");
-    public static final ITextComponent TITLE_STACK = Utils.translate(null, "select_condition.item.title");
-    public static final ITextComponent TITLE_TAG = Utils.translate(null, "select_condition.tag.title");
-    public static final ITextComponent MSG_NO_CONDITION = Utils.translate("msg", "select_condition.no_condition");
-    public static final ITextComponent MSG_MISSING_DATA = Utils.translate("msg", "select_condition.missing_data");
+    public static final Component TITLE = Utils.translate(null, "select_condition.title");
+    public static final Component TITLE_SELECT = Utils.translate(null, "select_condition.select.title");
+    public static final Component TITLE_STACK = Utils.translate(null, "select_condition.item.title");
+    public static final Component TITLE_TAG = Utils.translate(null, "select_condition.tag.title");
+    public static final Component MSG_NO_CONDITION = Utils.translate("msg", "select_condition.no_condition");
+    public static final Component MSG_MISSING_DATA = Utils.translate("msg", "select_condition.missing_data");
     private static final int WIDTH = 176;
     private static final int INV_HEIGHT = ClientUtils.INVENTORY_HEIGHT;
     private static final int LEFT_OFFSET = 8;
@@ -36,12 +36,12 @@ public class SelectConditionScreen extends ContainerScreen<RecipeBuilderContaine
     private SelectionWidget<ConditionEntry> selection = null;
     private ConditionEntry currEntry = null;
     private ItemStack conditionStack = ItemStack.EMPTY;
-    private TextFieldWidget conditionTagField = null;
+    private EditBox conditionTagField = null;
 
     public SelectConditionScreen(RecipeBuilderScreen parent)
     {
         //noinspection ConstantConditions
-        super(parent.getMenu(), Minecraft.getInstance().player.inventory, TITLE);
+        super(parent.getMenu(), Minecraft.getInstance().player.getInventory(), TITLE);
         this.parent = parent;
         this.imageWidth = RecipeBuilderScreen.WIDTH;
         this.imageHeight = RecipeBuilderScreen.HEIGHT;
@@ -69,40 +69,40 @@ public class SelectConditionScreen extends ContainerScreen<RecipeBuilderContaine
             selection.setSelected(currEntry, false);
         }
 
-        conditionTagField = addButton(new HintedTextFieldWidget(font, localLeft + LEFT_OFFSET + 1, topPos + 50, WIDTH - 18, 18, conditionTagField, TITLE_TAG));
+        conditionTagField = addRenderableWidget(new HintedTextFieldWidget(font, localLeft + LEFT_OFFSET + 1, topPos + 50, WIDTH - 18, 18, conditionTagField, TITLE_TAG));
         conditionTagField.visible = false;
 
-        addButton(new Button(localLeft + (WIDTH / 2) - 30, topPos + RecipeBuilderScreen.HEIGHT - INV_HEIGHT - 40, 60, 20, MessageScreen.TITLE_BTN_OK, btn -> onConfirm()));
+        addRenderableWidget(new Button(localLeft + (WIDTH / 2) - 30, topPos + RecipeBuilderScreen.HEIGHT - INV_HEIGHT - 40, 60, 20, MessageScreen.TITLE_BTN_OK, btn -> onConfirm()));
     }
 
     @Override
-    public void render(MatrixStack mstack, int mouseX, int mouseY, float partialTicks)
+    public void render(PoseStack pstack, int mouseX, int mouseY, float partialTicks)
     {
-        renderBackground(mstack);
-        super.render(mstack, mouseX, mouseY, partialTicks);
-        selection.render(mstack, mouseX, mouseY, partialTicks);
+        renderBackground(pstack);
+        super.render(pstack, mouseX, mouseY, partialTicks);
+        selection.render(pstack, mouseX, mouseY, partialTicks);
     }
 
     @Override
-    protected void renderBg(MatrixStack mstack, float partialTicks, int mouseX, int mouseY)
+    protected void renderBg(PoseStack pstack, float partialTicks, int mouseX, int mouseY)
     {
-        ClientUtils.drawScreenBackground(this, mstack, localLeft, topPos, WIDTH, RecipeBuilderScreen.HEIGHT);
-        ClientUtils.drawInventoryBackground(this, mstack, localLeft, topPos + RecipeBuilderScreen.HEIGHT - INV_HEIGHT - 4, true);
+        ClientUtils.drawScreenBackground(this, pstack, localLeft, topPos, WIDTH, RecipeBuilderScreen.HEIGHT);
+        ClientUtils.drawInventoryBackground(this, pstack, localLeft, topPos + RecipeBuilderScreen.HEIGHT - INV_HEIGHT - 4, true);
 
         if (currEntry != null && currEntry.getCondition().needsItem())
         {
-            font.draw(mstack, TITLE_STACK, localLeft + LEFT_OFFSET, topPos + 55, 0x404040);
-            renderConditionSlot(mstack, mouseX, mouseY, localLeft + SLOT_X, topPos + SLOT_Y);
+            font.draw(pstack, TITLE_STACK, localLeft + LEFT_OFFSET, topPos + 55, 0x404040);
+            renderConditionSlot(pstack, mouseX, mouseY, localLeft + SLOT_X, topPos + SLOT_Y);
         }
     }
 
-    private void renderConditionSlot(MatrixStack mstack, int mouseX, int mouseY, int slotX, int slotY)
+    private void renderConditionSlot(PoseStack pstack, int mouseX, int mouseY, int slotX, int slotY)
     {
-        ClientUtils.drawSlotBackground(this, mstack, slotX, slotY);
-        renderSlot(mstack, mouseX, mouseY, slotX + 1, slotY + 1, conditionStack);
+        ClientUtils.drawSlotBackground(this, pstack, slotX, slotY);
+        renderSlot(pstack, mouseX, mouseY, slotX + 1, slotY + 1, conditionStack);
     }
 
-    private void renderSlot(MatrixStack mstack, int mouseX, int mouseY, int slotX, int slotY, ItemStack content)
+    private void renderSlot(PoseStack pstack, int mouseX, int mouseY, int slotX, int slotY, ItemStack content)
     {
         //don't render when the slot position is below the opened selection menu
         if (selection.isMouseOver(slotX, slotY)) { return; }
@@ -114,7 +114,7 @@ public class SelectConditionScreen extends ContainerScreen<RecipeBuilderContaine
             itemRenderer.blitOffset = 2100.0F;
 
             RenderSystem.enableDepthTest();
-            itemRenderer.renderAndDecorateItem(player(), content, slotX, slotY);
+            itemRenderer.renderAndDecorateItem(content, slotX, slotY);
             itemRenderer.renderGuiItemDecorations(font, content, slotX, slotY, null);
 
             itemRenderer.blitOffset = 0.0F;
@@ -127,7 +127,7 @@ public class SelectConditionScreen extends ContainerScreen<RecipeBuilderContaine
             RenderSystem.disableDepthTest();
             RenderSystem.colorMask(true, true, true, false);
 
-            fillGradient(mstack, slotX, slotY, slotX + 16, slotY + 16, 0x80ffffff, 0x80ffffff);
+            fillGradient(pstack, slotX, slotY, slotX + 16, slotY + 16, 0x80ffffff, 0x80ffffff);
 
             RenderSystem.colorMask(true, true, true, true);
             RenderSystem.enableDepthTest();
@@ -143,7 +143,7 @@ public class SelectConditionScreen extends ContainerScreen<RecipeBuilderContaine
             int slotY = topPos + SLOT_Y + 1;
             if (mouseX >= slotX && mouseX <= slotX + 16 && mouseY >= slotY && mouseY <= slotY + 16)
             {
-                ItemStack carried = player().inventory.getCarried();
+                ItemStack carried = menu.getCarried();
                 if (!conditionStack.isEmpty() && carried.isEmpty())
                 {
                     conditionStack = ItemStack.EMPTY;
@@ -192,7 +192,7 @@ public class SelectConditionScreen extends ContainerScreen<RecipeBuilderContaine
 
     private void onConfirm()
     {
-        ITextComponent error = null;
+        Component error = null;
         if (currEntry == null)
         {
             error = MSG_NO_CONDITION;
@@ -220,6 +220,7 @@ public class SelectConditionScreen extends ContainerScreen<RecipeBuilderContaine
             return;
         }
 
+        //noinspection ConstantConditions
         parent.setCriterion(currEntry.getCondition(), conditionStack, conditionTagField.getValue());
         onClose();
     }
@@ -245,7 +246,7 @@ public class SelectConditionScreen extends ContainerScreen<RecipeBuilderContaine
         return minecraft;
     }
 
-    private PlayerEntity player()
+    private Player player()
     {
         if (mc().player == null) { throw new IllegalStateException("Minecraft#player not initialized!"); }
         return mc().player;

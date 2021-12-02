@@ -1,13 +1,13 @@
 package xfacthd.recipebuilder.client.builders.vanilla;
 
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.advancements.ICriterionInstance;
-import net.minecraft.block.Blocks;
-import net.minecraft.data.SingleItemRecipeBuilder;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.advancements.CriterionTriggerInstance;
+import net.minecraft.data.recipes.SingleItemRecipeBuilder;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.level.block.Blocks;
 import xfacthd.recipebuilder.client.data.*;
 import xfacthd.recipebuilder.client.data.slots.ItemSlot;
 
@@ -20,20 +20,20 @@ public class StonecuttingBuilder extends AbstractBuilder
 
     public StonecuttingBuilder()
     {
-        super(IRecipeSerializer.STONECUTTER, "minecraft", new ItemStack(Blocks.STONECUTTER), buildSlotMap(), TEXTURE, 19, 14, 145, 56, true);
+        super(RecipeSerializer.STONECUTTER, "minecraft", new ItemStack(Blocks.STONECUTTER), buildSlotMap(), TEXTURE, 19, 14, 145, 56, true);
     }
 
     @Override
     protected void validate(Map<String, Pair<RecipeSlot<?>, SlotContent<?>>> contents) { }
 
     @Override
-    protected void build(Map<String, Pair<RecipeSlot<?>, SlotContent<?>>> contents, String recipeName, ICriterionInstance criterion, String criterionName)
+    protected void build(Map<String, Pair<RecipeSlot<?>, SlotContent<?>>> contents, String recipeName, CriterionTriggerInstance criterion, String criterionName)
     {
         Ingredient input = getContentAsIngredient(contents.get("in").getSecond(), true);
         ItemStack output = getItemContent(contents.get("out").getSecond());
 
         SingleItemRecipeBuilder builder = SingleItemRecipeBuilder.stonecutting(input, output.getItem(), output.getCount())
-                .unlocks(criterionName, criterion);
+                .unlockedBy(criterionName, criterion);
 
         //noinspection ConstantConditions
         Exporter.exportRecipe(

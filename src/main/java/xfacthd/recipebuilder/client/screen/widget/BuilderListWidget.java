@@ -1,16 +1,13 @@
 package xfacthd.recipebuilder.client.screen.widget;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.widget.list.ExtendedList;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.*;
-import org.lwjgl.opengl.GL11;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.components.ObjectSelectionList;
+import net.minecraft.locale.Language;
+import net.minecraft.network.chat.*;
+import net.minecraft.world.item.ItemStack;
 import xfacthd.recipebuilder.client.RBClient;
 import xfacthd.recipebuilder.client.screen.RecipeBuilderScreen;
 import xfacthd.recipebuilder.client.data.AbstractBuilder;
@@ -78,12 +75,12 @@ public class BuilderListWidget extends ScissoredList<BuilderListWidget.BuilderEn
         }
     }
 
-    protected class BuilderEntry extends ExtendedList.AbstractListEntry<BuilderEntry>
+    protected class BuilderEntry extends ObjectSelectionList.Entry<BuilderEntry>
     {
         private final AbstractBuilder type;
         private final ItemStack typeIcon;
-        private final ITextComponent typeTitle;
-        private final ITextComponent modName;
+        private final Component typeTitle;
+        private final Component modName;
 
         private BuilderEntry(AbstractBuilder type)
         {
@@ -94,27 +91,25 @@ public class BuilderListWidget extends ScissoredList<BuilderListWidget.BuilderEn
         }
 
         @Override
-        public void render(MatrixStack mstack, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean isMouseOver, float partialTicks)
+        public void render(PoseStack pstack, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean isMouseOver, float partialTicks)
         {
             if (isMouseOver && !isSelectedItem(index))
             {
-                Tessellator tess = Tessellator.getInstance();
+                Tesselator tess = Tesselator.getInstance();
                 BufferBuilder buffer = tess.getBuilder();
 
                 RenderSystem.disableTexture();
 
-                //noinspection deprecation
-                RenderSystem.color4f(1F, 1F, 1F, 1F);
-                buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
+                RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
+                buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION);
                 buffer.vertex(left - 1,         top + height + 1, 0.0D).endVertex();
                 buffer.vertex(left + width - 3, top + height + 1, 0.0D).endVertex();
                 buffer.vertex(left + width - 3, top - 1, 0.0D).endVertex();
                 buffer.vertex(left - 1,         top - 1, 0.0D).endVertex();
                 tess.end();
 
-                //noinspection deprecation
-                RenderSystem.color4f(0F, 0F, 0F, 1F);
-                buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
+                RenderSystem.setShaderColor(0F, 0F, 0F, 1F);
+                buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION);
                 buffer.vertex(left,             top + height, 0.0D).endVertex();
                 buffer.vertex(left + width - 4, top + height, 0.0D).endVertex();
                 buffer.vertex(left + width - 4, top, 0.0D).endVertex();
@@ -126,15 +121,15 @@ public class BuilderListWidget extends ScissoredList<BuilderListWidget.BuilderEn
 
             Minecraft.getInstance().getItemRenderer().renderAndDecorateFakeItem(typeIcon, left + 1, top + 2);
 
-            FontRenderer font = BuilderListWidget.this.parent.getFont();
+            Font font = BuilderListWidget.this.parent.getFont();
 
-            ITextProperties titleLine = ITextProperties.composite(font.substrByWidth(typeTitle, listWidth - 6));
-            ITextProperties modNameLine = ITextProperties.composite(font.substrByWidth(modName, listWidth - 6));
+            FormattedText titleLine = FormattedText.composite(font.substrByWidth(typeTitle, listWidth - 6));
+            FormattedText modNameLine = FormattedText.composite(font.substrByWidth(modName, listWidth - 6));
 
             int textY = top + 2;
-            font.draw(mstack, LanguageMap.getInstance().getVisualOrder(titleLine), left + 20, textY, 0xFFFFFF);
+            font.draw(pstack, Language.getInstance().getVisualOrder(titleLine), left + 20, textY, 0xFFFFFF);
             textY += font.lineHeight;
-            font.draw(mstack, LanguageMap.getInstance().getVisualOrder(modNameLine), left + 20, textY, 0xCCCCCC);
+            font.draw(pstack, Language.getInstance().getVisualOrder(modNameLine), left + 20, textY, 0xCCCCCC);
         }
 
         @Override
@@ -144,5 +139,8 @@ public class BuilderListWidget extends ScissoredList<BuilderListWidget.BuilderEn
             BuilderListWidget.this.setSelected(this);
             return false;
         }
+
+        @Override
+        public Component getNarration() { return typeTitle; }
     }
 }

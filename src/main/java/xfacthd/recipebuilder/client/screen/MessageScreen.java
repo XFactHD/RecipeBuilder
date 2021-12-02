@@ -1,10 +1,11 @@
 package xfacthd.recipebuilder.client.screen;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.util.IReorderingProcessor;
-import net.minecraft.util.text.*;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
+import net.minecraft.util.FormattedCharSequence;
 import xfacthd.recipebuilder.client.util.ClientUtils;
 import xfacthd.recipebuilder.common.util.Utils;
 
@@ -12,30 +13,30 @@ import java.util.*;
 
 public class MessageScreen extends Screen
 {
-    public static final ITextComponent INFO_TITLE = Utils.translate(null, "message.info.title");
-    public static final ITextComponent ERROR_TITLE = Utils.translate(null, "message.error.title");
-    public static final ITextComponent TITLE_BTN_OK = Utils.translate(null, "message.btn.ok");
+    public static final Component INFO_TITLE = Utils.translate(null, "message.info.title");
+    public static final Component ERROR_TITLE = Utils.translate(null, "message.error.title");
+    public static final Component TITLE_BTN_OK = Utils.translate(null, "message.btn.ok");
     private static final int WIDTH = 176;
     private static final int BASE_HEIGHT = 64;
     private static final int TEXT_WIDTH = WIDTH - 12;
     private static final int TITLE_X = 8;
     private static final int TITLE_Y = 6;
 
-    private final List<ITextComponent> messages;
-    private final List<List<IReorderingProcessor>> textBlocks = new ArrayList<>();
+    private final List<Component> messages;
+    private final List<List<FormattedCharSequence>> textBlocks = new ArrayList<>();
     private int leftPos;
     private int topPos;
     private int imageHeight;
 
-    public static MessageScreen info(ITextComponent message) { return new MessageScreen(INFO_TITLE, Collections.singletonList(message)); }
+    public static MessageScreen info(Component message) { return new MessageScreen(INFO_TITLE, Collections.singletonList(message)); }
 
-    public static MessageScreen info(List<ITextComponent> message) { return new MessageScreen(INFO_TITLE, message); }
+    public static MessageScreen info(List<Component> message) { return new MessageScreen(INFO_TITLE, message); }
 
-    public static MessageScreen error(ITextComponent message) { return new MessageScreen(ERROR_TITLE, Collections.singletonList(message)); }
+    public static MessageScreen error(Component message) { return new MessageScreen(ERROR_TITLE, Collections.singletonList(message)); }
 
-    public static MessageScreen error(List<ITextComponent> message) { return new MessageScreen(ERROR_TITLE, message); }
+    public static MessageScreen error(List<Component> message) { return new MessageScreen(ERROR_TITLE, message); }
 
-    public MessageScreen(ITextComponent title, List<ITextComponent> messages)
+    public MessageScreen(Component title, List<Component> messages)
     {
         super(title);
         this.messages = messages;
@@ -47,7 +48,7 @@ public class MessageScreen extends Screen
         textBlocks.clear();
 
         imageHeight = BASE_HEIGHT;
-        for (ITextComponent msg : messages)
+        for (Component msg : messages)
         {
             imageHeight += ClientUtils.getWrappedHeight(font, msg, TEXT_WIDTH);
             imageHeight += font.lineHeight;
@@ -59,23 +60,23 @@ public class MessageScreen extends Screen
         leftPos = (this.width - WIDTH) / 2;
         topPos = (this.height - imageHeight) / 2;
 
-        addButton(new Button(leftPos + (WIDTH / 2) - 30, topPos + imageHeight - 30, 60, 20, TITLE_BTN_OK, btn -> onClose()));
+        addRenderableWidget(new Button(leftPos + (WIDTH / 2) - 30, topPos + imageHeight - 30, 60, 20, TITLE_BTN_OK, btn -> onClose()));
     }
 
     @Override
-    public void render(MatrixStack mstack, int mouseX, int mouseY, float partialTicks)
+    public void render(PoseStack pstack, int mouseX, int mouseY, float partialTicks)
     {
-        renderBackground(mstack);
+        renderBackground(pstack);
 
-        ClientUtils.drawScreenBackground(this, mstack, leftPos, topPos, WIDTH, imageHeight);
-        font.draw(mstack, title, leftPos + TITLE_X, topPos + TITLE_Y, 0x404040);
+        ClientUtils.drawScreenBackground(this, pstack, leftPos, topPos, WIDTH, imageHeight);
+        font.draw(pstack, title, leftPos + TITLE_X, topPos + TITLE_Y, 0x404040);
 
         int y = topPos + TITLE_Y + font.lineHeight * 2;
-        for (List<IReorderingProcessor> block : textBlocks)
+        for (List<FormattedCharSequence> block : textBlocks)
         {
-            for (IReorderingProcessor line : block)
+            for (FormattedCharSequence line : block)
             {
-                font.draw(mstack, line, leftPos + TITLE_X, y, 0);
+                font.draw(pstack, line, leftPos + TITLE_X, y, 0);
                 y += font.lineHeight;
             }
             y += font.lineHeight;
@@ -84,10 +85,10 @@ public class MessageScreen extends Screen
         Style style = findTextLine(mouseX, mouseY);
         if (style != null)
         {
-            renderComponentHoverEffect(mstack, style, mouseX, mouseY);
+            renderComponentHoverEffect(pstack, style, mouseX, mouseY);
         }
 
-        super.render(mstack, mouseX, mouseY, partialTicks);
+        super.render(pstack, mouseX, mouseY, partialTicks);
     }
 
     @Override
@@ -104,7 +105,7 @@ public class MessageScreen extends Screen
     private Style findTextLine(int mouseX, int mouseY)
     {
         int y = topPos + TITLE_Y + font.lineHeight * 2;
-        for (List<IReorderingProcessor> block : textBlocks)
+        for (List<FormattedCharSequence> block : textBlocks)
         {
             int height = block.size() * font.lineHeight;
             if (mouseY >= y && mouseY <= y + height)

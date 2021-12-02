@@ -1,14 +1,14 @@
 package xfacthd.recipebuilder.client.builders.vanilla;
 
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.advancements.ICriterionInstance;
-import net.minecraft.data.CookingRecipeBuilder;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.*;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Util;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.Util;
+import net.minecraft.advancements.CriterionTriggerInstance;
+import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.*;
 import xfacthd.recipebuilder.client.data.*;
 import xfacthd.recipebuilder.client.data.slots.*;
 import xfacthd.recipebuilder.common.util.Utils;
@@ -18,21 +18,21 @@ import java.util.Map;
 
 public class CookingBuilder extends AbstractBuilder
 {
-    private static final Map<IRecipeSerializer<?>, ResourceLocation> TEXTURES = Util.make(new HashMap<>(), map ->
+    private static final Map<RecipeSerializer<?>, ResourceLocation> TEXTURES = Util.make(new HashMap<>(), map ->
     {
-        map.put(IRecipeSerializer.SMELTING_RECIPE, new ResourceLocation("minecraft", "textures/gui/container/furnace.png"));
-        map.put(IRecipeSerializer.BLASTING_RECIPE, new ResourceLocation("minecraft", "textures/gui/container/blast_furnace.png"));
-        map.put(IRecipeSerializer.SMOKING_RECIPE, new ResourceLocation("minecraft", "textures/gui/container/smoker.png"));
-        map.put(IRecipeSerializer.CAMPFIRE_COOKING_RECIPE, Utils.location("textures/campfire.png"));
+        map.put(RecipeSerializer.SMELTING_RECIPE, new ResourceLocation("minecraft", "textures/gui/container/furnace.png"));
+        map.put(RecipeSerializer.BLASTING_RECIPE, new ResourceLocation("minecraft", "textures/gui/container/blast_furnace.png"));
+        map.put(RecipeSerializer.SMOKING_RECIPE, new ResourceLocation("minecraft", "textures/gui/container/smoker.png"));
+        map.put(RecipeSerializer.CAMPFIRE_COOKING_RECIPE, Utils.location("textures/campfire.png"));
     });
-    public static final ITextComponent TITLE_SMELT_TIME = Utils.translate(null, "smelting.slot.time");
-    public static final ITextComponent TITLE_EXPERIENCE = Utils.translate(null, "smelting.slot.experience");
+    public static final Component TITLE_SMELT_TIME = Utils.translate(null, "smelting.slot.time");
+    public static final Component TITLE_EXPERIENCE = Utils.translate(null, "smelting.slot.experience");
 
     private final int defaultTime;
 
-    public CookingBuilder(IRecipeSerializer<?> type, ItemStack iconStack, int defaultTime) { this(type, iconStack, defaultTime, 1); }
+    public CookingBuilder(RecipeSerializer<?> type, ItemStack iconStack, int defaultTime) { this(type, iconStack, defaultTime, 1); }
 
-    public CookingBuilder(IRecipeSerializer<?> type, ItemStack iconStack, int defaultTime, int slotInY)
+    public CookingBuilder(RecipeSerializer<?> type, ItemStack iconStack, int defaultTime, int slotInY)
     {
         super(type, "minecraft", iconStack, buildSlotMap(slotInY), TEXTURES.get(type), 55, 16, 82, 54, true);
         this.defaultTime = defaultTime;
@@ -42,7 +42,7 @@ public class CookingBuilder extends AbstractBuilder
     protected void validate(Map<String, Pair<RecipeSlot<?>, SlotContent<?>>> contents) { }
 
     @Override
-    protected final void build(Map<String, Pair<RecipeSlot<?>, SlotContent<?>>> contents, String recipeName, ICriterionInstance criterion, String criterionName)
+    protected final void build(Map<String, Pair<RecipeSlot<?>, SlotContent<?>>> contents, String recipeName, CriterionTriggerInstance criterion, String criterionName)
     {
         Ingredient input = getContentAsIngredient(contents.get("in").getSecond(), true);
         Item output = getItemContent(contents.get("out").getSecond()).getItem();
@@ -57,7 +57,7 @@ public class CookingBuilder extends AbstractBuilder
             cookingTime = defaultTime;
         }
 
-        CookingRecipeBuilder builder = CookingRecipeBuilder.cooking(input, output, experience, cookingTime, (CookingRecipeSerializer<?>) getType())
+        SimpleCookingRecipeBuilder builder = SimpleCookingRecipeBuilder.cooking(input, output, experience, cookingTime, (SimpleCookingSerializer<?>) getType())
                 .unlockedBy(criterionName, criterion);
 
         Exporter.exportRecipe(builder::save, builder::save, recipeName);

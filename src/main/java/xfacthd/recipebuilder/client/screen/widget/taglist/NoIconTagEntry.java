@@ -1,17 +1,17 @@
 package xfacthd.recipebuilder.client.screen.widget.taglist;
 
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.entity.EntityType;
-import net.minecraft.potion.Effect;
-import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class NoIconTagEntry extends AbstractTagEntry
 {
-    private NoIconTagEntry(String name, ITextComponent translatedName) { super(name, translatedName, 0); }
+    private NoIconTagEntry(String name, Component translatedName) { super(name, translatedName, 0); }
 
     public static NoIconTagEntry entity(String name)
     {
@@ -22,14 +22,14 @@ public class NoIconTagEntry extends AbstractTagEntry
 
     public static NoIconTagEntry tileEntity(String name)
     {
-        TileEntityType<?> entry = ForgeRegistries.TILE_ENTITIES.getValue(new ResourceLocation(name));
+        BlockEntityType<?> entry = ForgeRegistries.BLOCK_ENTITIES.getValue(new ResourceLocation(name));
         //noinspection ConstantConditions
-        return new NoIconTagEntry(name, new TranslationTextComponent(entry.getRegistryName().toString()));
+        return new NoIconTagEntry(name, new TranslatableComponent(entry.getRegistryName().toString()));
     }
 
     public static NoIconTagEntry potion(String name)
     {
-        Effect entry = ForgeRegistries.POTIONS.getValue(new ResourceLocation(name));
+        MobEffect entry = ForgeRegistries.MOB_EFFECTS.getValue(new ResourceLocation(name));
         //noinspection ConstantConditions
         return new NoIconTagEntry(name, entry.getDisplayName());
     }
@@ -38,6 +38,6 @@ public class NoIconTagEntry extends AbstractTagEntry
     {
         Enchantment entry = ForgeRegistries.ENCHANTMENTS.getValue(new ResourceLocation(name));
         //noinspection ConstantConditions
-        return new NoIconTagEntry(name, new TranslationTextComponent(entry.getDescriptionId()));
+        return new NoIconTagEntry(name, new TranslatableComponent(entry.getDescriptionId()));
     }
 }

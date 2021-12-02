@@ -1,11 +1,11 @@
 package xfacthd.recipebuilder.client.screen.widget;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.widget.list.ExtendedList;
+import net.minecraft.client.gui.components.ObjectSelectionList;
 
-public abstract class ScissoredList<T extends ExtendedList.AbstractListEntry<T>> extends ExtendedList<T>
+public abstract class ScissoredList<T extends ObjectSelectionList.Entry<T>> extends ObjectSelectionList<T>
 {
     protected final int listWidth;
 
@@ -16,7 +16,7 @@ public abstract class ScissoredList<T extends ExtendedList.AbstractListEntry<T>>
     }
 
     @Override
-    public void render(MatrixStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks)
+    public void render(PoseStack pstack, int pMouseX, int pMouseY, float pPartialTicks)
     {
         int windowHeight = minecraft.getWindow().getGuiScaledHeight();
         double scale = minecraft.getWindow().getGuiScale();
@@ -27,7 +27,7 @@ public abstract class ScissoredList<T extends ExtendedList.AbstractListEntry<T>>
                 (int)(height * scale)
         );
 
-        super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
+        super.render(pstack, pMouseX, pMouseY, pPartialTicks);
 
         RenderSystem.disableScissor();
     }

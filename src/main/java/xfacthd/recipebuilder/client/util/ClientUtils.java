@@ -1,12 +1,12 @@
 package xfacthd.recipebuilder.client.util;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.util.IReorderingProcessor;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextProperties;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.FormattedText;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FormattedCharSequence;
 import xfacthd.recipebuilder.common.util.Utils;
 
 public class ClientUtils
@@ -29,43 +29,43 @@ public class ClientUtils
     private static final int SLOT_TEX_Y = 17;
     private static final int SLOT_SIZE = 18;
 
-    public static void drawScreenBackground(Screen screen, MatrixStack mstack, int screenX, int screenY, int screenWidth, int screenHeight)
+    public static void drawScreenBackground(Screen screen, PoseStack pstack, int screenX, int screenY, int screenWidth, int screenHeight)
     {
-        Minecraft.getInstance().textureManager.bind(BACKGROUND_TEXTURE);
-        drawNineSliceTexture(screen, mstack, screenX, screenY, screenWidth, screenHeight, BACKGROUND_WIDTH, BACKGROUND_HEIGHT, BORDER);
+        RenderSystem.setShaderTexture(0, BACKGROUND_TEXTURE);
+        drawNineSliceTexture(screen, pstack, screenX, screenY, screenWidth, screenHeight, BACKGROUND_WIDTH, BACKGROUND_HEIGHT, BORDER);
     }
 
-    public static void drawBuilderBackground(Screen screen, MatrixStack mstack, int screenX, int screenY, int screenWidth, int screenHeight)
+    public static void drawBuilderBackground(Screen screen, PoseStack pstack, int screenX, int screenY, int screenWidth, int screenHeight)
     {
-        Minecraft.getInstance().textureManager.bind(BUILDER_BACKGROUND_TEXTURE);
-        drawNineSliceTexture(screen, mstack, screenX, screenY, screenWidth, screenHeight, BACKGROUND_WIDTH, BACKGROUND_HEIGHT, BUILDER_BORDER);
+        RenderSystem.setShaderTexture(0, BUILDER_BACKGROUND_TEXTURE);
+        drawNineSliceTexture(screen, pstack, screenX, screenY, screenWidth, screenHeight, BACKGROUND_WIDTH, BACKGROUND_HEIGHT, BUILDER_BORDER);
     }
 
-    public static void drawNineSliceTexture(Screen screen, MatrixStack mstack, int screenX, int screenY, int screenWidth, int screenHeight, int texWidth, int texHeight, int border)
+    public static void drawNineSliceTexture(Screen screen, PoseStack pstack, int screenX, int screenY, int screenWidth, int screenHeight, int texWidth, int texHeight, int border)
     {
         int texCenterWidth = texWidth - (border * 2);
         int texCenterHeight = texHeight - (border * 2);
 
         //Corners
-        screen.blit(mstack, screenX, screenY, 0, 0, border, border);
-        screen.blit(mstack, screenX + screenWidth - border, screenY, texWidth - border, 0, border, border);
-        screen.blit(mstack, screenX, screenY + screenHeight - border, 0, texHeight - border, border, border);
-        screen.blit(mstack, screenX + screenWidth - border, screenY + screenHeight - border, texWidth - border, texHeight - border, border, border);
+        screen.blit(pstack, screenX, screenY, 0, 0, border, border);
+        screen.blit(pstack, screenX + screenWidth - border, screenY, texWidth - border, 0, border, border);
+        screen.blit(pstack, screenX, screenY + screenHeight - border, 0, texHeight - border, border, border);
+        screen.blit(pstack, screenX + screenWidth - border, screenY + screenHeight - border, texWidth - border, texHeight - border, border, border);
 
         //Edges
         for (int i = 0; i <= (screenWidth / texCenterWidth); i++)
         {
             int x = screenX + border + (i * texCenterWidth);
             int width = Math.min(texCenterWidth, screenWidth - (i * texCenterWidth) - (border * 2));
-            screen.blit(mstack, x, screenY, border, 0, width, border);
-            screen.blit(mstack, x, screenY + screenHeight - border, border, texHeight - border, width, border);
+            screen.blit(pstack, x, screenY, border, 0, width, border);
+            screen.blit(pstack, x, screenY + screenHeight - border, border, texHeight - border, width, border);
         }
         for (int i = 0; i <= (screenHeight / texCenterHeight); i++)
         {
             int y = screenY + border + (i * texCenterHeight);
             int height = Math.min(texCenterHeight, screenHeight - (i * texCenterHeight) - (border * 2));
-            screen.blit(mstack, screenX, y, 0, border, border, height);
-            screen.blit(mstack, screenX + screenWidth - border, y, texWidth - border, border, border, height);
+            screen.blit(pstack, screenX, y, 0, border, border, height);
+            screen.blit(pstack, screenX + screenWidth - border, y, texWidth - border, border, border, height);
         }
 
         //Center
@@ -79,43 +79,43 @@ public class ClientUtils
                 int y = screenY + border + (iy * texCenterHeight);
                 int width = Math.min(texCenterWidth, screenWidth - (ix * texCenterWidth) - (border * 2));
                 int height = Math.min(texCenterHeight, screenHeight - (iy * texCenterHeight) - (border * 2));
-                screen.blit(mstack, x, y, border, border, width, height);
+                screen.blit(pstack, x, y, border, border, width, height);
             }
         }
     }
 
-    public static void drawInventoryBackground(Screen screen, MatrixStack mstack, int invX, int invY, boolean withBorder)
+    public static void drawInventoryBackground(Screen screen, PoseStack pstack, int invX, int invY, boolean withBorder)
     {
-        Minecraft.getInstance().textureManager.bind(INVENTORY_TEXTURE);
+        RenderSystem.setShaderTexture(0, INVENTORY_TEXTURE);
 
         if (withBorder)
         {
-            screen.blit(mstack, invX, invY, 0, INVENTORY_TEX_Y, INVENTORY_WIDTH_BORDER, INVENTORY_HEIGHT_BORDER);
+            screen.blit(pstack, invX, invY, 0, INVENTORY_TEX_Y, INVENTORY_WIDTH_BORDER, INVENTORY_HEIGHT_BORDER);
         }
         else
         {
-            screen.blit(mstack, invX, invY, INVENTORY_TEX_X, INVENTORY_TEX_Y, INVENTORY_WIDTH, INVENTORY_HEIGHT);
+            screen.blit(pstack, invX, invY, INVENTORY_TEX_X, INVENTORY_TEX_Y, INVENTORY_WIDTH, INVENTORY_HEIGHT);
         }
     }
 
-    public static void drawSlotBackground(Screen screen, MatrixStack mstack, int slotX, int slotY)
+    public static void drawSlotBackground(Screen screen, PoseStack pstack, int slotX, int slotY)
     {
-        Minecraft.getInstance().textureManager.bind(INVENTORY_TEXTURE);
-        screen.blit(mstack, slotX, slotY, SLOT_TEX_X, SLOT_TEX_Y, SLOT_SIZE, SLOT_SIZE);
+        RenderSystem.setShaderTexture(0, INVENTORY_TEXTURE);
+        screen.blit(pstack, slotX, slotY, SLOT_TEX_X, SLOT_TEX_Y, SLOT_SIZE, SLOT_SIZE);
     }
 
     //Copy of `FontRenderer.drawWordWrap()` for use with a MatrixStack
-    public static int drawWordWrap(FontRenderer font, MatrixStack mstack, ITextProperties text, int x, int y, int width, int color)
+    public static int drawWordWrap(Font font, PoseStack pstack, FormattedText text, int x, int y, int width, int color)
     {
-        for (IReorderingProcessor line : font.split(text, width))
+        for (FormattedCharSequence line : font.split(text, width))
         {
-            font.draw(mstack, line, x, y, color);
+            font.draw(pstack, line, x, y, color);
             y += font.lineHeight;
         }
         return y;
     }
 
-    public static int getWrappedHeight(FontRenderer font, ITextProperties text, int width)
+    public static int getWrappedHeight(Font font, FormattedText text, int width)
     {
         return font.split(text, width).size() * font.lineHeight;
     }

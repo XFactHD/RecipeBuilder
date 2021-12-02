@@ -1,19 +1,20 @@
 package xfacthd.recipebuilder.client.data;
 
-import net.minecraft.advancements.ICriterionInstance;
-import net.minecraft.block.Block;
-import net.minecraft.data.RecipeProvider;
-import net.minecraft.item.*;
-import net.minecraft.tags.ITag;
-import net.minecraft.tags.TagRegistryManager;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.*;
+import net.minecraft.advancements.CriterionTriggerInstance;
+import net.minecraft.data.recipes.RecipeProvider;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.StaticTags;
+import net.minecraft.tags.Tag;
+import net.minecraft.world.item.*;
+import net.minecraft.world.level.block.Block;
 import xfacthd.recipebuilder.common.util.Utils;
 
 public abstract class Condition
 {
-    public static final IFormattableTextComponent MSG_NO_SUCH_TAG = Utils.translate("msg", "condition.no_such_tag");
-    public static final IFormattableTextComponent MSG_NOT_A_BLOCK = Utils.translate("msg", "condition.not_a_block");
+    public static final MutableComponent MSG_NO_SUCH_TAG = Utils.translate("msg", "condition.no_such_tag");
+    public static final MutableComponent MSG_NOT_A_BLOCK = Utils.translate("msg", "condition.not_a_block");
 
     public static final Condition HAS_ITEM = new Condition(Utils.translate(null, "condition.has_item"))
     {
@@ -24,10 +25,10 @@ public abstract class Condition
         public boolean needsTag() { return false; }
 
         @Override
-        public ITextComponent validateStack(ItemStack stack) { return null; }
+        public Component validateStack(ItemStack stack) { return null; }
 
         @Override
-        public ICriterionInstance toCriterion(ItemStack stack, String tag)
+        public CriterionTriggerInstance toCriterion(ItemStack stack, String tag)
         {
             return RecipeProvider.has(stack.getItem());
         }
@@ -51,10 +52,10 @@ public abstract class Condition
         public boolean needsTag() { return true; }
 
         @Override
-        public ITextComponent validateTag(String tagName)
+        public Component validateTag(String tagName)
         {
             //noinspection ConstantConditions
-            ITag.INamedTag<?> tag = TagRegistryManager.get(REGISTRY).bind(tagName);
+            Tag.Named<?> tag = StaticTags.get(REGISTRY).bind(tagName);
             try
             {
                 tag.getValues();
@@ -67,12 +68,12 @@ public abstract class Condition
         }
 
         @Override
-        public ICriterionInstance toCriterion(ItemStack stack, String tagName)
+        public CriterionTriggerInstance toCriterion(ItemStack stack, String tagName)
         {
             //noinspection ConstantConditions
-            ITag.INamedTag<?> tag = TagRegistryManager.get(REGISTRY).bind(tagName);
+            Tag.Named<?> tag = StaticTags.get(REGISTRY).bind(tagName);
             //noinspection unchecked
-            return RecipeProvider.has((ITag<Item>) tag);
+            return RecipeProvider.has((Tag<Item>) tag);
         }
 
         @Override
@@ -95,7 +96,7 @@ public abstract class Condition
         public boolean acceptsItem(ItemStack stack) { return stack.getItem() instanceof BlockItem; }
 
         @Override
-        public ITextComponent validateStack(ItemStack stack)
+        public Component validateStack(ItemStack stack)
         {
             if (!acceptsItem(stack))
             {
@@ -105,7 +106,7 @@ public abstract class Condition
         }
 
         @Override
-        public ICriterionInstance toCriterion(ItemStack stack, String tag)
+        public CriterionTriggerInstance toCriterion(ItemStack stack, String tag)
         {
             Block block = ((BlockItem) stack.getItem()).getBlock();
             return RecipeProvider.insideOf(block);
@@ -121,11 +122,11 @@ public abstract class Condition
 
 
 
-    private final ITextComponent name;
+    private final Component name;
 
-    public Condition(ITextComponent name) { this.name = name; }
+    public Condition(Component name) { this.name = name; }
 
-    public ITextComponent getName() { return name; }
+    public Component getName() { return name; }
 
     public abstract boolean needsItem();
 
@@ -133,11 +134,11 @@ public abstract class Condition
 
     public boolean acceptsItem(ItemStack stack) { throw new UnsupportedOperationException(); }
 
-    public ITextComponent validateStack(ItemStack stack) { throw new UnsupportedOperationException(); }
+    public Component validateStack(ItemStack stack) { throw new UnsupportedOperationException(); }
 
-    public ITextComponent validateTag(String tag) { throw new UnsupportedOperationException(); }
+    public Component validateTag(String tag) { throw new UnsupportedOperationException(); }
 
-    public abstract ICriterionInstance toCriterion(ItemStack stack, String tag);
+    public abstract CriterionTriggerInstance toCriterion(ItemStack stack, String tag);
 
     public abstract String buildName(ItemStack stack, String tag);
 }

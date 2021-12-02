@@ -1,62 +1,68 @@
 package xfacthd.recipebuilder.client.screen.widget;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.IGuiEventListener;
-import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.util.IReorderingProcessor;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.*;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.locale.Language;
+import net.minecraft.network.chat.*;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.util.Mth;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-public class SelectionWidget<T extends SelectionWidget.SelectionEntry> extends Widget //TODO: add drag scrolling
+public class SelectionWidget<T extends SelectionWidget.SelectionEntry> extends AbstractWidget //TODO: add drag scrolling
 {
     private static final ResourceLocation ICONS = new ResourceLocation("minecraft", "textures/gui/resource_packs.png");
     private static final int ENTRY_HEIGHT = 20;
-    private final ITextComponent title;
+    private final Component title;
     private final Consumer<T> selectCallback;
     private final List<T> entries = new ArrayList<>();
     private T selected = null;
     private boolean extended = false;
     private int scrollOffset = 0;
 
-    public SelectionWidget(int x, int y, int width, ITextComponent title, Consumer<T> selectCallback)
+    public SelectionWidget(int x, int y, int width, Component title, Consumer<T> selectCallback)
     {
-        super(x, y, width, ENTRY_HEIGHT, new StringTextComponent(""));
+        super(x, y, width, ENTRY_HEIGHT, new TextComponent(""));
         this.title = title;
         this.selectCallback = selectCallback;
     }
 
     @Override
-    public void renderButton(MatrixStack mstack, int mouseX, int mouseY, float partialTicks)
+    public void renderButton(PoseStack pstack, int mouseX, int mouseY, float partialTicks)
     {
-        super.renderButton(mstack, mouseX, mouseY, partialTicks);
+        super.renderButton(pstack, mouseX, mouseY, partialTicks);
 
         if (selected != null)
         {
-            selected.render(mstack, x, y, width, false, getFGColor(), alpha);
+            selected.render(pstack, x, y, width, false, getFGColor(), alpha);
         }
         else
         {
-            FontRenderer font = Minecraft.getInstance().font;
-            drawString(mstack, font, title, x + 6, y + (height - 8) / 2, getFGColor() | MathHelper.ceil(alpha * 255.0F) << 24);
+            Font font = Minecraft.getInstance().font;
+            drawString(pstack, font, title, x + 6, y + (height - 8) / 2, getFGColor() | Mth.ceil(alpha * 255.0F) << 24);
         }
 
         if (extended)
         {
+            pstack.pushPose();
+            pstack.translate(0, 0, 500);
+
             int boxHeight = Math.max(1, ENTRY_HEIGHT * Math.min(entries.size(), 4)) + 2;
 
-            fill(mstack, x,     y + ENTRY_HEIGHT - 1, x + width,     y + ENTRY_HEIGHT + boxHeight - 1, 0xFFFFFFFF);
-            fill(mstack, x + 1, y + ENTRY_HEIGHT,     x + width - 1, y + ENTRY_HEIGHT + boxHeight - 2, 0xFF000000);
+            fill(pstack, x,     y + ENTRY_HEIGHT - 1, x + width,     y + ENTRY_HEIGHT + boxHeight - 1, 0xFFFFFFFF);
+            fill(pstack, x + 1, y + ENTRY_HEIGHT,     x + width - 1, y + ENTRY_HEIGHT + boxHeight - 2, 0xFF000000);
 
-            Minecraft.getInstance().textureManager.bind(ICONS);
-            blit(mstack, x + width - 17, y + 6, 114, 5, 11, 7);
+            RenderSystem.setShaderTexture(0, ICONS);
+            blit(pstack, x + width - 17, y + 6, 114, 5, 11, 7);
 
             T hoverEntry = getEntryAtPosition(mouseX, mouseY);
 
@@ -68,7 +74,7 @@ public class SelectionWidget<T extends SelectionWidget.SelectionEntry> extends W
                     int entryY = y + ((i + 1) * ENTRY_HEIGHT);
 
                     T entry = entries.get(idx);
-                    entry.render(mstack, x + 1, entryY, width - 2, entry == hoverEntry, getFGColor(), alpha);
+                    entry.render(pstack, x + 1, entryY, width - 2, entry == hoverEntry, getFGColor(), alpha);
                 }
             }
 
@@ -77,14 +83,16 @@ public class SelectionWidget<T extends SelectionWidget.SelectionEntry> extends W
                 int scrollY = y + (ENTRY_HEIGHT * (scrollOffset + 1));
                 int barHeight = (ENTRY_HEIGHT * 4) - (ENTRY_HEIGHT * (entries.size() - 4));
 
-                fill(mstack, x + width - 5, scrollY,     x + width - 1, scrollY + barHeight,     0xFF666666);
-                fill(mstack, x + width - 4, scrollY + 1, x + width - 2, scrollY + barHeight - 1, 0xFFAAAAAA);
+                fill(pstack, x + width - 5, scrollY,     x + width - 1, scrollY + barHeight,     0xFF666666);
+                fill(pstack, x + width - 4, scrollY + 1, x + width - 2, scrollY + barHeight - 1, 0xFFAAAAAA);
             }
+
+            pstack.popPose();
         }
         else
         {
-            Minecraft.getInstance().textureManager.bind(ICONS);
-            blit(mstack, x + width - 17, y + 6, 82, 20, 11, 7);
+            RenderSystem.setShaderTexture(0, ICONS);
+            blit(pstack, x + width - 17, y + 6, 82, 20, 11, 7);
         }
     }
 
@@ -181,22 +189,25 @@ public class SelectionWidget<T extends SelectionWidget.SelectionEntry> extends W
 
     public Stream<T> stream() { return entries.stream(); }
 
-    public static class SelectionEntry implements IGuiEventListener
+    @Override
+    public void updateNarration(NarrationElementOutput output) { }
+
+    public static class SelectionEntry implements GuiEventListener
     {
-        private final ITextComponent message;
+        private final Component message;
 
-        public SelectionEntry(ITextComponent message) { this.message = message; }
+        public SelectionEntry(Component message) { this.message = message; }
 
-        public void render(MatrixStack mstack, int x, int y, int width, boolean hovered, int fgColor, float alpha)
+        public void render(PoseStack pstack, int x, int y, int width, boolean hovered, int fgColor, float alpha)
         {
             if (hovered)
             {
-                fill(mstack, x, y, x + width, y + ENTRY_HEIGHT, 0xFFA0A0A0);
+                fill(pstack, x, y, x + width, y + ENTRY_HEIGHT, 0xFFA0A0A0);
             }
 
-            FontRenderer font = Minecraft.getInstance().font;
-            IReorderingProcessor text = LanguageMap.getInstance().getVisualOrder(ITextProperties.composite(font.substrByWidth(message, width - 12)));
-            font.drawShadow(mstack, text, x + 6, y + 6, fgColor | MathHelper.ceil(alpha * 255.0F) << 24);
+            Font font = Minecraft.getInstance().font;
+            FormattedCharSequence text = Language.getInstance().getVisualOrder(FormattedText.composite(font.substrByWidth(message, width - 12)));
+            font.drawShadow(pstack, text, x + 6, y + 6, fgColor | Mth.ceil(alpha * 255.0F) << 24);
         }
     }
 }

@@ -19,14 +19,15 @@ apply plugin: 'maven-publish'
 apply plugin: 'org.spongepowered.mixin'
 
 version = '1.0'
-group = 'xfacthd.xfacthd.recipebuilder'
-archivesBaseName = 'RecipeBuilder'
+group = 'xfacthd.recipebuilder'
+archivesBaseName = 'RecipeBuilder-1.18'
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(8) // Mojang ships Java 8 to end users, so your mod should target Java 8.
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 minecraft {
-    mappings channel: 'parchment', version: '2021.10.17-1.16.5'
+    //mappings channel: 'parchment', version: '2021.10.17-1.16.5'
+    mappings channel: 'official', version: '1.18'
     
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
@@ -98,11 +99,11 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.16.5-36.2.9'
+    minecraft 'net.minecraftforge:forge:1.18-38.0.11'
 
-    runtimeOnly fg.deobf("curse.maven:jei-238222:3530253")
+    //runtimeOnly fg.deobf("curse.maven:jei-238222:3530253")
 
-    annotationProcessor 'org.spongepowered:mixin:0.8.3'
+    annotationProcessor 'org.spongepowered:mixin:0.8.5'
     annotationProcessor 'com.google.code.gson:gson:2.8.0'
     annotationProcessor 'com.google.guava:guava:21.0'
     annotationProcessor 'org.ow2.asm:asm-tree:7.2'
@@ -116,7 +117,7 @@ mixin {
 jar {
     manifest {
         attributes([
-            "Specification-Title": "xfacthd.recipebuilder",
+            "Specification-Title": "recipebuilder",
             "Specification-Vendor": "XFactHD",
             "Specification-Version": "1", // We are version 1 of ourselves
             "Implementation-Title": project.name,

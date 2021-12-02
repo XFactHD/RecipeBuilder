@@ -4,7 +4,7 @@
     "compatibilityLevel": "JAVA_8",
     "refmap": "recipebuilder.refmap.json",
     "client": [
-        "MixinContainerScreen"
+        "MixinAbstractContainerScreen"
     ],
     "injectors": {
         "defaultRequire": 1

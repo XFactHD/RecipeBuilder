@@ -1,33 +1,33 @@
 package xfacthd.recipebuilder.client.screen.widget;
 
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.util.StringUtils;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.util.StringUtil;
 import xfacthd.recipebuilder.client.data.slots.*;
 
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
-public class NumberTextFieldWidget extends TextFieldWidget
+public class NumberTextFieldWidget extends EditBox
 {
     private static final Pattern INTEGER_PATTERN = Pattern.compile("(0|[1-9][0-9]*)");
     private static final Predicate<String> INTEGER_FILTER = s ->
     {
-        if (StringUtils.isNullOrEmpty(s)) { return false; }
+        if (StringUtil.isNullOrEmpty(s)) { return false; }
         if (s.length() > 7) { return false; }
         return INTEGER_PATTERN.matcher(s).matches();
     };
     private static final Pattern FLOAT_PATTERN = Pattern.compile("(0|[1-9][0-9]*).[0-9]+");
     private static final Predicate<String> FLOAT_FILTER = s ->
     {
-        if (StringUtils.isNullOrEmpty(s)) { return false; }
+        if (StringUtil.isNullOrEmpty(s)) { return false; }
         if (s.length() > 7) { return false; }
         return FLOAT_PATTERN.matcher(s).matches();
     };
 
     private final INumberContent content;
 
-    public NumberTextFieldWidget(FontRenderer font, int x, int y, int width, int height, NumberSlot<?> slot, INumberContent content, boolean commitOnChange)
+    public NumberTextFieldWidget(Font font, int x, int y, int width, int height, NumberSlot<?> slot, INumberContent content, boolean commitOnChange)
     {
         super(font, x, y, width, height, slot.getTitle());
         this.content = content;

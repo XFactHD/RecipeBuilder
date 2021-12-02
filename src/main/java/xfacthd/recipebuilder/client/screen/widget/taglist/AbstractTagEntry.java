@@ -1,45 +1,46 @@
 package xfacthd.recipebuilder.client.screen.widget.taglist;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.widget.list.ExtendedList;
-import net.minecraft.util.text.*;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.components.ObjectSelectionList;
+import net.minecraft.locale.Language;
+import net.minecraft.network.chat.*;
 import xfacthd.recipebuilder.client.data.AbstractBuilder;
 
-public abstract class AbstractTagEntry extends ExtendedList.AbstractListEntry<AbstractTagEntry>
+public abstract class AbstractTagEntry extends ObjectSelectionList.Entry<AbstractTagEntry>
 {
     protected TagEntryListWidget parent;
     private final String entryName;
-    protected final ITextComponent translatedName;
-    protected final ITextComponent rawNameComponent;
-    protected final ITextComponent modName;
+    protected final Component translatedName;
+    protected final Component rawNameComponent;
+    protected final Component modName;
     private final int textOffX;
 
-    protected AbstractTagEntry(String name, ITextComponent translatedName, int textOffX)
+    protected AbstractTagEntry(String name, Component translatedName, int textOffX)
     {
         this.entryName = name;
         this.translatedName = translatedName;
-        this.rawNameComponent = new StringTextComponent(name);
+        this.rawNameComponent = new TextComponent(name);
         this.modName = AbstractBuilder.getModName(name.contains(":") ? name.split(":")[0] : "minecraft");
         this.textOffX = textOffX;
     }
 
     @Override
-    public void render(MatrixStack mstack, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean isMouseOver, float partialTicks)
+    public void render(PoseStack pstack, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean isMouseOver, float partialTicks)
     {
-        FontRenderer font = Minecraft.getInstance().font;
+        Font font = Minecraft.getInstance().font;
 
         int textX = left + 2 + textOffX;
         int textY = top + 2;
 
-        font.draw(mstack, LanguageMap.getInstance().getVisualOrder(ITextProperties.composite(font.substrByWidth(translatedName, width))), textX, textY, 0xFFFFFF);
+        font.draw(pstack, Language.getInstance().getVisualOrder(FormattedText.composite(font.substrByWidth(translatedName, width))), textX, textY, 0xFFFFFF);
         textY += font.lineHeight;
 
-        font.draw(mstack, LanguageMap.getInstance().getVisualOrder(ITextProperties.composite(font.substrByWidth(rawNameComponent, width))), textX, textY, 0xFFFFFF);
+        font.draw(pstack, Language.getInstance().getVisualOrder(FormattedText.composite(font.substrByWidth(rawNameComponent, width))), textX, textY, 0xFFFFFF);
         textY += font.lineHeight;
 
-        font.draw(mstack, LanguageMap.getInstance().getVisualOrder(ITextProperties.composite(font.substrByWidth(modName, width))), textX, textY, 0xCCCCCC);
+        font.draw(pstack, Language.getInstance().getVisualOrder(FormattedText.composite(font.substrByWidth(modName, width))), textX, textY, 0xCCCCCC);
     }
 
     @Override
@@ -52,4 +53,7 @@ public abstract class AbstractTagEntry extends ExtendedList.AbstractListEntry<Ab
     void setParent(TagEntryListWidget parent) { this.parent = parent; }
 
     public String getEntryName() { return entryName; }
+
+    @Override
+    public Component getNarration() { return translatedName; }
 }

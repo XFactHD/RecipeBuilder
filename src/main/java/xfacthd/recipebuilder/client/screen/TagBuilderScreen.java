@@ -1,20 +1,19 @@
 package xfacthd.recipebuilder.client.screen;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.ResourceLocationException;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.client.gui.widget.button.CheckboxButton;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.*;
-import net.minecraft.potion.PotionUtils;
-import net.minecraft.util.*;
-import net.minecraft.util.text.*;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.components.*;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.network.chat.*;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.StringUtil;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.*;
+import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
@@ -33,40 +32,40 @@ import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class TagBuilderScreen extends ContainerScreen<TagBuilderContainer>
+public class TagBuilderScreen extends AbstractContainerScreen<TagBuilderContainer>
 {
-    public static final ITextComponent TITLE_TEXT_TAGNAME = Utils.translate(null, "builder.text.tagname");
-    public static final ITextComponent TITLE_TEXT_ADD = Utils.translate(null, "builder.text.add_enty");
-    public static final ITextComponent TITLE_TAG_TYPE = Utils.translate(null, "builder.select.tagtype");
-    public static final ITextComponent TITLE_TAG_REPLACE = Utils.translate(null, "builder.tag.replace");
-    public static final ITextComponent TITLE_BTN_ADD_ENTRY = Utils.translate(null, "builder.btn.add_entry");
-    public static final ITextComponent TITLE_BTN_REMOVE_ENTRY = Utils.translate(null, "builder.btn.remove_entry");
-    public static final ITextComponent MSG_NAME_EMPTY = Utils.translate("msg", "builder.tag_name.empty");
-    public static final ITextComponent MSG_NAME_NO_NS = Utils.translate("msg", "builder.tag_name.no_ns");
-    public static final ITextComponent MSG_ENTRY_NAME_EMPTY = Utils.translate("msg", "builder.tag_entry.name_empty");
-    public static final ITextComponent MSG_ENTRY_UNKNOWN = Utils.translate("msg", "builder.tag_entry.unknown");
-    public static final ITextComponent MSG_ENTRY_EXISTS = Utils.translate("msg", "builder.tag_entry.exists");
-    public static final IFormattableTextComponent MSG_SUCCESS = Utils.translate("msg", "builder.tag.success");
-    public static final ITextComponent MSG_SUCCESS_LOCAL = Utils.translate("msg", "builder.tag.success_local");
+    public static final Component TITLE_TEXT_TAGNAME = Utils.translate(null, "builder.text.tagname");
+    public static final Component TITLE_TEXT_ADD = Utils.translate(null, "builder.text.add_enty");
+    public static final Component TITLE_TAG_TYPE = Utils.translate(null, "builder.select.tagtype");
+    public static final Component TITLE_TAG_REPLACE = Utils.translate(null, "builder.tag.replace");
+    public static final Component TITLE_BTN_ADD_ENTRY = Utils.translate(null, "builder.btn.add_entry");
+    public static final Component TITLE_BTN_REMOVE_ENTRY = Utils.translate(null, "builder.btn.remove_entry");
+    public static final Component MSG_NAME_EMPTY = Utils.translate("msg", "builder.tag_name.empty");
+    public static final Component MSG_NAME_NO_NS = Utils.translate("msg", "builder.tag_name.no_ns");
+    public static final Component MSG_ENTRY_NAME_EMPTY = Utils.translate("msg", "builder.tag_entry.name_empty");
+    public static final Component MSG_ENTRY_UNKNOWN = Utils.translate("msg", "builder.tag_entry.unknown");
+    public static final Component MSG_ENTRY_EXISTS = Utils.translate("msg", "builder.tag_entry.exists");
+    public static final MutableComponent MSG_SUCCESS = Utils.translate("msg", "builder.tag.success");
+    public static final Component MSG_SUCCESS_LOCAL = Utils.translate("msg", "builder.tag.success_local");
     private static final int WIDTH = 424;
     private static final int HEIGHT = 250;
     private static final Pattern TAG_NAME_PATTERN = Pattern.compile("([a-z0-9_.-]+)");
     private static final Predicate<String> TAG_NAME_FILTER = s ->
     {
-        if (StringUtils.isNullOrEmpty(s)) { return true; }
+        if (StringUtil.isNullOrEmpty(s)) { return true; }
         if (s.contains("..")) { return false; } //Name is used as part of the path -> must deny jumping up the directory tree
         return TAG_NAME_PATTERN.matcher(s).matches();
     };
 
-    private TextFieldWidget tagName = null;
+    private EditBox tagName = null;
     private SelectionWidget<TypeEntry> tagType = null;
-    private CheckboxButton tagReplace = null;
-    private TextFieldWidget tagEntryName = null;
+    private Checkbox tagReplace = null;
+    private EditBox tagEntryName = null;
     private Button removeEntry = null;
     private TagEntryListWidget entryList = null;
-    private ITextComponent pathComponent;
+    private Component pathComponent;
 
-    public TagBuilderScreen(TagBuilderContainer container, PlayerInventory playerInv, ITextComponent title)
+    public TagBuilderScreen(TagBuilderContainer container, Inventory playerInv, Component title)
     {
         super(container, playerInv, title);
         imageWidth = WIDTH;
@@ -84,7 +83,7 @@ public class TagBuilderScreen extends ContainerScreen<TagBuilderContainer>
         //Left side
         int leftFieldX = leftPos + titleLabelX;
         int leftFieldY = topPos + titleLabelY + font.lineHeight + RecipeBuilderScreen.TEXT_PADDING;
-        tagName = addButton(new HintedTextFieldWidget(font, leftFieldX + 1, leftFieldY + 1, RecipeBuilderScreen.BUTTON_WIDTH - 2, 18, tagName, TITLE_TEXT_TAGNAME));
+        tagName = addRenderableWidget(new HintedTextFieldWidget(font, leftFieldX + 1, leftFieldY + 1, RecipeBuilderScreen.BUTTON_WIDTH - 2, 18, tagName, TITLE_TEXT_TAGNAME));
         tagName.setFilter(TAG_NAME_FILTER);
         leftFieldY += RecipeBuilderScreen.BUTTON_INTERVAL;
 
@@ -92,26 +91,26 @@ public class TagBuilderScreen extends ContainerScreen<TagBuilderContainer>
         tagType = addWidget(new SelectionWidget<>(leftFieldX, leftFieldY, RecipeBuilderScreen.BUTTON_WIDTH, TITLE_TAG_TYPE, this::onTypeSelected));
         leftFieldY += RecipeBuilderScreen.BUTTON_INTERVAL;
 
-        tagReplace = addButton(new CheckboxButton(leftFieldX, leftFieldY, RecipeBuilderScreen.BUTTON_WIDTH, 20, TITLE_TAG_REPLACE, tagReplace != null && tagReplace.selected()));
+        tagReplace = addRenderableWidget(new Checkbox(leftFieldX, leftFieldY, RecipeBuilderScreen.BUTTON_WIDTH, 20, TITLE_TAG_REPLACE, tagReplace != null && tagReplace.selected()));
         leftFieldY += RecipeBuilderScreen.BUTTON_INTERVAL * 2;
 
-        tagEntryName = addButton(new HintedTextFieldWidget(font, leftFieldX + 1, leftFieldY + 1, RecipeBuilderScreen.BUTTON_WIDTH - 2, 18, tagEntryName, TITLE_TEXT_ADD));
+        tagEntryName = addRenderableWidget(new HintedTextFieldWidget(font, leftFieldX + 1, leftFieldY + 1, RecipeBuilderScreen.BUTTON_WIDTH - 2, 18, tagEntryName, TITLE_TEXT_ADD));
         leftFieldY += RecipeBuilderScreen.BUTTON_INTERVAL;
 
-        addButton(new Button(leftFieldX, leftFieldY, RecipeBuilderScreen.BUTTON_WIDTH, 20, TITLE_BTN_ADD_ENTRY, btn -> onAddEntry()));
+        addRenderableWidget(new Button(leftFieldX, leftFieldY, RecipeBuilderScreen.BUTTON_WIDTH, 20, TITLE_BTN_ADD_ENTRY, btn -> onAddEntry()));
 
         //Right side
         int buttonX = leftPos + imageWidth - RecipeBuilderScreen.BUTTON_WIDTH - (ClientUtils.BORDER * 2);
         int buttonY = topPos + titleLabelY + font.lineHeight + RecipeBuilderScreen.TEXT_PADDING;
 
-        addButton(new Button(buttonX, buttonY, RecipeBuilderScreen.BUTTON_WIDTH, 20, RecipeBuilderScreen.TITLE_BTN_BUILD, btn -> buildTag()));
+        addRenderableWidget(new Button(buttonX, buttonY, RecipeBuilderScreen.BUTTON_WIDTH, 20, RecipeBuilderScreen.TITLE_BTN_BUILD, btn -> buildTag()));
         buttonY += RecipeBuilderScreen.BUTTON_INTERVAL;
 
-        removeEntry = addButton(new Button(buttonX, buttonY, RecipeBuilderScreen.BUTTON_WIDTH, 20, TITLE_BTN_REMOVE_ENTRY, this::removeSelected));
+        removeEntry = addRenderableWidget(new Button(buttonX, buttonY, RecipeBuilderScreen.BUTTON_WIDTH, 20, TITLE_BTN_REMOVE_ENTRY, this::removeSelected));
         removeEntry.active = false;
         buttonY += RecipeBuilderScreen.BUTTON_INTERVAL;
 
-        addButton(new Button(buttonX, buttonY, RecipeBuilderScreen.BUTTON_WIDTH, 20, RecipeBuilderScreen.TITLE_BTN_RESET, btn -> clearTag()));
+        addRenderableWidget(new Button(buttonX, buttonY, RecipeBuilderScreen.BUTTON_WIDTH, 20, RecipeBuilderScreen.TITLE_BTN_RESET, btn -> clearTag()));
 
         //Center
         List<AbstractTagEntry> entries = entryList != null ? entryList.children() : Collections.emptyList();
@@ -130,24 +129,24 @@ public class TagBuilderScreen extends ContainerScreen<TagBuilderContainer>
     }
 
     @Override
-    public void render(MatrixStack mstack, int mouseX, int mouseY, float partialTicks)
+    public void render(PoseStack pstack, int mouseX, int mouseY, float partialTicks)
     {
-        renderBackground(mstack);
-        super.render(mstack, mouseX, mouseY, partialTicks);
-        tagType.render(mstack, mouseX, mouseY, partialTicks);
-        renderTooltip(mstack, mouseX, mouseY);
+        renderBackground(pstack);
+        super.render(pstack, mouseX, mouseY, partialTicks);
+        tagType.render(pstack, mouseX, mouseY, partialTicks);
+        renderTooltip(pstack, mouseX, mouseY);
     }
 
     @Override
-    protected void renderBg(MatrixStack mstack, float partialTicks, int mouseX, int mouseY)
+    protected void renderBg(PoseStack pstack, float partialTicks, int mouseX, int mouseY)
     {
-        ClientUtils.drawScreenBackground(this, mstack, leftPos, topPos, imageWidth, imageHeight);
+        ClientUtils.drawScreenBackground(this, pstack, leftPos, topPos, imageWidth, imageHeight);
 
         int invX = (imageWidth / 2) - (ClientUtils.INVENTORY_WIDTH / 2);
         int invY = imageHeight - ClientUtils.BORDER - ClientUtils.INVENTORY_HEIGHT;
-        ClientUtils.drawInventoryBackground(this, mstack, leftPos + invX, topPos + invY, false);
+        ClientUtils.drawInventoryBackground(this, pstack, leftPos + invX, topPos + invY, false);
 
-        entryList.render(mstack, mouseX, mouseY, partialTicks);
+        entryList.render(pstack, mouseX, mouseY, partialTicks);
     }
 
     @Override
@@ -155,7 +154,7 @@ public class TagBuilderScreen extends ContainerScreen<TagBuilderContainer>
     {
         if (tagEntryName.isMouseOver(mouseX, mouseY) && tagType.getSelected().allowItem())
         {
-            ItemStack held = player().inventory.getCarried();
+            ItemStack held = menu.getCarried();
             if (!held.isEmpty() && tagType.getSelected().acceptsItem(held))
             {
                 tagEntryName.setValue(tagType.getSelected().getEntryName(held));
@@ -192,14 +191,14 @@ public class TagBuilderScreen extends ContainerScreen<TagBuilderContainer>
         }
         catch (ResourceLocationException e)
         {
-            mc().pushGuiLayer(MessageScreen.error(new StringTextComponent(e.getMessage())));
+            mc().pushGuiLayer(MessageScreen.error(new TextComponent(e.getMessage())));
             return;
         }
 
         List<String> entries = entryList.children().stream().map(AbstractTagEntry::getEntryName).collect(Collectors.toList());
         Exporter.exportTag(tagType.getSelected().getType(), name, entries, tagReplace.selected());
 
-        List<ITextComponent> messages = new ArrayList<>();
+        List<Component> messages = new ArrayList<>();
 
         messages.add(MSG_SUCCESS);
         messages.add(pathComponent);
@@ -247,7 +246,7 @@ public class TagBuilderScreen extends ContainerScreen<TagBuilderContainer>
         }
         catch (ResourceLocationException e)
         {
-            mc().pushGuiLayer(MessageScreen.error(new StringTextComponent(e.getMessage())));
+            mc().pushGuiLayer(MessageScreen.error(new TextComponent(e.getMessage())));
             return;
         }
 
@@ -288,12 +287,12 @@ public class TagBuilderScreen extends ContainerScreen<TagBuilderContainer>
         tagType.addEntry(new TypeEntry(ForgeRegistries.ENTITIES, true, isEgg, eggToName, NoIconTagEntry::entity));
 
         //TileEnityTypes
-        tagType.addEntry(new TypeEntry(ForgeRegistries.TILE_ENTITIES, false, NoIconTagEntry::tileEntity));
+        tagType.addEntry(new TypeEntry(ForgeRegistries.BLOCK_ENTITIES, false, NoIconTagEntry::tileEntity));
 
         //Effects
         Predicate<ItemStack> isPotion = stack -> stack.getItem() instanceof PotionItem && PotionUtils.getPotion(stack).getEffects().size() == 1;
         Function<ItemStack, String> potionToName = stack -> PotionUtils.getPotion(stack).getEffects().get(0).getEffect().getRegistryName().toString();
-        tagType.addEntry(new TypeEntry(ForgeRegistries.POTIONS, true, isPotion, potionToName, NoIconTagEntry::potion));
+        tagType.addEntry(new TypeEntry(ForgeRegistries.MOB_EFFECTS, true, isPotion, potionToName, NoIconTagEntry::potion));
 
         //Enchantments
         Predicate<ItemStack> isEnchBook = stack -> stack.getItem() instanceof EnchantedBookItem && EnchantmentHelper.getEnchantments(stack).size() == 1;
@@ -340,14 +339,7 @@ public class TagBuilderScreen extends ContainerScreen<TagBuilderContainer>
         return minecraft;
     }
 
-    private PlayerEntity player()
-    {
-        PlayerEntity player = mc().player;
-        if (player == null) { throw new IllegalStateException("No player available!"); }
-        return player;
-    }
-
-    public FontRenderer getFont() { return font; }
+    public Font getFont() { return font; }
 
 
 

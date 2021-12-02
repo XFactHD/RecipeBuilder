@@ -1,24 +1,24 @@
 package xfacthd.recipebuilder.client.data.slots;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.ITextComponent;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
 import xfacthd.recipebuilder.client.data.SlotContent;
 
 public class FloatSlot extends NumberSlot<FloatSlot.FloatContent>
 {
-    public FloatSlot(String name, boolean optional, ITextComponent title) { super(name, optional, title); }
+    public FloatSlot(String name, boolean optional, Component title) { super(name, optional, title); }
 
     @Override
     public FloatContent newEmptyContent() { return new FloatContent(0F); }
 
     @Override
-    public void renderContent(Screen screen, FloatContent content, MatrixStack mstack, int builderX, int builderY, int blitBase, FontRenderer font) { }
+    public void renderContent(Screen screen, FloatContent content, PoseStack pstack, int builderX, int builderY, int blitBase, Font font) { }
 
     @Override
-    public void renderTooltip(Screen screen, FloatContent content, MatrixStack mstack, int mouseX, int mouseY, FontRenderer font) { }
+    public void renderTooltip(Screen screen, FloatContent content, PoseStack pstack, int mouseX, int mouseY, Font font) { }
 
     public static class FloatContent extends SlotContent<Float> implements INumberContent
     {

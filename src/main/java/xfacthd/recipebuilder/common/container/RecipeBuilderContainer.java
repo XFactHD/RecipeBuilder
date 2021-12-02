@@ -1,19 +1,19 @@
 package xfacthd.recipebuilder.common.container;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 import xfacthd.recipebuilder.RecipeBuilder;
 
-public class RecipeBuilderContainer extends Container
+public class RecipeBuilderContainer extends AbstractContainerMenu
 {
-    public static final ITextComponent TITLE = new TranslationTextComponent("recipebuilder.builder.title");
+    public static final Component TITLE = new TranslatableComponent("recipebuilder.builder.title");
 
-    public RecipeBuilderContainer(int containerId, PlayerInventory playerInv)
+    public RecipeBuilderContainer(int containerId, Inventory playerInv)
     {
         super(RecipeBuilder.RECIPE_BUILDER_CONTAINER.get(), containerId);
 
@@ -32,8 +32,8 @@ public class RecipeBuilderContainer extends Container
     }
 
     @Override
-    public boolean stillValid(PlayerEntity player) { return true; }
+    public boolean stillValid(Player player) { return true; }
 
     @Override
-    public ItemStack quickMoveStack(PlayerEntity pPlayer, int pIndex) { return ItemStack.EMPTY; }
+    public ItemStack quickMoveStack(Player pPlayer, int pIndex) { return ItemStack.EMPTY; }
 }
