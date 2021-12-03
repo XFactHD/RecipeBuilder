@@ -151,6 +151,14 @@ public class TagBuilderScreen extends ContainerScreen<TagBuilderContainer>
     }
 
     @Override
+    public void tick()
+    {
+        super.tick();
+        tagName.tick();
+        tagEntryName.tick();
+    }
+
+    @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button)
     {
         if (tagEntryName.isMouseOver(mouseX, mouseY) && tagType.getSelected().allowItem())

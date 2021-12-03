@@ -174,6 +174,13 @@ public class RecipeBuilderScreen extends ContainerScreen<RecipeBuilderContainer>
         renderSlots(mstack, mouseX, mouseY);
     }
 
+    @Override
+    public void tick()
+    {
+        super.tick();
+        recipeName.tick();
+    }
+
     private void renderSlots(MatrixStack mstack, int mouseX, int mouseY)
     {
         for (Map.Entry<RecipeSlot<?>, SlotContent<?>> entry : recipeSlots.entrySet())

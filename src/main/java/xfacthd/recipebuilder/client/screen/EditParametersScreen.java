@@ -2,16 +2,16 @@ package xfacthd.recipebuilder.client.screen;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
 import xfacthd.recipebuilder.client.data.slots.INumberContent;
 import xfacthd.recipebuilder.client.data.slots.NumberSlot;
 import xfacthd.recipebuilder.client.screen.widget.NumberTextFieldWidget;
 import xfacthd.recipebuilder.client.util.ClientUtils;
 import xfacthd.recipebuilder.common.util.Utils;
 
-import java.util.Map;
+import java.util.*;
 
 public class EditParametersScreen extends Screen
 {
@@ -23,6 +23,7 @@ public class EditParametersScreen extends Screen
     private static final int FIELD_INTERVAL = 22;
 
     private final Map<NumberSlot<?>, INumberContent> params;
+    private final List<NumberTextFieldWidget> textFields = new ArrayList<>();
     private int imageHeight;
     private int leftPos;
     private int topPos;
@@ -43,7 +44,8 @@ public class EditParametersScreen extends Screen
         int fieldY = topPos + TITLE_Y + font.lineHeight + 5;
         for (Map.Entry<NumberSlot<?>, INumberContent> entry : params.entrySet())
         {
-            addButton(new NumberTextFieldWidget(font, leftPos + LEFT_OFFSET, fieldY, 50, 18, entry.getKey(), entry.getValue(), false));
+            NumberTextFieldWidget widget = addButton(new NumberTextFieldWidget(font, leftPos + LEFT_OFFSET, fieldY, 50, 18, entry.getKey(), entry.getValue(), false));
+            textFields.add(widget);
             fieldY += FIELD_INTERVAL;
         }
 
@@ -67,6 +69,9 @@ public class EditParametersScreen extends Screen
 
         super.render(mstack, mouseX, mouseY, partialTicks);
     }
+
+    @Override
+    public void tick() { textFields.forEach(TextFieldWidget::tick); }
 
     private void onConfirm()
     {

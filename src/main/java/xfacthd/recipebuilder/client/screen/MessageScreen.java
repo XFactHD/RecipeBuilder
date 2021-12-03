@@ -103,6 +103,9 @@ public class MessageScreen extends Screen
 
     private Style findTextLine(int mouseX, int mouseY)
     {
+        int localX = mouseX - leftPos - TITLE_X;
+        if (localX < 0) { return null; }
+
         int y = topPos + TITLE_Y + font.lineHeight * 2;
         for (List<IReorderingProcessor> block : textBlocks)
         {
@@ -111,7 +114,7 @@ public class MessageScreen extends Screen
             {
                 int idx = (mouseY - y) / font.lineHeight;
                 if (idx >= block.size()) { return null; }
-                return font.getSplitter().componentStyleAtWidth(block.get(idx), mouseX - leftPos - TITLE_X);
+                return font.getSplitter().componentStyleAtWidth(block.get(idx), localX);
             }
 
             y += height + font.lineHeight;
