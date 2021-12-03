@@ -8,7 +8,7 @@ import xfacthd.recipebuilder.client.data.slots.*;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
-public class NumberTextFieldWidget extends EditBox
+public class NumberEditBox extends EditBox
 {
     private static final Pattern INTEGER_PATTERN = Pattern.compile("(0|[1-9][0-9]*)");
     private static final Predicate<String> INTEGER_FILTER = s ->
@@ -27,7 +27,7 @@ public class NumberTextFieldWidget extends EditBox
 
     private final INumberContent content;
 
-    public NumberTextFieldWidget(Font font, int x, int y, int width, int height, NumberSlot<?> slot, INumberContent content, boolean commitOnChange)
+    public NumberEditBox(Font font, int x, int y, int width, int height, NumberSlot<?> slot, INumberContent content, boolean commitOnChange)
     {
         super(font, x, y, width, height, slot.getTitle());
         this.content = content;

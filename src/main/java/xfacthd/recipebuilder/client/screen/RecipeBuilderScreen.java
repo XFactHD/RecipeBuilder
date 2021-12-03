@@ -172,6 +172,9 @@ public class RecipeBuilderScreen extends AbstractContainerScreen<RecipeBuilderCo
         renderSlots(pstack, mouseX, mouseY);
     }
 
+    @Override
+    protected void containerTick() { recipeName.tick(); }
+
     private void renderSlots(PoseStack pstack, int mouseX, int mouseY)
     {
         for (Map.Entry<RecipeSlot<?>, SlotContent<?>> entry : recipeSlots.entrySet())

@@ -96,6 +96,9 @@ public class SelectConditionScreen extends AbstractContainerScreen<RecipeBuilder
         }
     }
 
+    @Override
+    protected void containerTick() { conditionTagField.tick(); }
+
     private void renderConditionSlot(PoseStack pstack, int mouseX, int mouseY, int slotX, int slotY)
     {
         ClientUtils.drawSlotBackground(this, pstack, slotX, slotY);
