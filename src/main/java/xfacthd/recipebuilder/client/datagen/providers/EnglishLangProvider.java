@@ -30,6 +30,7 @@ public class EnglishLangProvider extends LanguageProvider
         add(RecipeBuilderScreen.TITLE_TEXT_RECIPENAME, "Name (Optional)");
         add(RecipeBuilderScreen.TITLE_BTN_CONDITION, "Set condition");
         add(RecipeBuilderScreen.TITLE_BTN_PARAMETERS, "Edit parameters");
+        add(RecipeBuilderScreen.MSG_NAME_INVALID, "The recipe name is invalid: ");
         add(RecipeBuilderScreen.MSG_SUCCESS, "The recipe has been exported successfully. You can find the generated datapack here: ");
         add(RecipeBuilderScreen.MSG_SUCCESS_LOCAL, "The recipe has also been placed in a generated datapack in the running World. To activate the new recipe, run the \"/reload\" command.");
         add(RecipeBuilderScreen.HOVER_MSG_CLICK_TO_OPEN, "Click to open the datapack in the file explorer");
@@ -42,7 +43,7 @@ public class EnglishLangProvider extends LanguageProvider
         add(TagBuilderScreen.TITLE_BTN_ADD_ENTRY, "Add entry");
         add(TagBuilderScreen.TITLE_BTN_REMOVE_ENTRY, "Remove entry");
         add(TagBuilderScreen.MSG_NAME_EMPTY, "The tag name must not be empty");
-        add(TagBuilderScreen.MSG_NAME_NO_NS, "The tag name must be namespaced (namespace:path)");
+        add(TagBuilderScreen.MSG_NAME_INVALID, "The tag name is invalid: ");
         add(TagBuilderScreen.MSG_ENTRY_NAME_EMPTY, "The entry name must not be empty");
         add(TagBuilderScreen.MSG_ENTRY_UNKNOWN, "Unknown registry entry: ");
         add(TagBuilderScreen.MSG_ENTRY_EXISTS, "This entry already exists");

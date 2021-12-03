@@ -1,6 +1,7 @@
 {
   "hover.recipebuilder.recipebuilder.builder.path.click": "Click to open the datapack in the file explorer",
   "key.categories.recipebuilder": "RecipeBuilder",
+  "msg.recipebuilder.builder.recipe_name.invalid": "The recipe name is invalid: ",
   "msg.recipebuilder.builder.success": "The recipe has been exported successfully. You can find the generated datapack here: ",
   "msg.recipebuilder.builder.success_local": "The recipe has also been placed in a generated datapack in the running World. To activate the new recipe, run the \"/reload\" command.",
   "msg.recipebuilder.builder.tag.success": "The tag has been exported successfully. You can find the generated datapack here: ",
@@ -9,7 +10,7 @@
   "msg.recipebuilder.builder.tag_entry.name_empty": "The entry name must not be empty",
   "msg.recipebuilder.builder.tag_entry.unknown": "Unknown registry entry: ",
   "msg.recipebuilder.builder.tag_name.empty": "The tag name must not be empty",
-  "msg.recipebuilder.builder.tag_name.no_ns": "The tag name must be namespaced (namespace:path)",
+  "msg.recipebuilder.builder.tag_name.invalid": "The tag name is invalid: ",
   "msg.recipebuilder.condition.no_such_tag": "Unknown tag: ",
   "msg.recipebuilder.condition.not_a_block": "Not a block: ",
   "msg.recipebuilder.edit_slot.no_tag": "No tag selected",
