@@ -36,7 +36,8 @@ public class RecipeBuilderScreen extends ContainerScreen<RecipeBuilderContainer>
     public static final ITextComponent TITLE_BTN_BUILD = Utils.translate(null, "builder.btn.build");
     public static final ITextComponent TITLE_BTN_RESET = Utils.translate(null, "builder.btn.reset");
     public static final ITextComponent TITLE_TEXT_RECIPENAME = Utils.translate(null, "builder.text.recipename");
-    public static final IFormattableTextComponent MSG_SUCCESS = Utils.translate("msg", "builder.success");
+    public static final IFormattableTextComponent MSG_NAME_INVALID = Utils.translate("msg", "builder.recipe_name.invalid");
+    public static final ITextComponent MSG_SUCCESS = Utils.translate("msg", "builder.success");
     public static final ITextComponent MSG_SUCCESS_LOCAL = Utils.translate("msg", "builder.success_local");
     public static final ITextComponent HOVER_MSG_CLICK_TO_OPEN = Utils.translate("hover", "recipebuilder.builder.path.click");
     public static final ITextComponent FILTER_ALL = Utils.translate(null, "recipebuilder.builder.filter.all");
@@ -47,7 +48,7 @@ public class RecipeBuilderScreen extends ContainerScreen<RecipeBuilderContainer>
     private static final int LIST_WIDTH = 130;
     public static final int BUTTON_WIDTH = 100;
     public static final int BUTTON_INTERVAL = 25;
-    private static final Pattern NAME_PATTERN = Pattern.compile("([a-z0-9_.-]+)([:]?)([a-z0-9/._-]*)");
+    private static final Pattern NAME_PATTERN = Pattern.compile("([a-z0-9_-]+)([:]?)([a-z0-9/_-]*)");
     private static final Predicate<String> NAME_FILTER = s ->
     {
         if (StringUtils.isNullOrEmpty(s)) { return true; }
@@ -329,9 +330,16 @@ public class RecipeBuilderScreen extends ContainerScreen<RecipeBuilderContainer>
     {
         if (currentBuilder != null)
         {
+            String name = recipeName.getValue();
+            if (name.endsWith(":"))
+            {
+                mc().pushGuiLayer(MessageScreen.error(MSG_NAME_INVALID.copy().append(name)));
+                return;
+            }
+
             ITextComponent error = currentBuilder.buildRecipe(
                     recipeSlots,
-                    recipeName.getValue(),
+                    name,
                     recipeCondition != null ? recipeCondition.toCriterion(conditionStack, conditionTag) : null,
                     recipeCondition != null ? recipeCondition.buildName(conditionStack, conditionTag) : ""
             );

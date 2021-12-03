@@ -47,7 +47,7 @@ public class Exporter
 
     public static void exportRecipe(IFinishedRecipe recipe)
     {
-        String recipeName = recipe.getId().getPath();
+        String recipeName = recipe.getId().toString();
         String advancementName = Optional.ofNullable(recipe.getAdvancementId()).map(ResourceLocation::getPath).orElse(null);
 
         JsonObject recipeJson = recipe.serializeRecipe();
@@ -69,12 +69,23 @@ public class Exporter
     {
         ensurePackDefinitionExists(packRoot);
 
-        Path recipePath = packRoot.resolve("data/" + RecipeBuilder.MOD_ID + "/recipes/" + recipeName + ".json");
+        String domain;
+        if (recipeName.contains(":"))
+        {
+            domain = recipeName.substring(0, recipeName.indexOf(":"));
+            recipeName = recipeName.substring(recipeName.indexOf(":") + 1);
+        }
+        else
+        {
+            domain = RecipeBuilder.MOD_ID;
+        }
+
+        Path recipePath = packRoot.resolve("data/" + domain + "/recipes/" + recipeName + ".json");
         saveToFile(recipePath, recipe);
 
         if (advancementName != null && advancement != null)
         {
-            Path advancementPath = packRoot.resolve("data/" + RecipeBuilder.MOD_ID + "/advancements/" + advancementName + ".json");
+            Path advancementPath = packRoot.resolve("data/" + domain + "/advancements/" + advancementName + ".json");
             saveToFile(advancementPath, advancement);
         }
     }
@@ -105,7 +116,18 @@ public class Exporter
     {
         ensurePackDefinitionExists(packRoot);
 
-        Path tagPath = packRoot.resolve("data/" + RecipeBuilder.MOD_ID + "/tags/" + type + "s/" + tagName + ".json");
+        String domain;
+        if (tagName.contains(":"))
+        {
+            domain = tagName.substring(0, tagName.indexOf(":"));
+            tagName = tagName.substring(tagName.indexOf(":") + 1);
+        }
+        else
+        {
+            domain = RecipeBuilder.MOD_ID;
+        }
+
+        Path tagPath = packRoot.resolve("data/" + domain + "/tags/" + type + "s/" + tagName + ".json");
         saveToFile(tagPath, contents);
     }
 

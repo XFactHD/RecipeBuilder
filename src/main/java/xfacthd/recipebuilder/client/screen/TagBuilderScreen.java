@@ -42,15 +42,15 @@ public class TagBuilderScreen extends ContainerScreen<TagBuilderContainer>
     public static final ITextComponent TITLE_BTN_ADD_ENTRY = Utils.translate(null, "builder.btn.add_entry");
     public static final ITextComponent TITLE_BTN_REMOVE_ENTRY = Utils.translate(null, "builder.btn.remove_entry");
     public static final ITextComponent MSG_NAME_EMPTY = Utils.translate("msg", "builder.tag_name.empty");
-    public static final ITextComponent MSG_NAME_NO_NS = Utils.translate("msg", "builder.tag_name.no_ns");
+    public static final IFormattableTextComponent MSG_NAME_INVALID = Utils.translate("msg", "builder.tag_name.invalid");
     public static final ITextComponent MSG_ENTRY_NAME_EMPTY = Utils.translate("msg", "builder.tag_entry.name_empty");
     public static final ITextComponent MSG_ENTRY_UNKNOWN = Utils.translate("msg", "builder.tag_entry.unknown");
     public static final ITextComponent MSG_ENTRY_EXISTS = Utils.translate("msg", "builder.tag_entry.exists");
-    public static final IFormattableTextComponent MSG_SUCCESS = Utils.translate("msg", "builder.tag.success");
+    public static final ITextComponent MSG_SUCCESS = Utils.translate("msg", "builder.tag.success");
     public static final ITextComponent MSG_SUCCESS_LOCAL = Utils.translate("msg", "builder.tag.success_local");
     private static final int WIDTH = 424;
     private static final int HEIGHT = 250;
-    private static final Pattern TAG_NAME_PATTERN = Pattern.compile("([a-z0-9_.-]+)");
+    private static final Pattern TAG_NAME_PATTERN = Pattern.compile("([a-z0-9_-]+)([:]?)([a-z0-9/_-]*)");
     private static final Predicate<String> TAG_NAME_FILTER = s ->
     {
         if (StringUtils.isNullOrEmpty(s)) { return true; }
@@ -182,6 +182,12 @@ public class TagBuilderScreen extends ContainerScreen<TagBuilderContainer>
         if (name.isEmpty())
         {
             mc().pushGuiLayer(MessageScreen.error(MSG_NAME_EMPTY));
+            return;
+        }
+
+        if (name.endsWith(":"))
+        {
+            mc().pushGuiLayer(MessageScreen.error(MSG_NAME_INVALID.copy().append(name)));
             return;
         }
 
