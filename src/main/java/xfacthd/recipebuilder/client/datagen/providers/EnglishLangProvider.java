@@ -2,12 +2,16 @@ package xfacthd.recipebuilder.client.datagen.providers;
 
 import net.minecraft.data.DataGenerator;
 import net.minecraft.item.crafting.IRecipeSerializer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.data.LanguageProvider;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
 import xfacthd.recipebuilder.RecipeBuilder;
 import xfacthd.recipebuilder.client.RBClient;
+import xfacthd.recipebuilder.client.builders.extendedcrafting.CombinationRecipeBuilder;
+import xfacthd.recipebuilder.client.builders.extendedcrafting.QuantumCompressorBuilder;
+import xfacthd.recipebuilder.client.compat.ExtendedCraftingCompat;
 import xfacthd.recipebuilder.client.data.Condition;
 import xfacthd.recipebuilder.client.builders.vanilla.*;
 import xfacthd.recipebuilder.client.screen.*;
@@ -75,7 +79,18 @@ public class EnglishLangProvider extends LanguageProvider
         add(RBClient.KEY_BIND_OPEN_RECIPE_BUILDER.get().getCategory(), "RecipeBuilder");
         add(RBClient.KEY_BIND_OPEN_RECIPE_BUILDER.get().getName(), "Open recipe builder");
         add(RBClient.KEY_BIND_OPEN_TAG_BUILDER.get().getName(), "Open tag builder");
+        add(QuantumCompressorBuilder.TITLE_INPUT_COUNT, "Input count");
+        add(QuantumCompressorBuilder.TITLE_POWER_COST, "Power cost");
+        add(QuantumCompressorBuilder.TITLE_POWER_RATE, "Power rate");
+        add(QuantumCompressorBuilder.MSG_INVALID_INPUT_COUNT, "Invalid input count, must be positiv!");
+        add(QuantumCompressorBuilder.MSG_INVALID_POWER_COST, "Invalid power cost, must be positive and higher than the power rate!");
+        add(QuantumCompressorBuilder.MSG_INVALID_POWER_RATE, "Invalid power rate, must be positive!");
+        add(CombinationRecipeBuilder.TITLE_POWER_COST, "Power cost");
+        add(CombinationRecipeBuilder.TITLE_POWER_RATE, "Power rate");
+        add(CombinationRecipeBuilder.MSG_INVALID_POWER_COST, "Invalid power cost, must be positive and higher than the power rate!");
+        add(CombinationRecipeBuilder.MSG_INVALID_POWER_RATE, "Invalid power rate, must be positive!");
 
+        //Vanilla serializers
         add(IRecipeSerializer.SHAPED_RECIPE, "Shaped Crafting");
         add(IRecipeSerializer.SHAPELESS_RECIPE, "Shapeless Crafting");
         add(IRecipeSerializer.SMELTING_RECIPE, "Smelting");
@@ -85,6 +100,27 @@ public class EnglishLangProvider extends LanguageProvider
         add(IRecipeSerializer.SMITHING, "Smithing");
         add(IRecipeSerializer.STONECUTTER, "Stonecutting");
 
+        //Extended Crafting serializers
+        IRecipeSerializer<?> extendedCraftingShaped = ForgeRegistries.RECIPE_SERIALIZERS.getValue(new ResourceLocation(ExtendedCraftingCompat.MOD_ID, "shaped_table"));
+        add(extendedCraftingShaped, "tier_1", "Basic Table (Shaped)");
+        add(extendedCraftingShaped, "tier_2", "Advanced Table (Shaped)");
+        add(extendedCraftingShaped, "tier_3", "Elite Table (Shaped)");
+        add(extendedCraftingShaped, "tier_4", "Ultimate Table (Shaped)");
+
+        IRecipeSerializer<?> extendedCraftingShapeless = ForgeRegistries.RECIPE_SERIALIZERS.getValue(new ResourceLocation(ExtendedCraftingCompat.MOD_ID, "shapeless_table"));
+        add(extendedCraftingShapeless, "tier_1", "Basic Table (Shapeless)");
+        add(extendedCraftingShapeless, "tier_2", "Advanced Table (Shapeless)");
+        add(extendedCraftingShapeless, "tier_3", "Elite Table (Shapeless)");
+        add(extendedCraftingShapeless, "tier_4", "Ultimate Table (Shapeless)");
+
+        add(ForgeRegistries.RECIPE_SERIALIZERS.getValue(new ResourceLocation(ExtendedCraftingCompat.MOD_ID, "shaped_ender_crafter")), "Ender Crafter (Shaped)");
+        add(ForgeRegistries.RECIPE_SERIALIZERS.getValue(new ResourceLocation(ExtendedCraftingCompat.MOD_ID, "shapeless_ender_crafter")), "Ender Crafter (Shapeless)");
+
+        add(ForgeRegistries.RECIPE_SERIALIZERS.getValue(new ResourceLocation(ExtendedCraftingCompat.MOD_ID, "compressor")), "Quantum Compression");
+
+        add(ForgeRegistries.RECIPE_SERIALIZERS.getValue(new ResourceLocation(ExtendedCraftingCompat.MOD_ID, "combination")), "Combination Crafting");
+
+        //Tag Types
         add(ForgeRegistries.BLOCKS, "Blocks");
         add(ForgeRegistries.ITEMS, "Items");
         add(ForgeRegistries.FLUIDS, "Fluids");
@@ -94,7 +130,9 @@ public class EnglishLangProvider extends LanguageProvider
         add(ForgeRegistries.ENCHANTMENTS, "Enchantments");
     }
 
-    private void add(IRecipeSerializer<?> serializer, String value) { add(AbstractBuilder.getTypeName(serializer), value); }
+    private void add(IRecipeSerializer<?> serializer, String value) { add(serializer, null, value); }
+
+    private void add(IRecipeSerializer<?> serializer, String typeSuffix, String value) { add(AbstractBuilder.getTypeName(serializer, typeSuffix), value); }
 
     private void add(IForgeRegistry<?> registry, String value) { add(Utils.translate("tag_type", registry.getRegistryName().toString()), value); }
 

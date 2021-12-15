@@ -98,9 +98,13 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.16.5-36.2.9'
+    minecraft 'net.minecraftforge:forge:1.16.5-36.2.20'
 
     runtimeOnly fg.deobf("curse.maven:jei-238222:3530253")
+
+    // Compat dependencies
+    implementation fg.deobf("curse.maven:cucumber-272335:3507886")
+    implementation fg.deobf("curse.maven:extendedcrafting-268387:3539189")
 
     annotationProcessor 'org.spongepowered:mixin:0.8.3'
     annotationProcessor 'com.google.code.gson:gson:2.8.0'

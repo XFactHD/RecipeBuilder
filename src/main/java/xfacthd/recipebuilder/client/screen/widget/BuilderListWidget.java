@@ -15,8 +15,7 @@ import xfacthd.recipebuilder.client.RBClient;
 import xfacthd.recipebuilder.client.screen.RecipeBuilderScreen;
 import xfacthd.recipebuilder.client.data.AbstractBuilder;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class BuilderListWidget extends ScissoredList<BuilderListWidget.BuilderEntry>
 {
@@ -30,6 +29,20 @@ public class BuilderListWidget extends ScissoredList<BuilderListWidget.BuilderEn
         setRenderTopAndBottom(false);
 
         RBClient.BUILDERS.forEach((type, builder) -> addEntry(new BuilderEntry(builder)));
+    }
+
+    @Override
+    protected void renderTooltips(MatrixStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks)
+    {
+        for(int i = 0; i < getItemCount(); ++i)
+        {
+            int itemTop = getRowTop(i);
+            int itemBottom = itemTop + itemHeight;
+            if (itemBottom >= y0 && itemTop <= y1)
+            {
+                getEntry(i).renderTooltip(pMatrixStack, pMouseX, pMouseY);
+            }
+        }
     }
 
     @Override
@@ -76,6 +89,8 @@ public class BuilderListWidget extends ScissoredList<BuilderListWidget.BuilderEn
                     .filter(entry -> entry.type.getModid().equals(filter.getModid()))
                     .forEach(children()::add);
         }
+
+        setScrollAmount(0);
     }
 
     protected class BuilderEntry extends ExtendedList.AbstractListEntry<BuilderEntry>
@@ -84,6 +99,7 @@ public class BuilderListWidget extends ScissoredList<BuilderListWidget.BuilderEn
         private final ItemStack typeIcon;
         private final ITextComponent typeTitle;
         private final ITextComponent modName;
+        private boolean needTooltip = false;
 
         private BuilderEntry(AbstractBuilder type)
         {
@@ -128,13 +144,24 @@ public class BuilderListWidget extends ScissoredList<BuilderListWidget.BuilderEn
 
             FontRenderer font = BuilderListWidget.this.parent.getFont();
 
-            ITextProperties titleLine = ITextProperties.composite(font.substrByWidth(typeTitle, listWidth - 6));
-            ITextProperties modNameLine = ITextProperties.composite(font.substrByWidth(modName, listWidth - 6));
+            int textWidth = listWidth - 24;
+            ITextProperties titleLine = ITextProperties.composite(font.substrByWidth(typeTitle, textWidth));
+            ITextProperties modNameLine = ITextProperties.composite(font.substrByWidth(modName, textWidth));
 
             int textY = top + 2;
             font.draw(mstack, LanguageMap.getInstance().getVisualOrder(titleLine), left + 20, textY, 0xFFFFFF);
             textY += font.lineHeight;
             font.draw(mstack, LanguageMap.getInstance().getVisualOrder(modNameLine), left + 20, textY, 0xCCCCCC);
+
+            needTooltip = isMouseOver && (font.width(titleLine) < font.width(typeTitle) || font.width(modNameLine) < font.width(modName));
+        }
+
+        public void renderTooltip(MatrixStack mstack, int mouseX, int mouseY)
+        {
+            if (needTooltip)
+            {
+                BuilderListWidget.this.parent.renderComponentTooltip(mstack, Arrays.asList(typeTitle, modName), mouseX, mouseY);
+            }
         }
 
         @Override

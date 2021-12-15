@@ -1,5 +1,6 @@
 package xfacthd.recipebuilder.client;
 
+import com.google.common.collect.*;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
@@ -34,7 +35,7 @@ import java.util.function.Supplier;
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = RecipeBuilder.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class RBClient
 {
-    public static final Map<IRecipeSerializer<?>, AbstractBuilder> BUILDERS = new Object2ObjectArrayMap<>();
+    public static final Multimap<IRecipeSerializer<?>, AbstractBuilder> BUILDERS = Multimaps.newListMultimap(new Object2ObjectArrayMap<>(), ArrayList::new);
     private static final List<AbstractBuilder> MOD_BUILDERS = new ArrayList<>();
 
     public static final Lazy<KeyBinding> KEY_BIND_OPEN_RECIPE_BUILDER = makeKeyBind("recipebuilder.key.open_recipe_builder", GLFW.GLFW_KEY_B);

@@ -22,13 +22,17 @@ public abstract class ScissoredList<T extends ExtendedList.AbstractListEntry<T>>
         double scale = minecraft.getWindow().getGuiScale();
         RenderSystem.enableScissor(
                 (int)(x0 * scale),
-                (int)((windowHeight - y1 - 1) * scale),
+                (int)((windowHeight - y1 - 1) * scale) + 1,
                 (int)((listWidth + 6) * scale),
-                (int)(height * scale)
+                (int)(height * scale) - 1
         );
 
         super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
 
         RenderSystem.disableScissor();
+
+        renderTooltips(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
     }
+
+    protected void renderTooltips(MatrixStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks) { }
 }

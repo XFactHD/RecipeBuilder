@@ -9,12 +9,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.tags.ITag;
 import net.minecraft.util.ResourceLocation;
-import xfacthd.recipebuilder.client.util.BuilderException;
 import xfacthd.recipebuilder.client.data.*;
 import xfacthd.recipebuilder.client.data.slots.ItemSlot;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ShapedCraftingBuilder extends AbstractBuilder
 {
@@ -28,23 +26,7 @@ public class ShapedCraftingBuilder extends AbstractBuilder
     @Override
     protected void validate(Map<String, Pair<RecipeSlot<?>, SlotContent<?>>> contents)
     {
-        AtomicBoolean foundInput = new AtomicBoolean();
-
-        contents.forEach((name, pair) ->
-        {
-            if (!name.equals("out"))
-            {
-                if (!pair.getSecond().isEmpty())
-                {
-                    foundInput.set(true);
-                }
-            }
-        });
-
-        if (!foundInput.get())
-        {
-            throw new BuilderException(MSG_INPUT_EMPTY);
-        }
+        checkAnyFilledExcept(contents, "out");
     }
 
     @Override
@@ -56,7 +38,7 @@ public class ShapedCraftingBuilder extends AbstractBuilder
 
         Map<Item, Character> itemKeys = new HashMap<>();
         Map<ITag<Item>, Character> tagKeys = new HashMap<>();
-        List<String> lines = parseGridLines(contents, itemKeys, tagKeys);
+        List<String> lines = parseTableGridLines(3, contents, itemKeys, tagKeys);
 
         itemKeys.forEach((i, c) -> builder.define(c, i));
         tagKeys.forEach((t, c) -> builder.define(c, t));
@@ -65,65 +47,6 @@ public class ShapedCraftingBuilder extends AbstractBuilder
         builder.unlockedBy(criterionName, criterion);
 
         Exporter.exportRecipe(builder::save, builder::save, recipeName);
-    }
-
-    private List<String> parseGridLines(Map<String, Pair<RecipeSlot<?>, SlotContent<?>>> contents, Map<Item, Character> itemKeys, Map<ITag<Item>, Character> tagKeys)
-    {
-        char[][] grid = new char[][] { { ' ', ' ', ' ', }, { ' ', ' ', ' ', }, { ' ', ' ', ' ', } };
-
-        char lastChar = 'A';
-        for (Map.Entry<String, Pair<RecipeSlot<?>, SlotContent<?>>> entry : contents.entrySet())
-        {
-            String name = entry.getKey();
-            if (name.equals("out"))
-            {
-                continue;
-            }
-
-            Pair<RecipeSlot<?>, SlotContent<?>> pair = entry.getValue();
-
-            ItemStack stack = getItemContent(pair.getSecond());
-            if (stack.isEmpty())
-            {
-                continue;
-            }
-
-            int line = Integer.parseInt(name.substring(0, 1));
-            int col = Integer.parseInt(name.substring(1, 2));
-
-            if (pair.getSecond().shouldUseTag())
-            {
-                ITag<Item> tag = getTagContent(pair.getSecond());
-                if (!tagKeys.containsKey(tag))
-                {
-                    tagKeys.put(tag, lastChar);
-                    lastChar++;
-                }
-
-                grid[line][col] = tagKeys.get(tag);
-            }
-            else
-            {
-                if (!itemKeys.containsKey(stack.getItem()))
-                {
-                    itemKeys.put(stack.getItem(), lastChar);
-                    lastChar++;
-                }
-
-                grid[line][col] = itemKeys.get(stack.getItem());
-            }
-        }
-
-        List<String> lines = new ArrayList<>();
-        for (char[] gridLine : grid)
-        {
-            String line = String.valueOf(gridLine);
-            if (!line.trim().isEmpty())
-            {
-                lines.add(line);
-            }
-        }
-        return lines;
     }
 
 

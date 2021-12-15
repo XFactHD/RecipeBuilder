@@ -1,7 +1,11 @@
 package xfacthd.recipebuilder.client.data;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.advancements.ICriterionInstance;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.Ingredient;
@@ -18,6 +22,7 @@ import xfacthd.recipebuilder.client.util.BuilderException;
 import xfacthd.recipebuilder.common.util.Utils;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public abstract class AbstractBuilder
 {
@@ -51,8 +56,25 @@ public abstract class AbstractBuilder
             boolean needAdvancement
     )
     {
+        this(type, null, modid, iconStack, slots, texture, texX, texY, texWidth, texHeight, needAdvancement);
+    }
+
+    protected AbstractBuilder(
+            IRecipeSerializer<?> type,
+            String typeSuffix,
+            String modid,
+            ItemStack iconStack,
+            Map<String, RecipeSlot<?>> slots,
+            ResourceLocation texture,
+            int texX,
+            int texY,
+            int texWidth,
+            int texHeight,
+            boolean needAdvancement
+    )
+    {
         this.type = type;
-        this.typeName = getTypeName(type);
+        this.typeName = getTypeName(type, typeSuffix);
         this.modid = modid;
         this.modName = getModName(modid);
         this.iconStack = iconStack;
@@ -69,7 +91,7 @@ public abstract class AbstractBuilder
 
     public final ITextComponent getTypeName() { return typeName; }
 
-    public String getModid() { return modid; }
+    public final String getModid() { return modid; }
 
     public final ITextComponent getModName() { return modName; }
 
@@ -121,6 +143,12 @@ public abstract class AbstractBuilder
         return null;
     }
 
+    public void drawBackground(Screen screen, MatrixStack mstack, int builderX, int builderY)
+    {
+        Minecraft.getInstance().textureManager.bind(getTexture());
+        screen.blit(mstack, builderX, builderY, getTexX(), getTexY(), getTexWidth(), getTexHeight());
+    }
+
     protected abstract void validate(Map<String, Pair<RecipeSlot<?>, SlotContent<?>>> contents);
 
     protected abstract void build(Map<String, Pair<RecipeSlot<?>, SlotContent<?>>> contents, String recipeName, ICriterionInstance criterion, String criterionName);
@@ -169,11 +197,99 @@ public abstract class AbstractBuilder
         return floatContent.getContent();
     }
 
-    public static ITextComponent getTypeName(IRecipeSerializer<?> type)
+    public static void checkAnyFilledExcept(Map<String, Pair<RecipeSlot<?>, SlotContent<?>>> contents, String... except)
+    {
+        List<String> ignore = Arrays.asList(except);
+        AtomicBoolean foundInput = new AtomicBoolean();
+
+        contents.forEach((name, pair) ->
+        {
+            if (!ignore.contains(name))
+            {
+                if (!pair.getSecond().isEmpty())
+                {
+                    foundInput.set(true);
+                }
+            }
+        });
+
+        if (!foundInput.get())
+        {
+            throw new BuilderException(MSG_INPUT_EMPTY);
+        }
+    }
+
+    protected final List<String> parseTableGridLines(int size, Map<String, Pair<RecipeSlot<?>, SlotContent<?>>> contents, Map<Item, Character> itemKeys, Map<ITag<Item>, Character> tagKeys)
+    {
+        char[][] grid = new char[size][size];
+        Arrays.stream(grid).forEach(arr -> Arrays.fill(arr, ' '));
+
+        char lastChar = 'A';
+        for (Map.Entry<String, Pair<RecipeSlot<?>, SlotContent<?>>> entry : contents.entrySet())
+        {
+            String name = entry.getKey();
+            if (name.equals("out"))
+            {
+                continue;
+            }
+
+            Pair<RecipeSlot<?>, SlotContent<?>> pair = entry.getValue();
+
+            ItemStack stack = getItemContent(pair.getSecond());
+            if (stack.isEmpty())
+            {
+                continue;
+            }
+
+            int line = Integer.parseInt(name.substring(0, 1));
+            int col = Integer.parseInt(name.substring(1, 2));
+
+            if (pair.getSecond().shouldUseTag())
+            {
+                ITag<Item> tag = getTagContent(pair.getSecond());
+                if (!tagKeys.containsKey(tag))
+                {
+                    tagKeys.put(tag, lastChar);
+                    lastChar++;
+                }
+
+                grid[line][col] = tagKeys.get(tag);
+            }
+            else
+            {
+                if (!itemKeys.containsKey(stack.getItem()))
+                {
+                    itemKeys.put(stack.getItem(), lastChar);
+                    lastChar++;
+                }
+
+                grid[line][col] = itemKeys.get(stack.getItem());
+            }
+        }
+
+        List<String> lines = new ArrayList<>();
+        for (char[] gridLine : grid)
+        {
+            String line = String.valueOf(gridLine);
+            if (!line.trim().isEmpty())
+            {
+                lines.add(line);
+            }
+        }
+        return lines;
+    }
+
+    public static ITextComponent getTypeName(IRecipeSerializer<?> type, String suffix)
     {
         ResourceLocation typeKey = ForgeRegistries.RECIPE_SERIALIZERS.getKey(type);
         if (typeKey == null) { throw new IllegalArgumentException("Recipe type has no name!"); }
-        return Utils.translate("typename", typeKey.getPath());
+
+        String name = typeKey.getPath();
+        if (suffix != null)
+        {
+            name += "_" + suffix;
+        }
+        return Utils.translate("typename", name);
     }
 
     public static ITextComponent getModName(String modid)

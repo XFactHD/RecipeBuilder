@@ -6,11 +6,9 @@ import net.minecraft.block.Blocks;
 import net.minecraft.data.ShapelessRecipeBuilder;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipeSerializer;
-import xfacthd.recipebuilder.client.util.BuilderException;
 import xfacthd.recipebuilder.client.data.*;
 
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ShapelessCraftingBuilder extends AbstractBuilder
 {
@@ -22,23 +20,7 @@ public class ShapelessCraftingBuilder extends AbstractBuilder
     @Override
     protected void validate(Map<String, Pair<RecipeSlot<?>, SlotContent<?>>> contents)
     {
-        AtomicBoolean foundInput = new AtomicBoolean();
-
-        contents.forEach((name, pair) ->
-        {
-            if (!name.equals("out"))
-            {
-                if (!pair.getSecond().isEmpty())
-                {
-                    foundInput.set(true);
-                }
-            }
-        });
-
-        if (!foundInput.get())
-        {
-            throw new BuilderException(ShapedCraftingBuilder.MSG_INPUT_EMPTY);
-        }
+        checkAnyFilledExcept(contents, "out");
     }
 
     @Override

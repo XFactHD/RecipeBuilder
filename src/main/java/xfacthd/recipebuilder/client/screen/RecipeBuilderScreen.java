@@ -41,8 +41,8 @@ public class RecipeBuilderScreen extends ContainerScreen<RecipeBuilderContainer>
     public static final ITextComponent MSG_SUCCESS_LOCAL = Utils.translate("msg", "builder.success_local");
     public static final ITextComponent HOVER_MSG_CLICK_TO_OPEN = Utils.translate("hover", "recipebuilder.builder.path.click");
     public static final ITextComponent FILTER_ALL = Utils.translate(null, "recipebuilder.builder.filter.all");
-    static final int WIDTH = 464;
-    static final int HEIGHT = 250;
+    static final int WIDTH = 504;
+    static final int HEIGHT = 270;
     private static final int BORDER = 4;
     public static final int TEXT_PADDING = 3;
     private static final int LIST_WIDTH = 130;
@@ -160,9 +160,7 @@ public class RecipeBuilderScreen extends ContainerScreen<RecipeBuilderContainer>
         {
             ClientUtils.drawBuilderBackground(this, mstack, builderX - 3, builderY - 3, currentBuilder.getTexWidth() + 6, currentBuilder.getTexHeight() + 6);
 
-            mc().textureManager.bind(currentBuilder.getTexture());
-
-            blit(mstack, builderX, builderY, currentBuilder.getTexX(), currentBuilder.getTexY(), currentBuilder.getTexWidth(), currentBuilder.getTexHeight());
+            currentBuilder.drawBackground(this, mstack, builderX, builderY);
         }
 
         int invX = (imageWidth / 2) - (ClientUtils.INVENTORY_WIDTH / 2);
@@ -280,11 +278,22 @@ public class RecipeBuilderScreen extends ContainerScreen<RecipeBuilderContainer>
             type.getSlots().forEach((name, slot) -> recipeSlots.put(slot, slot.newEmptyContent()));
         }
 
+        int listRight = builderList.getRight() + 12;
+        int screenTop = topPos + BORDER + 3;
+
         builderX = leftPos + (imageWidth / 2) - (currentBuilder.getTexWidth() / 2);
+        if (builderX < listRight)
+        {
+            builderX += (listRight - builderX);
+        }
 
         int top = titleLabelY + font.lineHeight + TEXT_PADDING;
         int bottom = imageHeight - BORDER - ClientUtils.INVENTORY_HEIGHT;
         builderY = topPos + ((bottom - top) / 2) - (currentBuilder.getTexHeight() / 2);
+        if (builderY < screenTop)
+        {
+            builderY += (screenTop - builderY);
+        }
 
         recipeName.active = true;
         buttonCondition.active = currentBuilder.needsAdvancement();
