@@ -22,23 +22,7 @@ public class ShapelessCraftingBuilder extends AbstractBuilder
     @Override
     protected void validate(Map<String, Pair<RecipeSlot<?>, SlotContent<?>>> contents)
     {
-        AtomicBoolean foundInput = new AtomicBoolean();
-
-        contents.forEach((name, pair) ->
-        {
-            if (!name.equals("out"))
-            {
-                if (!pair.getSecond().isEmpty())
-                {
-                    foundInput.set(true);
-                }
-            }
-        });
-
-        if (!foundInput.get())
-        {
-            throw new BuilderException(ShapedCraftingBuilder.MSG_INPUT_EMPTY);
-        }
+        checkAnyFilledExcept(contents, "out");
     }
 
     @Override

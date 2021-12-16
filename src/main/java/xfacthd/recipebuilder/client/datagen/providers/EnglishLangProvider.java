@@ -94,7 +94,9 @@ public class EnglishLangProvider extends LanguageProvider
         add(ForgeRegistries.ENCHANTMENTS, "Enchantments");
     }
 
-    private void add(RecipeSerializer<?> serializer, String value) { add(AbstractBuilder.getTypeName(serializer), value); }
+    private void add(RecipeSerializer<?> serializer, String value) { add(serializer, null, value); }
+
+    private void add(RecipeSerializer<?> serializer, String typeSuffix, String value) { add(AbstractBuilder.getTypeName(serializer, typeSuffix), value); }
 
     private void add(IForgeRegistry<?> registry, String value) { add(Utils.translate("tag_type", registry.getRegistryName().toString()), value); }
 

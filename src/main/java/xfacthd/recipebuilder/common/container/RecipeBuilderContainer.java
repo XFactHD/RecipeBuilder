@@ -21,13 +21,13 @@ public class RecipeBuilderContainer extends AbstractContainerMenu
         {
             for(int column = 0; column < 9; ++column)
             {
-                addSlot(new Slot(playerInv, column + row * 9 + 9, 152 + column * 18, 168 + row * 18));
+                addSlot(new Slot(playerInv, column + row * 9 + 9, 172 + column * 18, 188 + row * 18));
             }
         }
 
         for(int column = 0; column < 9; ++column)
         {
-            addSlot(new Slot(playerInv, column, 152 + column * 18, 226));
+            addSlot(new Slot(playerInv, column, 172 + column * 18, 246));
         }
     }
 

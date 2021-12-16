@@ -1,5 +1,7 @@
 package xfacthd.recipebuilder.client;
 
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -16,11 +18,11 @@ import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
+import net.minecraftforge.fml.event.lifecycle.*;
 import org.lwjgl.glfw.GLFW;
 import xfacthd.recipebuilder.RecipeBuilder;
 import xfacthd.recipebuilder.client.builders.vanilla.*;
+import xfacthd.recipebuilder.client.compat.CompatHandler;
 import xfacthd.recipebuilder.client.screen.RecipeBuilderScreen;
 import xfacthd.recipebuilder.client.data.AbstractBuilder;
 import xfacthd.recipebuilder.client.screen.TagBuilderScreen;
@@ -34,7 +36,8 @@ import java.util.function.Supplier;
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = RecipeBuilder.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class RBClient
 {
-    public static final Map<RecipeSerializer<?>, AbstractBuilder> BUILDERS = new Object2ObjectArrayMap<>();
+    public static final Multimap<RecipeSerializer<?>, AbstractBuilder> BUILDERS = Multimaps.newListMultimap(new Object2ObjectArrayMap<>(), ArrayList::new);
+    private static final List<AbstractBuilder> MOD_BUILDERS = new ArrayList<>();
 
     public static final Lazy<KeyMapping> KEY_BIND_OPEN_RECIPE_BUILDER = makeKeyBind("recipebuilder.key.open_recipe_builder", GLFW.GLFW_KEY_B);
     public static final Lazy<KeyMapping> KEY_BIND_OPEN_TAG_BUILDER = makeKeyBind("recipebuilder.key.open_tag_builder", GLFW.GLFW_KEY_V);
@@ -67,24 +70,22 @@ public class RBClient
     @SubscribeEvent
     public static void onHandleIMC(final InterModProcessEvent event)
     {
-        Map<String, List<AbstractBuilder>> buildersPerMod = new Object2ObjectArrayMap<>();
-
         event.getIMCStream("builder"::equals).forEach(msg ->
         {
             Supplier<AbstractBuilder> builder = msg.getMessageSupplier();
-            buildersPerMod.computeIfAbsent(
-                    msg.getSenderModId(),
-                    modid -> new ArrayList<>()
-            ).add(builder.get());
+            MOD_BUILDERS.add(builder.get());
 
-            RecipeBuilder.LOGGER.error("Received builder via IMC message from mod '{}'", msg.getSenderModId());
+            RecipeBuilder.LOGGER.debug("Received builder via IMC message from mod '{}'", msg.getSenderModId());
         });
+    }
 
-        buildersPerMod.keySet()
-                .stream()
-                .sorted()
-                .map(buildersPerMod::get)
-                .flatMap(List::stream)
+    @SubscribeEvent
+    public static void onLoadComplete(final FMLLoadCompleteEvent event)
+    {
+        CompatHandler.registerModBuilders(MOD_BUILDERS);
+
+        MOD_BUILDERS.stream()
+                .sorted(Comparator.comparing(AbstractBuilder::getModid))
                 .forEach(builder -> BUILDERS.put(builder.getType(), builder));
     }
 

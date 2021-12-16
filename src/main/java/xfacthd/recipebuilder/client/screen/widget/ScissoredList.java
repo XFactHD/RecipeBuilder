@@ -30,5 +30,9 @@ public abstract class ScissoredList<T extends ObjectSelectionList.Entry<T>> exte
         super.render(pstack, pMouseX, pMouseY, pPartialTicks);
 
         RenderSystem.disableScissor();
+
+        renderTooltips(pstack, pMouseX, pMouseY, pPartialTicks);
     }
+
+    protected void renderTooltips(PoseStack poseStack, int mouseX, int mouseY, float partialTicks) { }
 }
