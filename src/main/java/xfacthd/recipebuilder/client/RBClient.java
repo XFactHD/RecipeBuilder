@@ -1,5 +1,6 @@
 package xfacthd.recipebuilder.client;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.*;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import net.minecraft.block.Blocks;
@@ -72,6 +73,7 @@ public class RBClient
         event.getIMCStream("builder"::equals).forEach(msg ->
         {
             Supplier<AbstractBuilder> builder = msg.getMessageSupplier();
+            Preconditions.checkArgument(msg.getSenderModId().equals(builder.get().getModid()), "Registering recipe types for other mods is not allowed!");
             MOD_BUILDERS.add(builder.get());
 
             RecipeBuilder.LOGGER.debug("Received builder via IMC message from mod '{}'", msg.getSenderModId());

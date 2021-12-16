@@ -10,6 +10,7 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.storage.FolderName;
 import net.minecraftforge.registries.IForgeRegistry;
 import xfacthd.recipebuilder.RecipeBuilder;
+import xfacthd.recipebuilder.client.screen.widget.taglist.AbstractTagEntry;
 import xfacthd.recipebuilder.client.util.BuilderException;
 
 import javax.annotation.Nullable;
@@ -90,7 +91,7 @@ public class Exporter
         }
     }
 
-    public static void exportTag(IForgeRegistry<?> regType, String name, List<String> entries, boolean replace)
+    public static void exportTag(IForgeRegistry<?> regType, String name, List<AbstractTagEntry> entries, boolean replace)
     {
         String type = regType.getRegistryName().getPath();
 
@@ -98,7 +99,20 @@ public class Exporter
         obj.addProperty("replace", replace);
 
         JsonArray arr = new JsonArray();
-        entries.forEach(arr::add);
+        for (AbstractTagEntry entry : entries)
+        {
+            if (entry.isOptional())
+            {
+                JsonObject entryObj = new JsonObject();
+                entryObj.addProperty("id", entry.getEntryName());
+                entryObj.addProperty("required", false);
+                arr.add(entryObj);
+            }
+            else
+            {
+                arr.add(entry.getEntryName());
+            }
+        }
         obj.add("values", arr);
 
         //Export to game directory
