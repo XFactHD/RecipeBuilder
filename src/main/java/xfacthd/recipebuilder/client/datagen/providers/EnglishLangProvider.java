@@ -12,6 +12,7 @@ import xfacthd.recipebuilder.client.data.Condition;
 import xfacthd.recipebuilder.client.builders.vanilla.*;
 import xfacthd.recipebuilder.client.screen.*;
 import xfacthd.recipebuilder.client.screen.edit.EditItemSlotScreen;
+import xfacthd.recipebuilder.client.screen.widget.taglist.AbstractTagEntry;
 import xfacthd.recipebuilder.common.container.RecipeBuilderContainer;
 import xfacthd.recipebuilder.client.data.AbstractBuilder;
 import xfacthd.recipebuilder.common.container.TagBuilderContainer;
@@ -41,7 +42,10 @@ public class EnglishLangProvider extends LanguageProvider
         add(TagBuilderScreen.TITLE_TAG_TYPE, "Tag type");
         add(TagBuilderScreen.TITLE_TAG_REPLACE, "Replace existing");
         add(TagBuilderScreen.TITLE_BTN_ADD_ENTRY, "Add entry");
+        add(TagBuilderScreen.TITLE_BTN_OPTIONAL, "Make optional");
+        add(TagBuilderScreen.TITLE_BTN_NON_OPTIONAL, "Make non-optional");
         add(TagBuilderScreen.TITLE_BTN_REMOVE_ENTRY, "Remove entry");
+        add(TagBuilderScreen.TITLE_BTN_RESET, "Clear inputs");
         add(TagBuilderScreen.MSG_NAME_EMPTY, "The tag name must not be empty");
         add(TagBuilderScreen.MSG_NAME_INVALID, "The tag name is invalid: ");
         add(TagBuilderScreen.MSG_ENTRY_NAME_EMPTY, "The entry name must not be empty");
@@ -49,6 +53,7 @@ public class EnglishLangProvider extends LanguageProvider
         add(TagBuilderScreen.MSG_ENTRY_EXISTS, "This entry already exists");
         add(TagBuilderScreen.MSG_SUCCESS, "The tag has been exported successfully. You can find the generated datapack here: ");
         add(TagBuilderScreen.MSG_SUCCESS_LOCAL, "The tag has also been placed in a generated datapack in the running World. To activate the new tag, run the \"/reload\" command.");
+        add(AbstractTagEntry.TITLE_OPTIONAL, "Optional");
         add(MessageScreen.INFO_TITLE, "Builder Info");
         add(MessageScreen.ERROR_TITLE, "Builder Error");
         add(MessageScreen.TITLE_BTN_OK, "Ok");

@@ -7,14 +7,18 @@ import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.*;
 import xfacthd.recipebuilder.client.data.AbstractBuilder;
+import xfacthd.recipebuilder.common.util.Utils;
 
 public abstract class AbstractTagEntry extends ObjectSelectionList.Entry<AbstractTagEntry>
 {
+    public static final Component TITLE_OPTIONAL = Utils.translate(null, "tag_entry.optional");
+
     protected TagEntryListWidget parent;
     private final String entryName;
     protected final Component translatedName;
     protected final Component rawNameComponent;
     protected final Component modName;
+    private boolean optional = false;
     private final int textOffX;
 
     protected AbstractTagEntry(String name, Component translatedName, int textOffX)
@@ -41,6 +45,18 @@ public abstract class AbstractTagEntry extends ObjectSelectionList.Entry<Abstrac
         textY += font.lineHeight;
 
         font.draw(pstack, Language.getInstance().getVisualOrder(FormattedText.composite(font.substrByWidth(modName, width))), textX, textY, 0xCCCCCC);
+
+        if (optional)
+        {
+            textX = left + width - 6 - (font.width(TITLE_OPTIONAL) / 2);
+            textY = top + 2;
+
+            pstack.pushPose();
+            pstack.translate(textX, textY, 0);
+            pstack.scale(.5F, .5F, 1);
+            font.draw(pstack, TITLE_OPTIONAL, 0, 0, 0xFFFFFF);
+            pstack.popPose();
+        }
     }
 
     @Override
@@ -53,6 +69,10 @@ public abstract class AbstractTagEntry extends ObjectSelectionList.Entry<Abstrac
     void setParent(TagEntryListWidget parent) { this.parent = parent; }
 
     public String getEntryName() { return entryName; }
+
+    public void setOptional(boolean optional) { this.optional = optional; }
+
+    public boolean isOptional() { return optional; }
 
     @Override
     public Component getNarration() { return translatedName; }

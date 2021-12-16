@@ -30,7 +30,6 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class TagBuilderScreen extends AbstractContainerScreen<TagBuilderContainer>
 {
@@ -39,7 +38,10 @@ public class TagBuilderScreen extends AbstractContainerScreen<TagBuilderContaine
     public static final Component TITLE_TAG_TYPE = Utils.translate(null, "builder.select.tagtype");
     public static final Component TITLE_TAG_REPLACE = Utils.translate(null, "builder.tag.replace");
     public static final Component TITLE_BTN_ADD_ENTRY = Utils.translate(null, "builder.btn.add_entry");
+    public static final Component TITLE_BTN_OPTIONAL = Utils.translate(null, "builder.btn.mark_optional");
+    public static final Component TITLE_BTN_NON_OPTIONAL = Utils.translate(null, "builder.btn.mark_non_optional");
     public static final Component TITLE_BTN_REMOVE_ENTRY = Utils.translate(null, "builder.btn.remove_entry");
+    public static final Component TITLE_BTN_RESET = Utils.translate(null, "tag_builder.btn.reset");
     public static final Component MSG_NAME_EMPTY = Utils.translate("msg", "builder.tag_name.empty");
     public static final MutableComponent MSG_NAME_INVALID = Utils.translate("msg", "builder.tag_name.invalid");
     public static final Component MSG_ENTRY_NAME_EMPTY = Utils.translate("msg", "builder.tag_entry.name_empty");
@@ -61,6 +63,7 @@ public class TagBuilderScreen extends AbstractContainerScreen<TagBuilderContaine
     private SelectionWidget<TypeEntry> tagType = null;
     private Checkbox tagReplace = null;
     private EditBox tagEntryName = null;
+    private Button markOptional = null;
     private Button removeEntry = null;
     private TagEntryListWidget entryList = null;
     private Component pathComponent;
@@ -103,6 +106,10 @@ public class TagBuilderScreen extends AbstractContainerScreen<TagBuilderContaine
         int buttonX = leftPos + imageWidth - RecipeBuilderScreen.BUTTON_WIDTH - (ClientUtils.BORDER * 2);
         int buttonY = topPos + titleLabelY + font.lineHeight + RecipeBuilderScreen.TEXT_PADDING;
 
+        markOptional = addRenderableWidget(new Button(buttonX, buttonY, RecipeBuilderScreen.BUTTON_WIDTH, 20, TITLE_BTN_OPTIONAL, this::markSelectedOptional));
+        markOptional.active = false;
+        buttonY += RecipeBuilderScreen.BUTTON_INTERVAL;
+
         addRenderableWidget(new Button(buttonX, buttonY, RecipeBuilderScreen.BUTTON_WIDTH, 20, RecipeBuilderScreen.TITLE_BTN_BUILD, btn -> buildTag()));
         buttonY += RecipeBuilderScreen.BUTTON_INTERVAL;
 
@@ -110,14 +117,14 @@ public class TagBuilderScreen extends AbstractContainerScreen<TagBuilderContaine
         removeEntry.active = false;
         buttonY += RecipeBuilderScreen.BUTTON_INTERVAL;
 
-        addRenderableWidget(new Button(buttonX, buttonY, RecipeBuilderScreen.BUTTON_WIDTH, 20, RecipeBuilderScreen.TITLE_BTN_RESET, btn -> clearTag()));
+        addRenderableWidget(new Button(buttonX, buttonY, RecipeBuilderScreen.BUTTON_WIDTH, 20, TITLE_BTN_RESET, btn -> clearTag()));
 
         //Center
         List<AbstractTagEntry> entries = entryList != null ? entryList.children() : Collections.emptyList();
 
         int listTop = topPos + titleLabelY + font.lineHeight + RecipeBuilderScreen.TEXT_PADDING;
         int listBottom = topPos + inventoryLabelY - RecipeBuilderScreen.TEXT_PADDING;
-        entryList = addWidget(new TagEntryListWidget(this, ClientUtils.INVENTORY_WIDTH, listTop, listBottom, entry -> removeEntry.active = true));
+        entryList = addWidget(new TagEntryListWidget(this, ClientUtils.INVENTORY_WIDTH, listTop, listBottom, this::onEntrySelected));
         entryList.setLeftPos(leftPos + (imageWidth / 2) - (ClientUtils.INVENTORY_WIDTH / 2));
         entries.forEach(entryList::addEntry);
 
@@ -208,8 +215,7 @@ public class TagBuilderScreen extends AbstractContainerScreen<TagBuilderContaine
             return;
         }
 
-        List<String> entries = entryList.children().stream().map(AbstractTagEntry::getEntryName).collect(Collectors.toList());
-        Exporter.exportTag(tagType.getSelected().getType(), name, entries, tagReplace.selected());
+        Exporter.exportTag(tagType.getSelected().getType(), name, entryList.children(), tagReplace.selected());
 
         List<Component> messages = new ArrayList<>();
 
@@ -225,11 +231,24 @@ public class TagBuilderScreen extends AbstractContainerScreen<TagBuilderContaine
         tagName.setValue("");
         entryList.children().clear();
 
+        markOptional.setMessage(TITLE_BTN_OPTIONAL);
+        markOptional.active = false;
+        removeEntry.active = false;
+
         if (tagReplace.selected())
         {
             //"Unselect" checkbox
             tagReplace.onPress();
         }
+    }
+
+    private void markSelectedOptional(Button btn)
+    {
+        AbstractTagEntry entry = entryList.getSelected();
+        if (entry == null) { return; }
+
+        entry.setOptional(!entry.isOptional());
+        btn.setMessage(entry.isOptional() ? TITLE_BTN_NON_OPTIONAL : TITLE_BTN_OPTIONAL);
     }
 
     private void removeSelected(Button btn)
@@ -238,9 +257,27 @@ public class TagBuilderScreen extends AbstractContainerScreen<TagBuilderContaine
 
         entryList.children().remove(entryList.getSelected());
         btn.active = false;
+
+        markOptional.active = false;
+        markOptional.setMessage(TITLE_BTN_OPTIONAL);
     }
 
-    private void onTypeSelected(TypeEntry entry) { entryList.children().clear(); }
+    private void onTypeSelected(TypeEntry entry)
+    {
+        entryList.children().clear();
+
+        markOptional.setMessage(TITLE_BTN_OPTIONAL);
+        markOptional.active = false;
+        removeEntry.active = false;
+    }
+
+    private void onEntrySelected(AbstractTagEntry entry)
+    {
+        markOptional.active = true;
+        markOptional.setMessage(entry.isOptional() ? TITLE_BTN_NON_OPTIONAL : TITLE_BTN_OPTIONAL);
+
+        removeEntry.active = true;
+    }
 
     private void onAddEntry()
     {

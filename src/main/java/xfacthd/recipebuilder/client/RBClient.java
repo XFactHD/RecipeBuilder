@@ -1,5 +1,6 @@
 package xfacthd.recipebuilder.client;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
@@ -72,10 +73,12 @@ public class RBClient
     {
         event.getIMCStream("builder"::equals).forEach(msg ->
         {
+            //noinspection deprecation
             Supplier<AbstractBuilder> builder = msg.getMessageSupplier();
+            Preconditions.checkArgument(msg.senderModId().equals(builder.get().getModid()), "Registering recipe types for other mods is not allowed!");
             MOD_BUILDERS.add(builder.get());
 
-            RecipeBuilder.LOGGER.debug("Received builder via IMC message from mod '{}'", msg.getSenderModId());
+            RecipeBuilder.LOGGER.debug("Received builder via IMC message from mod '{}'", msg.senderModId());
         });
     }
 
