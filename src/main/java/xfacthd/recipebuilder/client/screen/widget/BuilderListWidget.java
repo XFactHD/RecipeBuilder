@@ -1,16 +1,11 @@
 package xfacthd.recipebuilder.client.screen.widget;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.widget.list.ExtendedList;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.*;
-import org.lwjgl.opengl.GL11;
 import xfacthd.recipebuilder.client.RBClient;
 import xfacthd.recipebuilder.client.screen.RecipeBuilderScreen;
 import xfacthd.recipebuilder.client.data.AbstractBuilder;
@@ -114,30 +109,8 @@ public class BuilderListWidget extends ScissoredList<BuilderListWidget.BuilderEn
         {
             if (isMouseOver && !isSelectedItem(index))
             {
-                Tessellator tess = Tessellator.getInstance();
-                BufferBuilder buffer = tess.getBuilder();
-
-                RenderSystem.disableTexture();
-
-                //noinspection deprecation
-                RenderSystem.color4f(1F, 1F, 1F, 1F);
-                buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
-                buffer.vertex(left - 1,         top + height + 1, 0.0D).endVertex();
-                buffer.vertex(left + width - 3, top + height + 1, 0.0D).endVertex();
-                buffer.vertex(left + width - 3, top - 1, 0.0D).endVertex();
-                buffer.vertex(left - 1,         top - 1, 0.0D).endVertex();
-                tess.end();
-
-                //noinspection deprecation
-                RenderSystem.color4f(0F, 0F, 0F, 1F);
-                buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
-                buffer.vertex(left,             top + height, 0.0D).endVertex();
-                buffer.vertex(left + width - 4, top + height, 0.0D).endVertex();
-                buffer.vertex(left + width - 4, top, 0.0D).endVertex();
-                buffer.vertex(left,             top, 0.0D).endVertex();
-                tess.end();
-
-                RenderSystem.enableTexture();
+                fill(mstack, left - 1, top - 1, left + width - 3, top + height + 1, 0xFFFFFFFF);
+                fill(mstack, left, top, left + width - 4, top + height, 0xFF000000);
             }
 
             Minecraft.getInstance().getItemRenderer().renderAndDecorateFakeItem(typeIcon, left + 1, top + 2);

@@ -1,13 +1,11 @@
 buildscript {
     repositories {
         maven { url = 'https://maven.minecraftforge.net' }
-        maven { url = 'https://repo.spongepowered.org/maven' }
         maven { url = 'https://maven.parchmentmc.org' }
         mavenCentral()
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
-        classpath group: 'org.spongepowered', name: 'mixingradle', version: '0.7-SNAPSHOT'
         classpath 'org.parchmentmc:librarian:1.+'
     }
 }
@@ -16,7 +14,6 @@ apply plugin: 'org.parchmentmc.librarian.forgegradle'
 // Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
-apply plugin: 'org.spongepowered.mixin'
 
 version = '1.0'
 group = 'xfacthd.recipebuilder'
@@ -41,8 +38,6 @@ minecraft {
 
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
-
-            arg "-mixin.config=recipebuilder.mixin.json"
 
             mods {
                 recipebuilder {
@@ -105,15 +100,6 @@ dependencies {
     // Compat dependencies
     implementation fg.deobf("curse.maven:cucumber-272335:3507886")
     implementation fg.deobf("curse.maven:extendedcrafting-268387:3539189")
-
-    annotationProcessor 'org.spongepowered:mixin:0.8.3'
-    annotationProcessor 'com.google.code.gson:gson:2.8.0'
-    annotationProcessor 'com.google.guava:guava:21.0'
-    annotationProcessor 'org.ow2.asm:asm-tree:7.2'
-}
-
-mixin {
-    add sourceSets.main, "recipebuilder.refmap.json"
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..
@@ -126,8 +112,7 @@ jar {
             "Implementation-Title": project.name,
             "Implementation-Version": "${version}",
             "Implementation-Vendor" :"XFactHD",
-            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-            "MixinConfigs": "recipebuilder.mixin.json"
+            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
 }

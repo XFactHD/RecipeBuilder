@@ -7,6 +7,7 @@ import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
 import xfacthd.recipebuilder.client.data.Condition;
@@ -94,6 +95,30 @@ public class SelectConditionScreen extends ContainerScreen<RecipeBuilderContaine
             font.draw(mstack, TITLE_STACK, localLeft + LEFT_OFFSET, topPos + 55, 0x404040);
             renderConditionSlot(mstack, mouseX, mouseY, localLeft + SLOT_X, topPos + SLOT_Y);
         }
+    }
+
+    @Override
+    @SuppressWarnings("deprecation")
+    protected void renderFloatingItem(ItemStack stack, int x, int y, String countTag)
+    {
+        RenderSystem.pushMatrix();
+        RenderSystem.translatef(0, 0, 2000);
+
+        super.renderFloatingItem(stack, x, y, countTag);
+
+        RenderSystem.popMatrix();
+    }
+
+    @Override
+    @SuppressWarnings("deprecation")
+    protected void renderSlot(MatrixStack poseStack, Slot slot)
+    {
+        RenderSystem.pushMatrix();
+        RenderSystem.translatef(0, 0, 2000);
+
+        super.renderSlot(poseStack, slot);
+
+        RenderSystem.popMatrix();
     }
 
     @Override
