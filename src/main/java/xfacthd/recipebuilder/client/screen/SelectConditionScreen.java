@@ -8,6 +8,7 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import xfacthd.recipebuilder.client.data.Condition;
 import xfacthd.recipebuilder.client.screen.widget.HintedTextFieldWidget;
@@ -94,6 +95,34 @@ public class SelectConditionScreen extends AbstractContainerScreen<RecipeBuilder
             font.draw(pstack, TITLE_STACK, localLeft + LEFT_OFFSET, topPos + 55, 0x404040);
             renderConditionSlot(pstack, mouseX, mouseY, localLeft + SLOT_X, topPos + SLOT_Y);
         }
+    }
+
+    @Override
+    protected void renderFloatingItem(ItemStack stack, int x, int y, String countTag)
+    {
+        PoseStack modelViewStack = RenderSystem.getModelViewStack();
+        modelViewStack.pushPose();
+        modelViewStack.translate(0, 0, 2000);
+        RenderSystem.applyModelViewMatrix();
+
+        super.renderFloatingItem(stack, x, y, countTag);
+
+        modelViewStack.popPose();
+        RenderSystem.applyModelViewMatrix();
+    }
+
+    @Override
+    protected void renderSlot(PoseStack poseStack, Slot slot)
+    {
+        PoseStack modelViewStack = RenderSystem.getModelViewStack();
+        modelViewStack.pushPose();
+        modelViewStack.translate(0, 0, 2000);
+        RenderSystem.applyModelViewMatrix();
+
+        super.renderSlot(poseStack, slot);
+
+        modelViewStack.popPose();
+        RenderSystem.applyModelViewMatrix();
     }
 
     @Override

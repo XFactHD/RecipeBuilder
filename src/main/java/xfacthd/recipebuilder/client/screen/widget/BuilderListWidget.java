@@ -1,7 +1,6 @@
 package xfacthd.recipebuilder.client.screen.widget;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.*;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.ObjectSelectionList;
@@ -111,28 +110,8 @@ public class BuilderListWidget extends ScissoredList<BuilderListWidget.BuilderEn
         {
             if (isMouseOver && !isSelectedItem(index))
             {
-                Tesselator tess = Tesselator.getInstance();
-                BufferBuilder buffer = tess.getBuilder();
-
-                RenderSystem.disableTexture();
-
-                RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
-                buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION);
-                buffer.vertex(left - 1,         top + height + 1, 0.0D).endVertex();
-                buffer.vertex(left + width - 3, top + height + 1, 0.0D).endVertex();
-                buffer.vertex(left + width - 3, top - 1, 0.0D).endVertex();
-                buffer.vertex(left - 1,         top - 1, 0.0D).endVertex();
-                tess.end();
-
-                RenderSystem.setShaderColor(0F, 0F, 0F, 1F);
-                buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION);
-                buffer.vertex(left,             top + height, 0.0D).endVertex();
-                buffer.vertex(left + width - 4, top + height, 0.0D).endVertex();
-                buffer.vertex(left + width - 4, top, 0.0D).endVertex();
-                buffer.vertex(left,             top, 0.0D).endVertex();
-                tess.end();
-
-                RenderSystem.enableTexture();
+                fill(pstack, left - 1, top - 1, left + width - 3, top + height + 1, 0xFFFFFFFF);
+                fill(pstack, left, top, left + width - 4, top + height, 0xFF000000);
             }
 
             Minecraft.getInstance().getItemRenderer().renderAndDecorateFakeItem(typeIcon, left + 1, top + 2);
