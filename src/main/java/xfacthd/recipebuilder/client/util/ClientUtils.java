@@ -46,26 +46,28 @@ public class ClientUtils
         int texCenterWidth = texWidth - (border * 2);
         int texCenterHeight = texHeight - (border * 2);
 
+        TextureDrawer.start();
+
         //Corners
-        screen.blit(pstack, screenX, screenY, 0, 0, border, border);
-        screen.blit(pstack, screenX + screenWidth - border, screenY, texWidth - border, 0, border, border);
-        screen.blit(pstack, screenX, screenY + screenHeight - border, 0, texHeight - border, border, border);
-        screen.blit(pstack, screenX + screenWidth - border, screenY + screenHeight - border, texWidth - border, texHeight - border, border, border);
+        TextureDrawer.fillGuiBuffer(pstack, screen, screenX, screenY, 0, 0, border, border);
+        TextureDrawer.fillGuiBuffer(pstack, screen, screenX + screenWidth - border, screenY, texWidth - border, 0, border, border);
+        TextureDrawer.fillGuiBuffer(pstack, screen, screenX, screenY + screenHeight - border, 0, texHeight - border, border, border);
+        TextureDrawer.fillGuiBuffer(pstack, screen, screenX + screenWidth - border, screenY + screenHeight - border, texWidth - border, texHeight - border, border, border);
 
         //Edges
         for (int i = 0; i <= (screenWidth / texCenterWidth); i++)
         {
             int x = screenX + border + (i * texCenterWidth);
             int width = Math.min(texCenterWidth, screenWidth - (i * texCenterWidth) - (border * 2));
-            screen.blit(pstack, x, screenY, border, 0, width, border);
-            screen.blit(pstack, x, screenY + screenHeight - border, border, texHeight - border, width, border);
+            TextureDrawer.fillGuiBuffer(pstack, screen, x, screenY, border, 0, width, border);
+            TextureDrawer.fillGuiBuffer(pstack, screen, x, screenY + screenHeight - border, border, texHeight - border, width, border);
         }
         for (int i = 0; i <= (screenHeight / texCenterHeight); i++)
         {
             int y = screenY + border + (i * texCenterHeight);
             int height = Math.min(texCenterHeight, screenHeight - (i * texCenterHeight) - (border * 2));
-            screen.blit(pstack, screenX, y, 0, border, border, height);
-            screen.blit(pstack, screenX + screenWidth - border, y, texWidth - border, border, border, height);
+            TextureDrawer.fillGuiBuffer(pstack, screen, screenX, y, 0, border, border, height);
+            TextureDrawer.fillGuiBuffer(pstack, screen, screenX + screenWidth - border, y, texWidth - border, border, border, height);
         }
 
         //Center
@@ -79,9 +81,11 @@ public class ClientUtils
                 int y = screenY + border + (iy * texCenterHeight);
                 int width = Math.min(texCenterWidth, screenWidth - (ix * texCenterWidth) - (border * 2));
                 int height = Math.min(texCenterHeight, screenHeight - (iy * texCenterHeight) - (border * 2));
-                screen.blit(pstack, x, y, border, border, width, height);
+                TextureDrawer.fillGuiBuffer(pstack, screen, x, y, border, border, width, height);
             }
         }
+
+        TextureDrawer.end();
     }
 
     public static void drawInventoryBackground(Screen screen, PoseStack pstack, int invX, int invY, boolean withBorder)
