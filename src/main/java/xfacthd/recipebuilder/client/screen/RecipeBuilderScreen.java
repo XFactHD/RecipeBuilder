@@ -226,7 +226,7 @@ public class RecipeBuilderScreen extends AbstractContainerScreen<RecipeBuilderCo
 
             int x = builderX + slot.getX();
             int y = builderY + slot.getY();
-            if (mouseX >= x && mouseX <= x + 16 && mouseY >= y && mouseY <= y + 16)
+            if (mouseX >= x && mouseX <= x + slot.getWidth() && mouseY >= y && mouseY <= y + slot.getHeight())
             {
                 if (button == 0) //Left mouse button
                 {

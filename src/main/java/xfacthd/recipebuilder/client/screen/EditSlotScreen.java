@@ -20,15 +20,18 @@ public abstract class EditSlotScreen<T, C extends SlotContent<T>, S extends Reci
 {
     public static final Component TITLE_USE_TAG = Utils.translate(null, "edit_slot.use_tag.title");
     public static final Component MSG_NO_TAG_SELECTED = Utils.translate("msg", "edit_slot.no_tag");
-    private static final int WIDTH = 176;
-    private static final int HEIGHT = 112;
+    protected static final int WIDTH = 176;
+    protected static final int HEIGHT = 112;
     private static final int TITLE_Y = 6;
     protected static final int LEFT_OFFSET = 8;
 
     protected final S slot;
     protected final C content;
+    private int screenHeight;
+    protected int additionalHeight = 0;
     private int leftPos;
     private int topPos;
+    private int topPosAdditional;
     private int slotX;
     private int slotY;
     private Checkbox useTagCheckbox = null;
@@ -42,10 +45,12 @@ public abstract class EditSlotScreen<T, C extends SlotContent<T>, S extends Reci
     }
 
     @Override
-    protected void init()
+    protected final void init()
     {
+        screenHeight = HEIGHT + additionalHeight;
         leftPos = (this.width - WIDTH) / 2;
-        topPos = (this.height - HEIGHT) / 2;
+        topPos = (this.height - screenHeight) / 2;
+        topPosAdditional = topPos + 66;
 
         slotX = leftPos + LEFT_OFFSET;
         slotY = topPos + 21;
@@ -59,6 +64,8 @@ public abstract class EditSlotScreen<T, C extends SlotContent<T>, S extends Reci
                 content.shouldUseTag(),
                 btn -> onSetCheck()
         ));
+
+        addAdditionalWidgets();
 
         tagSelection = new SelectionWidget<>(leftPos + LEFT_OFFSET, topPos + 43, WIDTH - (LEFT_OFFSET * 2), SelectConditionScreen.TITLE_SELECT, null);
         gatherTags(content.getContent(), tagSelection);
@@ -77,7 +84,7 @@ public abstract class EditSlotScreen<T, C extends SlotContent<T>, S extends Reci
         }
         addWidget(tagSelection);
 
-        addRenderableWidget(new Button(leftPos + (WIDTH / 2) - 30, topPos + HEIGHT - 35, 60, 20, MessageScreen.TITLE_BTN_OK, btn -> onConfirm()));
+        addRenderableWidget(new Button(leftPos + (WIDTH / 2) - 30, topPos + screenHeight - 35, 60, 20, MessageScreen.TITLE_BTN_OK, btn -> onConfirm()));
     }
 
     @Override
@@ -85,7 +92,7 @@ public abstract class EditSlotScreen<T, C extends SlotContent<T>, S extends Reci
     {
         renderBackground(pstack);
 
-        ClientUtils.drawScreenBackground(this, pstack, leftPos, topPos, WIDTH, HEIGHT);
+        ClientUtils.drawScreenBackground(this, pstack, leftPos, topPos, WIDTH, screenHeight);
         ClientUtils.drawSlotBackground(this, pstack, slotX, slotY);
         font.draw(pstack, title, leftPos + LEFT_OFFSET, topPos + TITLE_Y, 0x404040);
 
@@ -96,12 +103,22 @@ public abstract class EditSlotScreen<T, C extends SlotContent<T>, S extends Reci
             slot.renderTooltip(this, content, pstack, mouseX, mouseY, font);
         }
 
+        renderAdditional(pstack, mouseX, mouseY, partialTicks);
+
         tagSelection.render(pstack, mouseX, mouseY, partialTicks);
     }
+
+    protected void addAdditionalWidgets() { }
 
     protected abstract void renderContent(PoseStack pstack, int slotX, int slotY, int mouseX, int mouseY);
 
     protected abstract void gatherTags(T content, SelectionWidget<LocationEntry> widget);
+
+    protected void renderAdditional(PoseStack pstack, int mouseX, int mouseY, float partialTicks) { }
+
+    protected int getLeftPos() { return leftPos; }
+
+    protected int getTopPosAdditional() { return topPosAdditional; }
 
     private void onSetCheck() { tagSelection.active = useTagCheckbox.selected(); }
 

@@ -6,11 +6,9 @@ import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.block.Blocks;
-import xfacthd.recipebuilder.client.util.BuilderException;
 import xfacthd.recipebuilder.client.data.*;
 
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ShapelessCraftingBuilder extends AbstractBuilder
 {

@@ -1,5 +1,6 @@
 package xfacthd.recipebuilder.client.util;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -44,5 +45,16 @@ public class ObjectUtils
                 (float) FastColor.ARGB32.blue(color) / 255F,
                 (float) FastColor.ARGB32.alpha(color) / 255F
         };
+    }
+
+    public static void useFluidForShaderColor(Fluid fluid)
+    {
+        int color = fluid.getAttributes().getColor();
+        RenderSystem.setShaderColor(
+                (float) FastColor.ARGB32.red(color) / 255F,
+                (float) FastColor.ARGB32.green(color) / 255F,
+                (float) FastColor.ARGB32.blue(color) / 255F,
+                (float) FastColor.ARGB32.alpha(color) / 255F
+        );
     }
 }

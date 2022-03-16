@@ -10,7 +10,9 @@ import xfacthd.recipebuilder.RecipeBuilder;
 import xfacthd.recipebuilder.client.RBClient;
 import xfacthd.recipebuilder.client.data.Condition;
 import xfacthd.recipebuilder.client.builders.vanilla.*;
+import xfacthd.recipebuilder.client.data.slots.FluidSlot;
 import xfacthd.recipebuilder.client.screen.*;
+import xfacthd.recipebuilder.client.screen.edit.EditFluidSlotScreen;
 import xfacthd.recipebuilder.client.screen.edit.EditItemSlotScreen;
 import xfacthd.recipebuilder.client.screen.widget.taglist.AbstractTagEntry;
 import xfacthd.recipebuilder.common.container.RecipeBuilderContainer;
@@ -67,6 +69,8 @@ public class EnglishLangProvider extends LanguageProvider
         add(EditSlotScreen.TITLE_USE_TAG, "Use tag");
         add(EditSlotScreen.MSG_NO_TAG_SELECTED, "No tag selected");
         add(EditItemSlotScreen.TITLE, "Edit item");
+        add(EditFluidSlotScreen.TITLE, "Edit fluid");
+        add(EditFluidSlotScreen.TITLE_AMOUNT, "Amount:");
         add(AbstractBuilder.MSG_NO_UNLOCK, "No advancement criterion set");
         add(AbstractBuilder.MSG_INPUT_EMPTY, "The input may not be empty");
         add(AbstractBuilder.MSG_NON_OPT_EMPTY, "A non-optional Slot is empty: ");
@@ -80,6 +84,7 @@ public class EnglishLangProvider extends LanguageProvider
         add(RBClient.KEY_BIND_OPEN_RECIPE_BUILDER.get().getCategory(), "RecipeBuilder");
         add(RBClient.KEY_BIND_OPEN_RECIPE_BUILDER.get().getName(), "Open recipe builder");
         add(RBClient.KEY_BIND_OPEN_TAG_BUILDER.get().getName(), "Open tag builder");
+        add(FluidSlot.AMOUNT, "Amount:");
 
         add(RecipeSerializer.SHAPED_RECIPE, "Shaped Crafting");
         add(RecipeSerializer.SHAPELESS_RECIPE, "Shapeless Crafting");

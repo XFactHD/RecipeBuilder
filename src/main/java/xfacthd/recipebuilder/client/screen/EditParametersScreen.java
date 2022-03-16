@@ -7,7 +7,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import xfacthd.recipebuilder.client.data.slots.INumberContent;
 import xfacthd.recipebuilder.client.data.slots.NumberSlot;
-import xfacthd.recipebuilder.client.screen.widget.NumberEditBox;
+import xfacthd.recipebuilder.client.screen.widget.NumberSlotEditBox;
 import xfacthd.recipebuilder.client.util.ClientUtils;
 import xfacthd.recipebuilder.common.util.Utils;
 
@@ -23,7 +23,7 @@ public class EditParametersScreen extends Screen
     private static final int FIELD_INTERVAL = 22;
 
     private final Map<NumberSlot<?>, INumberContent> params;
-    private final List<NumberEditBox> editBoxes = new ArrayList<>();
+    private final List<NumberSlotEditBox> editBoxes = new ArrayList<>();
     private int imageHeight;
     private int leftPos;
     private int topPos;
@@ -44,7 +44,7 @@ public class EditParametersScreen extends Screen
         int fieldY = topPos + TITLE_Y + font.lineHeight + 5;
         for (Map.Entry<NumberSlot<?>, INumberContent> entry : params.entrySet())
         {
-            NumberEditBox widget = addRenderableWidget(new NumberEditBox(font, leftPos + LEFT_OFFSET, fieldY, 50, 18, entry.getKey(), entry.getValue(), false));
+            NumberSlotEditBox widget = addRenderableWidget(new NumberSlotEditBox(font, leftPos + LEFT_OFFSET, fieldY, 50, 18, entry.getKey(), entry.getValue(), false));
             editBoxes.add(widget);
             fieldY += FIELD_INTERVAL;
         }
@@ -76,9 +76,9 @@ public class EditParametersScreen extends Screen
     private void onConfirm()
     {
         children().stream()
-                .filter(w -> w instanceof NumberEditBox)
-                .map(w -> (NumberEditBox)w)
-                .forEach(NumberEditBox::commit);
+                .filter(w -> w instanceof NumberSlotEditBox)
+                .map(NumberSlotEditBox.class::cast)
+                .forEach(NumberSlotEditBox::commit);
 
         onClose();
     }
