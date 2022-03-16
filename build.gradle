@@ -23,8 +23,7 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 minecraft {
-    //mappings channel: 'parchment', version: '2021.10.17-1.16.5'
-    mappings channel: 'official', version: '1.18'
+    mappings channel: 'parchment', version: '2022.03.06-1.18.1'
     
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
@@ -39,8 +38,6 @@ minecraft {
 
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
-
-            arg "-mixin.config=recipebuilder.mixin.json"
 
             mods {
                 recipebuilder {
@@ -96,7 +93,7 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.18.1-39.0.10'
+    minecraft 'net.minecraftforge:forge:1.18.1-39.1.2'
 
     runtimeOnly fg.deobf("curse.maven:jei-238222:3596020")
 }

@@ -2,11 +2,10 @@ package xfacthd.recipebuilder.client.screen.widget.taglist;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.registries.ForgeRegistries;
+import xfacthd.recipebuilder.client.util.ObjectUtils;
 
 public class ItemTagEntry extends AbstractTagEntry
 {
@@ -14,7 +13,7 @@ public class ItemTagEntry extends AbstractTagEntry
 
     public ItemTagEntry(String itemName)
     {
-        super(itemName, getTranslation(itemName), 18);
+        super(itemName, ObjectUtils.getItemTranslation(itemName), 18);
         this.item = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(itemName)));
     }
 
@@ -23,14 +22,5 @@ public class ItemTagEntry extends AbstractTagEntry
     {
         Minecraft.getInstance().getItemRenderer().renderAndDecorateFakeItem(item, left + 2, top + 7);
         super.render(pstack, index, top, left, width, height, mouseX, mouseY, isMouseOver, partialTicks);
-    }
-
-
-
-    private static Component getTranslation(String name)
-    {
-        Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(name));
-        //noinspection ConstantConditions
-        return item.getName(item.getDefaultInstance());
     }
 }
