@@ -9,7 +9,10 @@ public class CompatHandler
 {
     public static void registerModBuilders(List<AbstractBuilder> builders)
     {
-
+        if (loaded("extendedcrafting"))
+        {
+            ExtendedCraftingCompat.register(builders);
+        }
     }
 
     private static boolean loaded(String modid) { return ModList.get().isLoaded(modid); }

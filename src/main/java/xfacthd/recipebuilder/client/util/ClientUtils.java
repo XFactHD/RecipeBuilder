@@ -4,6 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
@@ -122,5 +123,19 @@ public class ClientUtils
     public static int getWrappedHeight(Font font, FormattedText text, int width)
     {
         return font.split(text, width).size() * font.lineHeight;
+    }
+
+    public static void drawCenteredText(PoseStack pstack, Font font, Component text, float x, float y, int color, boolean shadow)
+    {
+        FormattedCharSequence formattedcharsequence = text.getVisualOrderText();
+        float textX = x - font.width(formattedcharsequence) / 2F;
+        if (shadow)
+        {
+            font.drawShadow(pstack, formattedcharsequence, textX, y, color);
+        }
+        else
+        {
+            font.draw(pstack, formattedcharsequence, textX, y, color);
+        }
     }
 }

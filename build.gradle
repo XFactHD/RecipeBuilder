@@ -39,6 +39,9 @@ minecraft {
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
 
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${buildDir}/createSrgToMcp/output.srg"
+
             mods {
                 recipebuilder {
                     source sourceSets.main
@@ -71,6 +74,9 @@ minecraft {
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
 
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${buildDir}/createSrgToMcp/output.srg"
+
             // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
             args '--mod', 'recipebuilder', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
 
@@ -90,12 +96,41 @@ repositories {
 	maven {
         url "https://www.cursemaven.com"
     }
+
+    maven {
+        url 'https://maven.blamejared.com'
+    }
+
+    maven {
+        name "Modmaven"
+        url "https://modmaven.dev/"
+        // For Gradle 5.1 and above, limit it to just AE2
+        content {
+            includeGroup 'appeng'
+        }
+    }
+
+    maven {
+        url = "https://maven.theillusivec4.top/"
+    }
 }
 
 dependencies {
     minecraft 'net.minecraftforge:forge:1.18.1-39.1.2'
 
     runtimeOnly fg.deobf("curse.maven:jei-238222:3596020")
+
+    // Compat dependencies
+    implementation fg.deobf("curse.maven:cucumber-272335:3623830")
+    implementation fg.deobf("curse.maven:extendedcrafting-268387:3606681")
+
+    runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:1.18.1-5.0.6.2")
+    runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:1.18.1-65")
+    implementation fg.deobf("vazkii.botania:Botania:1.18.1-429")
+
+    implementation fg.deobf("curse.maven:immersiveengineering-231951:3587149")
+
+    implementation fg.deobf("appeng:appliedenergistics2:10.0.1")
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..
