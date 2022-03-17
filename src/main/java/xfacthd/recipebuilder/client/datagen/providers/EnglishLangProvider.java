@@ -89,18 +89,21 @@ public class EnglishLangProvider extends LanguageProvider
         add(RBClient.KEY_BIND_OPEN_RECIPE_BUILDER.get().getName(), "Open recipe builder");
         add(RBClient.KEY_BIND_OPEN_TAG_BUILDER.get().getName(), "Open tag builder");
         add(FluidSlot.AMOUNT, "Amount:");
-        add(QuantumCompressorBuilder.TITLE_INPUT_COUNT, "Input count");
-        add(QuantumCompressorBuilder.TITLE_POWER_COST, "Power cost");
-        add(QuantumCompressorBuilder.TITLE_POWER_RATE, "Power rate");
-        add(QuantumCompressorBuilder.MSG_INVALID_INPUT_COUNT, "Invalid input count, must be positiv!");
-        add(QuantumCompressorBuilder.MSG_INVALID_POWER_COST, "Invalid power cost, must be positive and higher than the power rate!");
-        add(QuantumCompressorBuilder.MSG_INVALID_POWER_RATE, "Invalid power rate, must be positive!");
-        add(CombinationRecipeBuilder.TITLE_POWER_COST, "Power cost");
-        add(CombinationRecipeBuilder.TITLE_POWER_RATE, "Power rate");
-        add(CombinationRecipeBuilder.MSG_INVALID_POWER_COST, "Invalid power cost, must be positive and higher than the power rate!");
-        add(CombinationRecipeBuilder.MSG_INVALID_POWER_RATE, "Invalid power rate, must be positive!");
 
-        //Vanilla serializers
+        addVanillaBuilders();
+        addExtendedCraftingBuilders();
+
+        add(ForgeRegistries.BLOCKS, "Blocks");
+        add(ForgeRegistries.ITEMS, "Items");
+        add(ForgeRegistries.FLUIDS, "Fluids");
+        add(ForgeRegistries.ENTITIES, "EntityTypes");
+        add(ForgeRegistries.BLOCK_ENTITIES, "BlockEntityTypes");
+        add(ForgeRegistries.MOB_EFFECTS, "Effects");
+        add(ForgeRegistries.ENCHANTMENTS, "Enchantments");
+    }
+
+    private void addVanillaBuilders()
+    {
         add(RecipeSerializer.SHAPED_RECIPE, "Shaped Crafting");
         add(RecipeSerializer.SHAPELESS_RECIPE, "Shapeless Crafting");
         add(RecipeSerializer.SMELTING_RECIPE, "Smelting");
@@ -109,8 +112,10 @@ public class EnglishLangProvider extends LanguageProvider
         add(RecipeSerializer.CAMPFIRE_COOKING_RECIPE, "Campfire Cooking");
         add(RecipeSerializer.SMITHING, "Smithing");
         add(RecipeSerializer.STONECUTTER, "Stonecutting");
+    }
 
-        //Extended Crafting serializers
+    private void addExtendedCraftingBuilders()
+    {
         RecipeSerializer<?> extendedCraftingShaped = ForgeRegistries.RECIPE_SERIALIZERS.getValue(new ResourceLocation(ExtendedCraftingCompat.MOD_ID, "shaped_table"));
         add(extendedCraftingShaped, "tier_1", "Basic Table (Shaped)");
         add(extendedCraftingShaped, "tier_2", "Advanced Table (Shaped)");
@@ -130,13 +135,16 @@ public class EnglishLangProvider extends LanguageProvider
 
         add(ForgeRegistries.RECIPE_SERIALIZERS.getValue(new ResourceLocation(ExtendedCraftingCompat.MOD_ID, "combination")), "Combination Crafting");
 
-        add(ForgeRegistries.BLOCKS, "Blocks");
-        add(ForgeRegistries.ITEMS, "Items");
-        add(ForgeRegistries.FLUIDS, "Fluids");
-        add(ForgeRegistries.ENTITIES, "EntityTypes");
-        add(ForgeRegistries.BLOCK_ENTITIES, "BlockEntityTypes");
-        add(ForgeRegistries.MOB_EFFECTS, "Effects");
-        add(ForgeRegistries.ENCHANTMENTS, "Enchantments");
+        add(QuantumCompressorBuilder.TITLE_INPUT_COUNT, "Input count");
+        add(QuantumCompressorBuilder.TITLE_POWER_COST, "Power cost");
+        add(QuantumCompressorBuilder.TITLE_POWER_RATE, "Power rate");
+        add(QuantumCompressorBuilder.MSG_INVALID_INPUT_COUNT, "Invalid input count, must be positiv!");
+        add(QuantumCompressorBuilder.MSG_INVALID_POWER_COST, "Invalid power cost, must be positive and higher than the power rate!");
+        add(QuantumCompressorBuilder.MSG_INVALID_POWER_RATE, "Invalid power rate, must be positive!");
+        add(CombinationRecipeBuilder.TITLE_POWER_COST, "Power cost");
+        add(CombinationRecipeBuilder.TITLE_POWER_RATE, "Power rate");
+        add(CombinationRecipeBuilder.MSG_INVALID_POWER_COST, "Invalid power cost, must be positive and higher than the power rate!");
+        add(CombinationRecipeBuilder.MSG_INVALID_POWER_RATE, "Invalid power rate, must be positive!");
     }
 
     private void add(RecipeSerializer<?> serializer, String value) { add(serializer, null, value); }
