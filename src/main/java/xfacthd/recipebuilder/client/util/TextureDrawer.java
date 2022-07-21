@@ -13,43 +13,6 @@ public class TextureDrawer
 
     /**
      * Draw a texture with arbitrary dimensions
-     * @param x X position
-     * @param y Y position
-     * @param w Resulting width
-     * @param h Resulting height
-     * @param minU Min u of the texture segment
-     * @param maxU Max u of the texture segment
-     * @param minV Min v of the texture segment
-     * @param maxV Max v of the texture segment
-     */
-    public static void drawTexture(float x, float y, float w, float h, float minU, float maxU, float minV, float maxV)
-    {
-        start();
-        fillBuffer(x, y, w, h, minU, maxU, minV, maxV);
-        end();
-    }
-
-    /**
-     * Draw a texture with arbitrary dimensions
-     * @param x X position
-     * @param y Y position
-     * @param z Z position (mostly referred to as blitOffset)
-     * @param w Resulting width
-     * @param h Resulting height
-     * @param minU Min u of the texture segment
-     * @param maxU Max u of the texture segment
-     * @param minV Min v of the texture segment
-     * @param maxV Max v of the texture segment
-     */
-    public static void drawTexture(float x, float y, float z, float w, float h, float minU, float maxU, float minV, float maxV)
-    {
-        start();
-        fillBuffer(x, y, z, w, h, minU, maxU, minV, maxV);
-        end();
-    }
-
-    /**
-     * Draw a texture with arbitrary dimensions
      * @param pstack The MatrixStack of the current context
      * @param x X position
      * @param y Y position
@@ -99,10 +62,10 @@ public class TextureDrawer
      * @param maxV Max v of the texture segment
      * @param color Color to tint the texture in
      */
-    public static void drawTexture(float x, float y, float w, float h, float minU, float maxU, float minV, float maxV, int color)
+    public static void drawTexture(MatrixStack pstack, float x, float y, float w, float h, float minU, float maxU, float minV, float maxV, int color)
     {
         startColored();
-        fillBuffer(x, y, w, h, minU, maxU, minV, maxV, color);
+        fillBuffer(pstack, x, y, w, h, minU, maxU, minV, maxV, color);
         end();
     }
 
@@ -116,10 +79,10 @@ public class TextureDrawer
      * @param w Width of the texture segment
      * @param h Height of the texture segment
      */
-    public static void drawGuiTexture(Screen gui, float x, float y, float texX, float texY, float w, float h)
+    public static void drawGuiTexture(MatrixStack pstack, Screen gui, float x, float y, float texX, float texY, float w, float h)
     {
         start();
-        fillGuiBuffer(gui, x, y, texX, texY, w, h);
+        fillGuiBuffer(pstack, gui, x, y, texX, texY, w, h);
         end();
     }
 
@@ -134,10 +97,10 @@ public class TextureDrawer
      * @param h Height of the texture segment
      * @param color Color to tint the texture in
      */
-    public static void drawGuiTexture(Screen gui, float x, float y, float texX, float texY, float w, float h, int color)
+    public static void drawGuiTexture(MatrixStack pstack, Screen gui, float x, float y, float texX, float texY, float w, float h, int color)
     {
         startColored();
-        fillGuiBuffer(gui, x, y, texX, texY, w, h, color);
+        fillGuiBuffer(pstack, gui, x, y, 0, texX, texY, w, h, color);
         end();
     }
 
@@ -153,10 +116,10 @@ public class TextureDrawer
      * @param minV Min v of the texture segment
      * @param maxV Max v of the texture segment
      */
-    public static void drawGuiTexture(Screen gui, float x, float y, float w, float h, float minU, float maxU, float minV, float maxV)
+    public static void drawGuiTexture(MatrixStack pstack, Screen gui, float x, float y, float w, float h, float minU, float maxU, float minV, float maxV)
     {
         start();
-        fillGuiBuffer(gui, x, y, w, h, minU, maxU, minV, maxV);
+        fillGuiBuffer(pstack, gui, x, y, w, h, minU, maxU, minV, maxV);
         end();
     }
 
@@ -173,10 +136,10 @@ public class TextureDrawer
      * @param maxV Max v of the texture segment
      * @param color Color to tint the texture in
      */
-    public static void drawGuiTexture(Screen gui, float x, float y, float w, float h, float minU, float maxU, float minV, float maxV, int color)
+    public static void drawGuiTexture(MatrixStack pstack, Screen gui, float x, float y, float w, float h, float minU, float maxU, float minV, float maxV, int color)
     {
         startColored();
-        fillGuiBuffer(gui, x, y, w, h, minU, maxU, minV, maxV, color);
+        fillGuiBuffer(pstack, gui, x, y, w, h, minU, maxU, minV, maxV, color);
         end();
     }
 
@@ -216,9 +179,9 @@ public class TextureDrawer
      * @param minV Min v of the texture segment
      * @param maxV Max v of the texture segment
      */
-    public static void fillBuffer(float x, float y, float w, float h, float minU, float maxU, float minV, float maxV)
+    public static void fillBuffer(MatrixStack pstack, float x, float y, float w, float h, float minU, float maxU, float minV, float maxV)
     {
-        fillBuffer(x, y, 0, w, h, minU, maxU, minV, maxV);
+        fillBuffer(pstack, x, y, 0, w, h, minU, maxU, minV, maxV);
     }
 
     /**
@@ -233,9 +196,9 @@ public class TextureDrawer
      * @param maxV Max v of the texture segment
      * @param color Color to tint the texture in
      */
-    public static void fillBuffer(float x, float y, float w, float h, float minU, float maxU, float minV, float maxV, int color)
+    public static void fillBuffer(MatrixStack pstack, float x, float y, float w, float h, float minU, float maxU, float minV, float maxV, int color)
     {
-        fillBuffer(x, y, 0, w, h, minU, maxU, minV, maxV, color);
+        fillBuffer(pstack, x, y, 0, w, h, minU, maxU, minV, maxV, color);
     }
 
     /**
@@ -248,13 +211,13 @@ public class TextureDrawer
      * @param w Width of the texture segment
      * @param h Height of the texture segment
      */
-    public static void fillGuiBuffer(Screen gui, float x, float y, float texX, float texY, float w, float h)
+    public static void fillGuiBuffer(MatrixStack pstack, Screen gui, float x, float y, float texX, float texY, float w, float h)
     {
         float minU = texX / 256F;
         float maxU = minU + (w / 256F);
         float minV = texY / 256F;
         float maxV = minV + (h / 256F);
-        fillBuffer(x, y, gui.getBlitOffset(), w, h, minU, maxU, minV, maxV);
+        fillBuffer(pstack, x, y, gui.getBlitOffset(), w, h, minU, maxU, minV, maxV);
     }
 
     /**
@@ -268,13 +231,13 @@ public class TextureDrawer
      * @param h Height of the texture segment
      * @param color Color to tint the texture in
      */
-    public static void fillGuiBuffer(Screen gui, float x, float y, float texX, float texY, float w, float h, int color)
+    public static void fillGuiBuffer(MatrixStack pstack, Screen gui, float x, float y, float texX, float texY, float w, float h, int color)
     {
         float minU = texX / 256F;
         float maxU = minU + (w / 256F);
         float minV = texY / 256F;
         float maxV = minV + (h / 256F);
-        fillBuffer(x, y, gui.getBlitOffset(), w, h, minU, maxU, minV, maxV, color);
+        fillBuffer(pstack, x, y, gui.getBlitOffset(), w, h, minU, maxU, minV, maxV, color);
     }
 
     /**
@@ -289,10 +252,11 @@ public class TextureDrawer
      * @param minV Min v of the texture segment
      * @param maxV Max v of the texture segment
      */
-    public static void fillGuiBuffer(Screen gui, float x, float y, float w, float h, float minU, float maxU, float minV, float maxV)
+    public static void fillGuiBuffer(MatrixStack pstack, Screen gui, float x, float y, float w, float h, float minU, float maxU, float minV, float maxV)
     {
-        fillBuffer(x, y, gui.getBlitOffset(), w, h, minU, maxU, minV, maxV);
+        fillBuffer(pstack, x, y, gui.getBlitOffset(), w, h, minU, maxU, minV, maxV);
     }
+
 
     /**
      * Fill the draw buffer for a gui with a tinted texture with arbitrary dimensions
@@ -307,31 +271,9 @@ public class TextureDrawer
      * @param maxV Max v of the texture segment
      * @param color Color to tint the texture in
      */
-    public static void fillGuiBuffer(Screen gui, float x, float y, float w, float h, float minU, float maxU, float minV, float maxV, int color)
+    public static void fillGuiBuffer(MatrixStack pstack, Screen gui, float x, float y, float w, float h, float minU, float maxU, float minV, float maxV, int color)
     {
-        fillBuffer(x, y, gui.getBlitOffset(), w, h, minU, maxU, minV, maxV, color);
-    }
-
-    /**
-     * Fill the draw buffer with a texture with arbitrary dimensions
-     * @param x X position
-     * @param y Y position
-     * @param z Z position (mostly referred to as blitOffset)
-     * @param w Resulting width
-     * @param h Resulting height
-     * @param minU Min u of the texture segment
-     * @param maxU Max u of the texture segment
-     * @param minV Min v of the texture segment
-     * @param maxV Max v of the texture segment
-     */
-    public static void fillBuffer(float x, float y, float z, float w, float h, float minU, float maxU, float minV, float maxV)
-    {
-        if (buffer == null) { throw new IllegalStateException("Drawing operation not started!"); }
-
-        buffer.vertex(x,     y + h, z).uv(minU, maxV).endVertex();
-        buffer.vertex(x + w, y + h, z).uv(maxU, maxV).endVertex();
-        buffer.vertex(x + w, y,     z).uv(maxU, minV).endVertex();
-        buffer.vertex(x,     y,     z).uv(minU, minV).endVertex();
+        fillBuffer(pstack, x, y, gui.getBlitOffset(), w, h, minU, maxU, minV, maxV, color);
     }
 
     /**
@@ -355,30 +297,6 @@ public class TextureDrawer
         buffer.vertex(pstack.last().pose(), x + w, y + h, z).uv(maxU, maxV).endVertex();
         buffer.vertex(pstack.last().pose(), x + w, y,     z).uv(maxU, minV).endVertex();
         buffer.vertex(pstack.last().pose(), x,     y,     z).uv(minU, minV).endVertex();
-    }
-
-    /**
-     * Fill the draw buffer with a tinted texture with arbitrary dimensions
-     * @param x X position
-     * @param y Y position
-     * @param z Z position (mostly referred to as blitOffset)
-     * @param w Resulting width
-     * @param h Resulting height
-     * @param minU Min u of the texture segment
-     * @param maxU Max u of the texture segment
-     * @param minV Min v of the texture segment
-     * @param maxV Max v of the texture segment
-     * @param color Color to tint the texture in
-     */
-    public static void fillBuffer(float x, float y, float z, float w, float h, float minU, float maxU, float minV, float maxV, int color)
-    {
-        if (buffer == null) { throw new IllegalStateException("Drawing operation not started!"); }
-
-        int[] colors = getRGBAArrayFromHexColor(color);
-        buffer.vertex(x,     y + h, z).uv(minU, maxV).color(colors[0], colors[1], colors[2], colors[3]).endVertex();
-        buffer.vertex(x + w, y + h, z).uv(maxU, maxV).color(colors[0], colors[1], colors[2], colors[3]).endVertex();
-        buffer.vertex(x + w, y,     z).uv(maxU, minV).color(colors[0], colors[1], colors[2], colors[3]).endVertex();
-        buffer.vertex(x,     y,     z).uv(minU, minV).color(colors[0], colors[1], colors[2], colors[3]).endVertex();
     }
 
     /**
