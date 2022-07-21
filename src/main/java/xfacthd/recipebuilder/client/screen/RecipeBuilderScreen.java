@@ -48,7 +48,7 @@ public class RecipeBuilderScreen extends ContainerScreen<RecipeBuilderContainer>
     private static final int LIST_WIDTH = 130;
     public static final int BUTTON_WIDTH = 100;
     public static final int BUTTON_INTERVAL = 25;
-    private static final Pattern NAME_PATTERN = Pattern.compile("([a-z0-9_-]+)([:]?)([a-z0-9/_-]*)");
+    private static final Pattern NAME_PATTERN = Pattern.compile("([a-z\\d_-]+)(:?)([a-z\\d/_-]*)");
     private static final Predicate<String> NAME_FILTER = s ->
     {
         if (StringUtils.isNullOrEmpty(s)) { return true; }
@@ -232,7 +232,7 @@ public class RecipeBuilderScreen extends ContainerScreen<RecipeBuilderContainer>
 
             int x = builderX + slot.getX();
             int y = builderY + slot.getY();
-            if (mouseX >= x && mouseX <= x + 16 && mouseY >= y && mouseY <= y + 16)
+            if (mouseX >= x && mouseX <= x + slot.getWidth() && mouseY >= y && mouseY <= y + slot.getHeight())
             {
                 if (button == 0) //Left mouse button
                 {

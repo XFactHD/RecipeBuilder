@@ -3,7 +3,6 @@ package xfacthd.recipebuilder.client.screen.edit;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
 import xfacthd.recipebuilder.client.data.slots.ItemSlot;
 import xfacthd.recipebuilder.client.screen.EditSlotScreen;
 import xfacthd.recipebuilder.client.screen.widget.SelectionWidget;

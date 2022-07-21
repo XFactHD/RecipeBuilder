@@ -3,63 +3,50 @@ package xfacthd.recipebuilder.client.screen.widget;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.util.StringUtils;
-import xfacthd.recipebuilder.client.data.slots.*;
+import net.minecraft.util.text.ITextComponent;
 
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
-public class NumberTextFieldWidget extends TextFieldWidget
+public abstract class NumberTextFieldWidget extends TextFieldWidget
 {
-    private static final Pattern INTEGER_PATTERN = Pattern.compile("(0|[1-9][0-9]*)");
-    private static final Predicate<String> INTEGER_FILTER = s ->
+    private static final Pattern INTEGER_PATTERN = Pattern.compile("(0|[1-9]\\d*)");
+    protected static final Predicate<String> INTEGER_FILTER = s ->
     {
         if (StringUtils.isNullOrEmpty(s)) { return false; }
         if (s.length() > 7) { return false; }
         return INTEGER_PATTERN.matcher(s).matches();
     };
-    private static final Pattern FLOAT_PATTERN = Pattern.compile("(0|[1-9][0-9]*).[0-9]+");
-    private static final Predicate<String> FLOAT_FILTER = s ->
+    private static final Pattern INTEGER_NON_ZERO_PATTERN = Pattern.compile("(0|[1-9]\\d*)");
+    protected static final Predicate<String> INTEGER_NON_ZERO_FILTER = s ->
+    {
+        if (StringUtils.isNullOrEmpty(s)) { return false; }
+        if (s.length() > 7) { return false; }
+        return INTEGER_NON_ZERO_PATTERN.matcher(s).matches();
+    };
+    private static final Pattern FLOAT_PATTERN = Pattern.compile("(0|[1-9]\\d*).\\d+");
+    protected static final Predicate<String> FLOAT_FILTER = s ->
     {
         if (StringUtils.isNullOrEmpty(s)) { return false; }
         if (s.length() > 7) { return false; }
         return FLOAT_PATTERN.matcher(s).matches();
     };
 
-    private final INumberContent content;
-
-    public NumberTextFieldWidget(FontRenderer font, int x, int y, int width, int height, NumberSlot<?> slot, INumberContent content, boolean commitOnChange)
+    public NumberTextFieldWidget(FontRenderer font, int x, int y, int width, int height, ITextComponent title, boolean commitOnChange)
     {
-        super(font, x, y, width, height, slot.getTitle());
-        this.content = content;
+        super(font, x, y, width, height, title);
 
         if (commitOnChange)
         {
             setResponder(this::onTextChanged);
         }
-
-        if (content instanceof IntegerSlot.IntegerContent)
-        {
-            setValue(Integer.toString(((IntegerSlot.IntegerContent) content).getContent()));
-            setFilter(INTEGER_FILTER);
-        }
-        else if (content instanceof FloatSlot.FloatContent)
-        {
-            setValue(Float.toString(((FloatSlot.FloatContent) content).getContent()));
-            setFilter(FLOAT_FILTER);
-        }
     }
 
     private void onTextChanged(String text) { commit(); }
 
-    public void commit()
-    {
-        if (content instanceof IntegerSlot.IntegerContent)
-        {
-            ((IntegerSlot.IntegerContent) content).setContent(Integer.valueOf(getValue()));
-        }
-        else if (content instanceof FloatSlot.FloatContent)
-        {
-            ((FloatSlot.FloatContent) content).setContent(Float.valueOf(getValue()));
-        }
-    }
+    public abstract void commit();
+
+    public int getIntegerValue() { return Integer.parseInt(getValue()); }
+
+    public float getFloatValue() { return Float.parseFloat(getValue()); }
 }

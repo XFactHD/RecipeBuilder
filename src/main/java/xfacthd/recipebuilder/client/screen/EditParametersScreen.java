@@ -7,7 +7,7 @@ import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.text.ITextComponent;
 import xfacthd.recipebuilder.client.data.slots.INumberContent;
 import xfacthd.recipebuilder.client.data.slots.NumberSlot;
-import xfacthd.recipebuilder.client.screen.widget.NumberTextFieldWidget;
+import xfacthd.recipebuilder.client.screen.widget.NumberSlotTextFieldWidget;
 import xfacthd.recipebuilder.client.util.ClientUtils;
 import xfacthd.recipebuilder.common.util.Utils;
 
@@ -23,7 +23,7 @@ public class EditParametersScreen extends Screen
     private static final int FIELD_INTERVAL = 22;
 
     private final Map<NumberSlot<?>, INumberContent> params;
-    private final List<NumberTextFieldWidget> textFields = new ArrayList<>();
+    private final List<NumberSlotTextFieldWidget> textFields = new ArrayList<>();
     private int imageHeight;
     private int leftPos;
     private int topPos;
@@ -44,7 +44,7 @@ public class EditParametersScreen extends Screen
         int fieldY = topPos + TITLE_Y + font.lineHeight + 5;
         for (Map.Entry<NumberSlot<?>, INumberContent> entry : params.entrySet())
         {
-            NumberTextFieldWidget widget = addButton(new NumberTextFieldWidget(font, leftPos + LEFT_OFFSET, fieldY, 50, 18, entry.getKey(), entry.getValue(), false));
+            NumberSlotTextFieldWidget widget = addButton(new NumberSlotTextFieldWidget(font, leftPos + LEFT_OFFSET, fieldY, 50, 18, entry.getKey(), entry.getValue(), false));
             textFields.add(widget);
             fieldY += FIELD_INTERVAL;
         }
@@ -76,9 +76,9 @@ public class EditParametersScreen extends Screen
     private void onConfirm()
     {
         children.stream()
-                .filter(w -> w instanceof NumberTextFieldWidget)
-                .map(w -> (NumberTextFieldWidget)w)
-                .forEach(NumberTextFieldWidget::commit);
+                .filter(w -> w instanceof NumberSlotTextFieldWidget)
+                .map(NumberSlotTextFieldWidget.class::cast)
+                .forEach(NumberSlotTextFieldWidget::commit);
 
         onClose();
     }
