@@ -24,10 +24,10 @@ public class StonecuttingBuilder extends AbstractBuilder
     }
 
     @Override
-    protected void validate(Map<String, Pair<RecipeSlot<?>, SlotContent<?>>> contents) { }
+    protected void validate(Map<String, Pair<RecipeSlot<?, ?>, SlotContent<?>>> contents) { }
 
     @Override
-    protected void build(Map<String, Pair<RecipeSlot<?>, SlotContent<?>>> contents, String recipeName, CriterionTriggerInstance criterion, String criterionName)
+    protected void build(Map<String, Pair<RecipeSlot<?, ?>, SlotContent<?>>> contents, String recipeName, CriterionTriggerInstance criterion, String criterionName)
     {
         Ingredient input = getContentAsIngredient(contents.get("in").getSecond(), true);
         ItemStack output = getItemContent(contents.get("out").getSecond());
@@ -45,9 +45,9 @@ public class StonecuttingBuilder extends AbstractBuilder
 
 
 
-    private static Map<String, RecipeSlot<?>> buildSlotMap()
+    private static Map<String, RecipeSlot<?, ?>> buildSlotMap()
     {
-        Map<String, RecipeSlot<?>> slots = new HashMap<>();
+        Map<String, RecipeSlot<?, ?>> slots = new HashMap<>();
 
         slots.put("in", new ItemSlot("in", 1, 19, false, true, ItemSlot.SINGLE_ITEM));
         slots.put("out", new ItemSlot("out", 124, 19, false, false));

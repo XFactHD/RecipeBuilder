@@ -48,7 +48,7 @@ public class CombinationRecipeBuilder extends AbstractBuilder
     }
 
     @Override
-    protected void validate(Map<String, Pair<RecipeSlot<?>, SlotContent<?>>> contents)
+    protected void validate(Map<String, Pair<RecipeSlot<?, ?>, SlotContent<?>>> contents)
     {
         checkAnyFilledExcept(contents, "out", "power", "rate");
 
@@ -65,7 +65,7 @@ public class CombinationRecipeBuilder extends AbstractBuilder
     }
 
     @Override
-    protected void build(Map<String, Pair<RecipeSlot<?>, SlotContent<?>>> contents, String recipeName, CriterionTriggerInstance criterion, String criterionName)
+    protected void build(Map<String, Pair<RecipeSlot<?, ?>, SlotContent<?>>> contents, String recipeName, CriterionTriggerInstance criterion, String criterionName)
     {
         List<Ingredient> ingredients = contents.values()
                 .stream()
@@ -94,9 +94,9 @@ public class CombinationRecipeBuilder extends AbstractBuilder
 
 
 
-    private static Map<String, RecipeSlot<?>> buildSlotMap()
+    private static Map<String, RecipeSlot<?, ?>> buildSlotMap()
     {
-        Map<String, RecipeSlot<?>> slots = new HashMap<>();
+        Map<String, RecipeSlot<?, ?>> slots = new HashMap<>();
 
         slots.put("input", new ItemSlot("input", 1, 55, false, true, ItemSlot.SINGLE_ITEM));
 

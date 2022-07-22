@@ -5,10 +5,10 @@ import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.StaticTags;
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Block;
+import net.minecraftforge.registries.ForgeRegistries;
 import xfacthd.recipebuilder.common.util.Utils;
 
 public abstract class Condition
@@ -43,8 +43,6 @@ public abstract class Condition
 
     public static final Condition HAS_ITEM_TAG = new Condition(Utils.translate(null, "condition.has_item_tag"))
     {
-        private final ResourceLocation REGISTRY = new ResourceLocation("minecraft", "item");
-
         @Override
         public boolean needsItem() { return false; }
 
@@ -55,25 +53,17 @@ public abstract class Condition
         public Component validateTag(String tagName)
         {
             //noinspection ConstantConditions
-            Tag.Named<?> tag = StaticTags.get(REGISTRY).bind(tagName);
-            try
-            {
-                tag.getValues();
-                return null;
-            }
-            catch (Exception e)
+            if (!ForgeRegistries.ITEMS.tags().isKnownTagName(ItemTags.create(new ResourceLocation(tagName))))
             {
                 return MSG_NO_SUCH_TAG.append(tagName);
             }
+            return null;
         }
 
         @Override
         public CriterionTriggerInstance toCriterion(ItemStack stack, String tagName)
         {
-            //noinspection ConstantConditions
-            Tag.Named<?> tag = StaticTags.get(REGISTRY).bind(tagName);
-            //noinspection unchecked
-            return RecipeProvider.has((Tag<Item>) tag);
+            return RecipeProvider.has(ItemTags.create(new ResourceLocation(tagName)));
         }
 
         @Override

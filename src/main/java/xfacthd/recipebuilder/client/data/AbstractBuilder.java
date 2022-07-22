@@ -8,6 +8,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -35,7 +36,7 @@ public abstract class AbstractBuilder
     private final Component typeName;
     private final Component modName;
     private final ItemStack iconStack;
-    private final Map<String, RecipeSlot<?>> slots;
+    private final Map<String, RecipeSlot<?, ?>> slots;
     private final ResourceLocation texture;
     private final int texX;
     private final int texY;
@@ -47,7 +48,7 @@ public abstract class AbstractBuilder
             RecipeSerializer<?> type,
             String modid,
             ItemStack iconStack,
-            Map<String, RecipeSlot<?>> slots,
+            Map<String, RecipeSlot<?, ?>> slots,
             ResourceLocation texture,
             int texX,
             int texY,
@@ -64,7 +65,7 @@ public abstract class AbstractBuilder
             String typeSuffix,
             String modid,
             ItemStack iconStack,
-            Map<String, RecipeSlot<?>> slots,
+            Map<String, RecipeSlot<?, ?>> slots,
             ResourceLocation texture,
             int texX,
             int texY,
@@ -97,7 +98,7 @@ public abstract class AbstractBuilder
 
     public final ItemStack getIcon() { return iconStack; }
 
-    public final Map<String, RecipeSlot<?>> getSlots() { return slots; }
+    public final Map<String, RecipeSlot<?, ?>> getSlots() { return slots; }
 
     public final ResourceLocation getTexture() { return texture; }
 
@@ -111,9 +112,9 @@ public abstract class AbstractBuilder
 
     public final boolean needsAdvancement() { return needAdvancement; }
 
-    public final Component buildRecipe(Map<RecipeSlot<?>, SlotContent<?>> contents, String recipeName, CriterionTriggerInstance criterion, String criterionName)
+    public final Component buildRecipe(Map<RecipeSlot<?, ?>, SlotContent<?>> contents, String recipeName, CriterionTriggerInstance criterion, String criterionName)
     {
-        Map<String, Pair<RecipeSlot<?>, SlotContent<?>>> byName = new HashMap<>();
+        Map<String, Pair<RecipeSlot<?, ?>, SlotContent<?>>> byName = new HashMap<>();
 
         try
         {
@@ -149,9 +150,9 @@ public abstract class AbstractBuilder
         screen.blit(pstack, builderX, builderY, getTexX(), getTexY(), getTexWidth(), getTexHeight());
     }
 
-    protected abstract void validate(Map<String, Pair<RecipeSlot<?>, SlotContent<?>>> contents);
+    protected abstract void validate(Map<String, Pair<RecipeSlot<?, ?>, SlotContent<?>>> contents);
 
-    protected abstract void build(Map<String, Pair<RecipeSlot<?>, SlotContent<?>>> contents, String recipeName, CriterionTriggerInstance criterion, String criterionName);
+    protected abstract void build(Map<String, Pair<RecipeSlot<?, ?>, SlotContent<?>>> contents, String recipeName, CriterionTriggerInstance criterion, String criterionName);
 
 
 
@@ -167,7 +168,7 @@ public abstract class AbstractBuilder
         return fluid.getContent();
     }
 
-    protected final <T> Tag<T> getTagContent(SlotContent<?> content)
+    protected final <T> TagKey<T> getTagContent(SlotContent<?> content)
     {
         SlotContent<T> tContent = content.cast();
         return tContent.getTag();
@@ -197,7 +198,7 @@ public abstract class AbstractBuilder
         return floatContent.getContent();
     }
 
-    public static void checkAnyFilledExcept(Map<String, Pair<RecipeSlot<?>, SlotContent<?>>> contents, String... except)
+    public static void checkAnyFilledExcept(Map<String, Pair<RecipeSlot<?, ?>, SlotContent<?>>> contents, String... except)
     {
         List<String> ignore = Arrays.asList(except);
         AtomicBoolean foundInput = new AtomicBoolean();
@@ -219,13 +220,13 @@ public abstract class AbstractBuilder
         }
     }
 
-    protected final List<String> parseTableGridLines(int size, Map<String, Pair<RecipeSlot<?>, SlotContent<?>>> contents, Map<Item, Character> itemKeys, Map<Tag<Item>, Character> tagKeys)
+    protected final List<String> parseTableGridLines(int size, Map<String, Pair<RecipeSlot<?, ?>, SlotContent<?>>> contents, Map<Item, Character> itemKeys, Map<TagKey<Item>, Character> tagKeys)
     {
         char[][] grid = new char[size][size];
         Arrays.stream(grid).forEach(arr -> Arrays.fill(arr, ' '));
 
         char lastChar = 'A';
-        for (Map.Entry<String, Pair<RecipeSlot<?>, SlotContent<?>>> entry : contents.entrySet())
+        for (Map.Entry<String, Pair<RecipeSlot<?, ?>, SlotContent<?>>> entry : contents.entrySet())
         {
             String name = entry.getKey();
             if (name.equals("out"))
@@ -233,7 +234,7 @@ public abstract class AbstractBuilder
                 continue;
             }
 
-            Pair<RecipeSlot<?>, SlotContent<?>> pair = entry.getValue();
+            Pair<RecipeSlot<?, ?>, SlotContent<?>> pair = entry.getValue();
 
             ItemStack stack = getItemContent(pair.getSecond());
             if (stack.isEmpty())
@@ -246,7 +247,7 @@ public abstract class AbstractBuilder
 
             if (pair.getSecond().shouldUseTag())
             {
-                Tag<Item> tag = getTagContent(pair.getSecond());
+                TagKey<Item> tag = getTagContent(pair.getSecond());
                 if (!tagKeys.containsKey(tag))
                 {
                     tagKeys.put(tag, lastChar);

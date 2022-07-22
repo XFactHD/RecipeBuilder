@@ -48,7 +48,7 @@ public class QuantumCompressorBuilder extends AbstractBuilder
     }
 
     @Override
-    protected void validate(Map<String, Pair<RecipeSlot<?>, SlotContent<?>>> contents)
+    protected void validate(Map<String, Pair<RecipeSlot<?, ?>, SlotContent<?>>> contents)
     {
         if (getIntegerContent(contents.get("count").getSecond()) <= 0)
         {
@@ -68,7 +68,7 @@ public class QuantumCompressorBuilder extends AbstractBuilder
     }
 
     @Override
-    protected void build(Map<String, Pair<RecipeSlot<?>, SlotContent<?>>> contents, String recipeName, CriterionTriggerInstance criterion, String criterionName)
+    protected void build(Map<String, Pair<RecipeSlot<?, ?>, SlotContent<?>>> contents, String recipeName, CriterionTriggerInstance criterion, String criterionName)
     {
         ItemStack output = getItemContent(contents.get("out").getSecond());
 
@@ -89,9 +89,9 @@ public class QuantumCompressorBuilder extends AbstractBuilder
 
 
 
-    private static Map<String, RecipeSlot<?>> buildSlotMap()
+    private static Map<String, RecipeSlot<?, ?>> buildSlotMap()
     {
-        Map<String, RecipeSlot<?>> slots = new HashMap<>();
+        Map<String, RecipeSlot<?, ?>> slots = new HashMap<>();
 
         slots.put("catalyst", new ItemSlot("catalyst", 31, 31, false, true, ItemSlot.SINGLE_ITEM));
         slots.put("in", new ItemSlot("in", 58, 31, false, true, ItemSlot.SINGLE_ITEM));

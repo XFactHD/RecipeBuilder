@@ -6,17 +6,14 @@ import net.minecraft.client.gui.components.Checkbox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.StaticTagHelper;
-import net.minecraft.tags.StaticTags;
+import net.minecraft.tags.TagKey;
 import xfacthd.recipebuilder.client.data.RecipeSlot;
 import xfacthd.recipebuilder.client.data.SlotContent;
 import xfacthd.recipebuilder.client.screen.widget.*;
 import xfacthd.recipebuilder.client.util.ClientUtils;
 import xfacthd.recipebuilder.common.util.Utils;
 
-import java.util.Objects;
-
-public abstract class EditSlotScreen<T, C extends SlotContent<T>, S extends RecipeSlot<C>> extends Screen
+public abstract class EditSlotScreen<B, T, C extends SlotContent<T>, S extends RecipeSlot<C, B>> extends Screen
 {
     public static final Component TITLE_USE_TAG = Utils.translate(null, "edit_slot.use_tag.title");
     public static final Component MSG_NO_TAG_SELECTED = Utils.translate("msg", "edit_slot.no_tag");
@@ -72,7 +69,7 @@ public abstract class EditSlotScreen<T, C extends SlotContent<T>, S extends Reci
         tagSelection.active = content.shouldUseTag();
         if (content.shouldUseTag())
         {
-            ResourceLocation id = getTagHelper().getAllTags().getId(content.getTag());
+            ResourceLocation id = content.getTag().location();
 
             tagSelection.setSelected(
                     tagSelection.stream()
@@ -133,7 +130,9 @@ public abstract class EditSlotScreen<T, C extends SlotContent<T>, S extends Reci
 
         if (useTagCheckbox.selected())
         {
-            content.setTag(getTagHelper().getAllTags().getTag(tagSelection.getSelected().getName()));
+            TagKey<?> key = TagKey.create(slot.getRegistryKey(), tagSelection.getSelected().getName());
+            //noinspection unchecked
+            content.setTag((TagKey<T>) key);
         }
         else
         {
@@ -141,13 +140,5 @@ public abstract class EditSlotScreen<T, C extends SlotContent<T>, S extends Reci
         }
 
         onClose();
-    }
-
-    private StaticTagHelper<T> getTagHelper()
-    {
-        //noinspection unchecked
-        StaticTagHelper<T> registry = (StaticTagHelper<T>) StaticTags.get(slot.getTagKey());
-        Objects.requireNonNull(registry);
-        return registry;
     }
 }

@@ -54,7 +54,7 @@ public class RecipeBuilderScreen extends AbstractContainerScreen<RecipeBuilderCo
         return NAME_PATTERN.matcher(s).matches();
     };
 
-    private final Map<RecipeSlot<?>, SlotContent<?>> recipeSlots = new HashMap<>();
+    private final Map<RecipeSlot<?, ?>, SlotContent<?>> recipeSlots = new HashMap<>();
     private AbstractBuilder currentBuilder = null;
     private Condition recipeCondition = null;
     private ItemStack conditionStack = ItemStack.EMPTY;
@@ -175,9 +175,9 @@ public class RecipeBuilderScreen extends AbstractContainerScreen<RecipeBuilderCo
 
     private void renderSlots(PoseStack pstack, int mouseX, int mouseY)
     {
-        for (Map.Entry<RecipeSlot<?>, SlotContent<?>> entry : recipeSlots.entrySet())
+        for (Map.Entry<RecipeSlot<?, ?>, SlotContent<?>> entry : recipeSlots.entrySet())
         {
-            RecipeSlot<?> slot = entry.getKey();
+            RecipeSlot<?, ?> slot = entry.getKey();
             SlotContent<?> content = entry.getValue();
 
             if (slot instanceof NumberSlot) { continue; } //NumberSlots don't render anything themselves
@@ -201,7 +201,7 @@ public class RecipeBuilderScreen extends AbstractContainerScreen<RecipeBuilderCo
         }
     }
 
-    private void renderHoveredSlot(PoseStack pstack, RecipeSlot<?> slot)
+    private void renderHoveredSlot(PoseStack pstack, RecipeSlot<?, ?> slot)
     {
         RenderSystem.disableDepthTest();
         RenderSystem.colorMask(true, true, true, false);
@@ -217,9 +217,9 @@ public class RecipeBuilderScreen extends AbstractContainerScreen<RecipeBuilderCo
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button)
     {
-        for (Map.Entry<RecipeSlot<?>, SlotContent<?>> entry : recipeSlots.entrySet())
+        for (Map.Entry<RecipeSlot<?, ?>, SlotContent<?>> entry : recipeSlots.entrySet())
         {
-            RecipeSlot<?> slot = entry.getKey();
+            RecipeSlot<?, ?> slot = entry.getKey();
             SlotContent<?> content = entry.getValue();
 
             if (slot instanceof NumberSlot) { continue; } //NumberSlots are not clickable

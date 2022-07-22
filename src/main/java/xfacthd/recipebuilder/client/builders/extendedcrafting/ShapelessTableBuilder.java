@@ -6,7 +6,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.advancements.CriterionTriggerInstance;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.data.recipes.FinishedRecipe;
@@ -58,19 +57,19 @@ public class ShapelessTableBuilder extends AbstractBuilder
     }
 
     @Override
-    protected void validate(Map<String, Pair<RecipeSlot<?>, SlotContent<?>>> contents)
+    protected void validate(Map<String, Pair<RecipeSlot<?, ?>, SlotContent<?>>> contents)
     {
         checkAnyFilledExcept(contents, "out");
     }
 
     @Override
-    protected void build(Map<String, Pair<RecipeSlot<?>, SlotContent<?>>> contents, String recipeName, CriterionTriggerInstance criterion, String criterionName)
+    protected void build(Map<String, Pair<RecipeSlot<?, ?>, SlotContent<?>>> contents, String recipeName, CriterionTriggerInstance criterion, String criterionName)
     {
         ItemStack out = getItemContent(contents.get("out").getSecond());
 
         List<Ingredient> ingredients = new ArrayList<>();
 
-        for (Pair<RecipeSlot<?>, SlotContent<?>> pair : contents.values())
+        for (Pair<RecipeSlot<?, ?>, SlotContent<?>> pair : contents.values())
         {
             if (pair.getFirst().getName().equals("out"))
             {

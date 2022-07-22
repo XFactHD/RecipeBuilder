@@ -39,10 +39,10 @@ public class CookingBuilder extends AbstractBuilder
     }
 
     @Override
-    protected void validate(Map<String, Pair<RecipeSlot<?>, SlotContent<?>>> contents) { }
+    protected void validate(Map<String, Pair<RecipeSlot<?, ?>, SlotContent<?>>> contents) { }
 
     @Override
-    protected final void build(Map<String, Pair<RecipeSlot<?>, SlotContent<?>>> contents, String recipeName, CriterionTriggerInstance criterion, String criterionName)
+    protected final void build(Map<String, Pair<RecipeSlot<?, ?>, SlotContent<?>>> contents, String recipeName, CriterionTriggerInstance criterion, String criterionName)
     {
         Ingredient input = getContentAsIngredient(contents.get("in").getSecond(), true);
         Item output = getItemContent(contents.get("out").getSecond()).getItem();
@@ -65,9 +65,9 @@ public class CookingBuilder extends AbstractBuilder
 
 
 
-    private static Map<String, RecipeSlot<?>> buildSlotMap(int slotInY)
+    private static Map<String, RecipeSlot<?, ?>> buildSlotMap(int slotInY)
     {
-        Map<String, RecipeSlot<?>> slots = new HashMap<>();
+        Map<String, RecipeSlot<?, ?>> slots = new HashMap<>();
 
         slots.put("in", new ItemSlot("in", 1, slotInY, false, true, ItemSlot.SINGLE_ITEM));
         slots.put("out", new ItemSlot("out", 61, 19, false, false, ItemSlot.SINGLE_ITEM));

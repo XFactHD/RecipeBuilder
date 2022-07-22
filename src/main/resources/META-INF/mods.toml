@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[38,)"
+loaderVersion="[40,)"
 license="LGPLv3"
 issueTrackerURL="https://www.github.com/xfacthd/recipebuilder"
 
@@ -14,15 +14,15 @@ authors="XFactHD"
 description=''''''
 
 [[dependencies.recipebuilder]]
-    modId="forge" #mandatory
-    mandatory=true #mandatory
-    versionRange="[38.0.11,)" #mandatory
+    modId="forge"
+    mandatory=true
+    versionRange="[40.0.0,)"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.recipebuilder]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.18,1.19)"
+    versionRange="[1.18.2,1.19)"
     ordering="NONE"
     side="BOTH"

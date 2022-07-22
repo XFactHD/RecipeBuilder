@@ -25,10 +25,10 @@ public class SmithingBuilder extends AbstractBuilder
     }
 
     @Override
-    protected void validate(Map<String, Pair<RecipeSlot<?>, SlotContent<?>>> contents) { }
+    protected void validate(Map<String, Pair<RecipeSlot<?, ?>, SlotContent<?>>> contents) { }
 
     @Override
-    protected void build(Map<String, Pair<RecipeSlot<?>, SlotContent<?>>> contents, String recipeName, CriterionTriggerInstance criterion, String criterionName)
+    protected void build(Map<String, Pair<RecipeSlot<?, ?>, SlotContent<?>>> contents, String recipeName, CriterionTriggerInstance criterion, String criterionName)
     {
         Ingredient base = getContentAsIngredient(contents.get("base").getSecond(), true);
         Ingredient addition = getContentAsIngredient(contents.get("base").getSecond(), true);
@@ -47,9 +47,9 @@ public class SmithingBuilder extends AbstractBuilder
 
 
 
-    private static Map<String, RecipeSlot<?>> buildSlotMap()
+    private static Map<String, RecipeSlot<?, ?>> buildSlotMap()
     {
-        Map<String, RecipeSlot<?>> slots = new HashMap<>();
+        Map<String, RecipeSlot<?, ?>> slots = new HashMap<>();
 
         slots.put("base", new ItemSlot("base", 10, 40, false, true, ItemSlot.SINGLE_ITEM));
         slots.put("addition", new ItemSlot("addition", 59, 40, false, true, ItemSlot.SINGLE_ITEM));

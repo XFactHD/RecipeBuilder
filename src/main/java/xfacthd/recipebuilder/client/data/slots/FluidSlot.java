@@ -9,6 +9,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.item.ItemStack;
@@ -26,14 +27,14 @@ import xfacthd.recipebuilder.common.util.Utils;
 
 import java.util.*;
 
-public class FluidSlot extends RecipeSlot<FluidSlot.FluidContent>
+public class FluidSlot extends RecipeSlot<FluidSlot.FluidContent, Fluid>
 {
     public static final Component AMOUNT = Utils.translate(null, "");
     private final int tankSize;
 
     public FluidSlot(String name, int x, int y, int width, int height, boolean optional, boolean allowTags, int tankSize)
     {
-        super(name, x, y, checkWidth(width), height, optional, true, "fluid", allowTags);
+        super(name, x, y, checkWidth(width), height, optional, true, Registry.FLUID_REGISTRY, allowTags);
         this.tankSize = tankSize;
     }
 

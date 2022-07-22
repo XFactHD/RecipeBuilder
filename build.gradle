@@ -15,15 +15,15 @@ apply plugin: 'org.parchmentmc.librarian.forgegradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = '1.0'
+version = '1.1'
 group = 'xfacthd.recipebuilder'
-archivesBaseName = 'RecipeBuilder-1.18'
+archivesBaseName = 'RecipeBuilder-1.18.2'
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 minecraft {
-    mappings channel: 'parchment', version: '2022.03.06-1.18.1'
+    mappings channel: 'parchment', version: '2022.07.17-1.18.2'
     
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
@@ -116,21 +116,21 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.18.1-39.1.2'
+    minecraft 'net.minecraftforge:forge:1.18.2-40.1.68'
 
-    runtimeOnly fg.deobf("curse.maven:jei-238222:3596020")
+    runtimeOnly fg.deobf("curse.maven:jei-238222:3885884")
 
     // Compat dependencies
-    implementation fg.deobf("curse.maven:cucumber-272335:3623830")
-    implementation fg.deobf("curse.maven:extendedcrafting-268387:3606681")
+    implementation fg.deobf("curse.maven:cucumber-272335:3859559")
+    implementation fg.deobf("curse.maven:extendedcrafting-268387:3885707")
 
-    runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:1.18.1-5.0.6.2")
-    runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:1.18.1-65")
-    implementation fg.deobf("vazkii.botania:Botania:1.18.1-429")
+    runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:1.18.2-5.0.7.1")
+    runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:1.18.2-71.1")
+    implementation fg.deobf("vazkii.botania:Botania:1.18.2-434")
 
-    implementation fg.deobf("curse.maven:immersiveengineering-231951:3587149")
+    implementation fg.deobf("curse.maven:immersiveengineering-231951:3823066")
 
-    implementation fg.deobf("appeng:appliedenergistics2:10.0.1")
+    implementation fg.deobf("appeng:appliedenergistics2:11.1.4")
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..

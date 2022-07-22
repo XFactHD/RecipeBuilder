@@ -18,19 +18,19 @@ public class ShapelessCraftingBuilder extends AbstractBuilder
     }
 
     @Override
-    protected void validate(Map<String, Pair<RecipeSlot<?>, SlotContent<?>>> contents)
+    protected void validate(Map<String, Pair<RecipeSlot<?, ?>, SlotContent<?>>> contents)
     {
         checkAnyFilledExcept(contents, "out");
     }
 
     @Override
-    protected void build(Map<String, Pair<RecipeSlot<?>, SlotContent<?>>> contents, String recipeName, CriterionTriggerInstance criterion, String criterionName)
+    protected void build(Map<String, Pair<RecipeSlot<?, ?>, SlotContent<?>>> contents, String recipeName, CriterionTriggerInstance criterion, String criterionName)
     {
         ItemStack out = getItemContent(contents.get("out").getSecond());
 
         ShapelessRecipeBuilder builder = new ShapelessRecipeBuilder(out.getItem(), out.getCount());
 
-        for (Pair<RecipeSlot<?>, SlotContent<?>> pair : contents.values())
+        for (Pair<RecipeSlot<?, ?>, SlotContent<?>> pair : contents.values())
         {
             if (pair.getFirst().getName().equals("out"))
             {

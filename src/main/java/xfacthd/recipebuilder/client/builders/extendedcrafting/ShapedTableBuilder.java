@@ -10,7 +10,7 @@ import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -59,18 +59,18 @@ public class ShapedTableBuilder extends AbstractBuilder
     }
 
     @Override
-    protected void validate(Map<String, Pair<RecipeSlot<?>, SlotContent<?>>> contents)
+    protected void validate(Map<String, Pair<RecipeSlot<?, ?>, SlotContent<?>>> contents)
     {
         checkAnyFilledExcept(contents, "out");
     }
 
     @Override
-    protected void build(Map<String, Pair<RecipeSlot<?>, SlotContent<?>>> contents, String recipeName, CriterionTriggerInstance criterion, String criterionName)
+    protected void build(Map<String, Pair<RecipeSlot<?, ?>, SlotContent<?>>> contents, String recipeName, CriterionTriggerInstance criterion, String criterionName)
     {
         ItemStack out = getItemContent(contents.get("out").getSecond());
 
         Map<Item, Character> itemKeys = new HashMap<>();
-        Map<Tag<Item>, Character> tagKeys = new HashMap<>();
+        Map<TagKey<Item>, Character> tagKeys = new HashMap<>();
         List<String> lines = parseTableGridLines(Math.max(tier, 1) * 2 + 1, contents, itemKeys, tagKeys);
 
         Map<Character, Ingredient> keys = new HashMap<>();
@@ -86,9 +86,9 @@ public class ShapedTableBuilder extends AbstractBuilder
 
 
 
-    public static Map<String, RecipeSlot<?>> buildSlotMap(int tier)
+    public static Map<String, RecipeSlot<?, ?>> buildSlotMap(int tier)
     {
-        Map<String, RecipeSlot<?>> slots = new HashMap<>();
+        Map<String, RecipeSlot<?, ?>> slots = new HashMap<>();
 
         int size = Math.max(tier, 1) * 2 + 1;
         for (int x = 0; x < size; x++)

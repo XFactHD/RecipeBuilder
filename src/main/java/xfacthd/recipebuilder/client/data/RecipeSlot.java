@@ -1,11 +1,13 @@
 package xfacthd.recipebuilder.client.data;
 
+import com.google.common.base.Preconditions;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
 
-public abstract class RecipeSlot<T extends SlotContent<?>>
+public abstract class RecipeSlot<T extends SlotContent<?>, V>
 {
     private final String name;
     private final int x;
@@ -14,7 +16,7 @@ public abstract class RecipeSlot<T extends SlotContent<?>>
     private final int height;
     private final boolean optional;
     private final boolean supportTags;
-    private final ResourceLocation tagKey;
+    private final ResourceKey<Registry<V>> registryKey;
     private final boolean allowTags;
 
     protected RecipeSlot(String name, int x, int y, int width, int height, boolean optional)
@@ -22,7 +24,7 @@ public abstract class RecipeSlot<T extends SlotContent<?>>
         this(name, x, y, width, height, optional, false, null, false);
     }
 
-    protected RecipeSlot(String name, int x, int y, int width, int height, boolean optional, boolean supportTags, String tagKey, boolean allowTags)
+    protected RecipeSlot(String name, int x, int y, int width, int height, boolean optional, boolean supportTags, ResourceKey<Registry<V>> registryKey, boolean allowTags)
     {
         this.name = name;
         this.x = x;
@@ -30,9 +32,10 @@ public abstract class RecipeSlot<T extends SlotContent<?>>
         this.width = width;
         this.height = height;
         this.optional = optional;
+        Preconditions.checkState(!supportTags || registryKey != null, "RegistryKey cannot be null when tags are supported");
         this.supportTags = supportTags;
-        this.tagKey = tagKey != null ? new ResourceLocation(tagKey) : null;
-        if (allowTags && !supportTags) { throw new IllegalArgumentException("Can't allow tags when they are not supported!"); }
+        this.registryKey = registryKey;
+        Preconditions.checkState(!allowTags || supportTags, "Can't allow tags when they are not supported!");
         this.allowTags = allowTags;
     }
 
@@ -50,7 +53,7 @@ public abstract class RecipeSlot<T extends SlotContent<?>>
 
     public final boolean supportsTags() { return supportTags; }
 
-    public ResourceLocation getTagKey() { return tagKey; }
+    public ResourceKey<Registry<V>> getRegistryKey() { return registryKey; }
 
     public boolean allowsTags() { return supportTags && allowTags; }
 

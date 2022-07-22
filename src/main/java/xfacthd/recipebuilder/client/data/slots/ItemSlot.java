@@ -6,15 +6,18 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.core.Registry;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.RenderProperties;
+import net.minecraftforge.registries.ForgeRegistries;
 import xfacthd.recipebuilder.client.data.RecipeSlot;
 import xfacthd.recipebuilder.client.data.SlotContent;
 import xfacthd.recipebuilder.client.screen.edit.EditItemSlotScreen;
 
 import java.util.function.Function;
 
-public class ItemSlot extends RecipeSlot<ItemSlot.ItemContent>
+public class ItemSlot extends RecipeSlot<ItemSlot.ItemContent, Item>
 {
     public static final Function<ItemStack, Integer> SINGLE_ITEM = stack -> 1;
 
@@ -24,12 +27,17 @@ public class ItemSlot extends RecipeSlot<ItemSlot.ItemContent>
 
     public ItemSlot(String name, int x, int y, boolean optional, boolean allowTags, Function<ItemStack, Integer> countModifier)
     {
-        super(name, x, y, 16, 16, optional, true, "item", allowTags);
+        super(name, x, y, 16, 16, optional, true, Registry.ITEM_REGISTRY, allowTags);
         this.countModifier = countModifier;
     }
 
     @Override
-    public boolean canEdit(ItemContent content) { return allowsTags() && !content.isEmpty() && !content.getContent().getItem().getTags().isEmpty(); }
+    public boolean canEdit(ItemContent content)
+    {
+        if (!allowsTags() || content.isEmpty()) { return false; }
+        //noinspection ConstantConditions
+        return ForgeRegistries.ITEMS.tags().getReverseTag(content.getContent().getItem()).isPresent();
+    }
 
     @Override
     public Screen requestEdit(ItemContent content) { return new EditItemSlotScreen(this, content); }

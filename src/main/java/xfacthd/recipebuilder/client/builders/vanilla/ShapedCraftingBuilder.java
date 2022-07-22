@@ -4,7 +4,7 @@ import com.mojang.datafixers.util.Pair;
 import net.minecraft.advancements.CriterionTriggerInstance;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -24,20 +24,20 @@ public class ShapedCraftingBuilder extends AbstractBuilder
     }
 
     @Override
-    protected void validate(Map<String, Pair<RecipeSlot<?>, SlotContent<?>>> contents)
+    protected void validate(Map<String, Pair<RecipeSlot<?, ?>, SlotContent<?>>> contents)
     {
         checkAnyFilledExcept(contents, "out");
     }
 
     @Override
-    protected void build(Map<String, Pair<RecipeSlot<?>, SlotContent<?>>> contents, String recipeName, CriterionTriggerInstance criterion, String criterionName)
+    protected void build(Map<String, Pair<RecipeSlot<?, ?>, SlotContent<?>>> contents, String recipeName, CriterionTriggerInstance criterion, String criterionName)
     {
         ItemStack out = getItemContent(contents.get("out").getSecond());
 
         ShapedRecipeBuilder builder = new ShapedRecipeBuilder(out.getItem(), out.getCount());
 
         Map<Item, Character> itemKeys = new HashMap<>();
-        Map<Tag<Item>, Character> tagKeys = new HashMap<>();
+        Map<TagKey<Item>, Character> tagKeys = new HashMap<>();
         List<String> lines = parseTableGridLines(3, contents, itemKeys, tagKeys);
 
         itemKeys.forEach((i, c) -> builder.define(c, i));
@@ -51,9 +51,9 @@ public class ShapedCraftingBuilder extends AbstractBuilder
 
 
 
-    public static Map<String, RecipeSlot<?>> buildSlotMap()
+    public static Map<String, RecipeSlot<?, ?>> buildSlotMap()
     {
-        Map<String, RecipeSlot<?>> slots = new HashMap<>();
+        Map<String, RecipeSlot<?, ?>> slots = new HashMap<>();
 
         slots.put("00", new ItemSlot("00",  1,  1, true, true, ItemSlot.SINGLE_ITEM));
         slots.put("01", new ItemSlot("01", 19,  1, true, true, ItemSlot.SINGLE_ITEM));

@@ -4,7 +4,7 @@ import net.minecraft.network.chat.Component;
 import xfacthd.recipebuilder.client.data.RecipeSlot;
 import xfacthd.recipebuilder.client.data.SlotContent;
 
-public abstract class NumberSlot<T extends SlotContent<?>> extends RecipeSlot<T>
+public abstract class NumberSlot<T extends SlotContent<? extends Number>> extends RecipeSlot<T, Object>
 {
     private final Component title;
 

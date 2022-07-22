@@ -10,13 +10,17 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.tags.IReverseTag;
 import xfacthd.recipebuilder.client.data.slots.FluidSlot;
 import xfacthd.recipebuilder.client.screen.EditSlotScreen;
 import xfacthd.recipebuilder.client.screen.widget.*;
 import xfacthd.recipebuilder.client.util.ObjectUtils;
 import xfacthd.recipebuilder.common.util.Utils;
 
-public class EditFluidSlotScreen extends EditSlotScreen<FluidStack, FluidSlot.FluidContent, FluidSlot>
+import java.util.stream.Stream;
+
+public class EditFluidSlotScreen extends EditSlotScreen<Fluid, FluidStack, FluidSlot.FluidContent, FluidSlot>
 {
     public static final Component TITLE = Utils.translate(null, "edit_fluid.title");
     public static final Component TITLE_AMOUNT = Utils.translate(null, "edit_fluid.amount.title");
@@ -65,7 +69,12 @@ public class EditFluidSlotScreen extends EditSlotScreen<FluidStack, FluidSlot.Fl
     @Override
     protected void gatherTags(FluidStack content, SelectionWidget<LocationEntry> widget)
     {
-        content.getFluid().getTags().forEach(tag -> widget.addEntry(new LocationEntry(tag)));
+        //noinspection ConstantConditions
+        ForgeRegistries.FLUIDS.tags()
+                .getReverseTag(content.getFluid())
+                .map(IReverseTag::getTagKeys)
+                .orElseGet(Stream::of)
+                .forEach(tag -> widget.addEntry(new LocationEntry(tag.location())));
     }
 
     @Override
